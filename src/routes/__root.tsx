@@ -8,25 +8,42 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Film, WifiOff, RotateCw, Home } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#121212] text-[#F5F5F5] px-4">
+      <div className="max-w-md w-full rounded-2xl border border-white/10 bg-white/5 p-8 text-center shadow-2xl backdrop-blur-md">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#FF6B6B]/15 text-[#FF6B6B] mb-6 animate-bounce">
+          <Film size={32} strokeWidth={1.5} />
+        </div>
+        <h1 
+          style={{ fontFamily: "Bebas Neue, sans-serif" }} 
+          className="text-6xl tracking-widest text-[#FF6B6B]"
+        >
+          404 ERROR
+        </h1>
+        <h2 
+          style={{ fontFamily: "Poppins, sans-serif" }} 
+          className="mt-3 text-xl font-bold text-[#F5F5F5]"
+        >
+          Scene Cut: Page Not Found!
+        </h2>
+        <p className="mt-4 text-sm text-white/50 leading-relaxed">
+          We searched the projection room but couldn't find the reel you wanted. 
+          It might have been deleted, or left on the cutting room floor.
         </p>
-        <div className="mt-6">
+        <div className="mt-8 flex justify-center">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-[#FF6B6B] px-6 py-2.5 text-xs font-semibold text-[#121212] transition hover:bg-[#FF8585] shadow-lg shadow-[#FF6B6B]/25"
           >
-            Go home
+            <Home size={14} />
+            BACK TO LOBBY
           </Link>
         </div>
       </div>
@@ -42,29 +59,44 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#121212] text-[#F5F5F5] px-4">
+      <div className="max-w-md w-full rounded-2xl border border-white/10 bg-white/5 p-8 text-center shadow-2xl backdrop-blur-md">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#FF6B6B]/15 text-[#FF6B6B] mb-6 animate-pulse">
+          <WifiOff size={32} strokeWidth={1.5} />
+        </div>
+        <h1 
+          style={{ fontFamily: "Bebas Neue, sans-serif" }} 
+          className="text-5xl tracking-widest text-[#FF6B6B]"
+        >
+          LOST SIGNAL
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+        <h2 
+          style={{ fontFamily: "Poppins, sans-serif" }} 
+          className="mt-3 text-xl font-bold text-[#F5F5F5]"
+        >
+          Projector Error: Off The Grid
+        </h2>
+        <p className="mt-4 text-sm text-white/50 leading-relaxed">
+          Connection to the Notion database failed or the network went offline. 
+          Please check your internet connection, or retry the stream.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-[#FF6B6B] px-6 py-2.5 text-xs font-semibold text-[#121212] transition hover:bg-[#FF8585] shadow-lg shadow-[#FF6B6B]/25"
           >
-            Try again
+            <RotateCw size={14} />
+            RELOAD STREAM
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-xs font-semibold text-[#F5F5F5] transition hover:bg-white/10"
           >
-            Go home
+            <Home size={14} />
+            BACK TO LOBBY
           </a>
         </div>
       </div>
@@ -85,6 +117,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
     ],
     links: [
+      {
+        rel: "icon",
+        type: "image/svg+xml",
+        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF6B6B' stroke-width='2' stroke-linecap='square'%3E%3Cpath d='M3 3h6M3 3v6M21 21h-6M21 21v-6'/%3E%3C/svg%3E",
+      },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -121,6 +158,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <Toaster />
     </QueryClientProvider>
   );
 }

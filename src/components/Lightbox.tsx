@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Heart, Share2, ExternalLink } from "lucide-react";
 import type { Poster } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
+import { ShareModal } from "./ShareModal";
 
 interface Props {
   poster: Poster | null;
@@ -12,6 +13,7 @@ export function Lightbox({ poster, onClose }: Props) {
   const { isSaved, toggle } = useSaved();
   const [zoom, setZoom] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     if (!poster) return;
@@ -128,15 +130,16 @@ export function Lightbox({ poster, onClose }: Props) {
               {saved ? "Pinned" : "Pin it"}
             </button>
             <button
-              onClick={share}
+              onClick={() => setShareOpen(true)}
               className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition hover:border-white/30"
             >
               <Share2 size={16} />
-              {copied ? "Link copied" : "Share"}
+              Share
             </button>
           </div>
         </div>
       </div>
+      {shareOpen && <ShareModal poster={poster} onClose={() => setShareOpen(false)} />}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Heart } from "lucide-react";
 import type { Poster } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
@@ -8,10 +8,27 @@ interface Props {
   onOpen: (p: Poster) => void;
 }
 
+// Global cache to track which image URLs have already finished loading
+const loadedImages = new Set<string>();
+
 export function PosterCard({ poster, onOpen }: Props) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() => loadedImages.has(poster.image));
   const { isSaved, toggle } = useSaved();
   const saved = isSaved(poster.id);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    // If image is already complete in DOM (e.g. from browser cache), set loaded immediately
+    if (imgRef.current?.complete) {
+      loadedImages.add(poster.image);
+      setLoaded(true);
+    }
+  }, [poster.image]);
+
+  const handleLoad = () => {
+    loadedImages.add(poster.image);
+    setLoaded(true);
+  };
 
   return (
     <button
@@ -22,10 +39,11 @@ export function PosterCard({ poster, onOpen }: Props) {
       <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
         {!loaded && <div className="absolute inset-0 animate-pulse bg-white/5" />}
         <img
+          ref={imgRef}
           src={poster.image}
           alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
           loading="lazy"
-          onLoad={() => setLoaded(true)}
+          onLoad={handleLoad}
           className={`h-full w-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
 
@@ -42,7 +60,7 @@ export function PosterCard({ poster, onOpen }: Props) {
           <Heart size={16} fill={saved ? "#FF6B6B" : "none"} stroke={saved ? "#FF6B6B" : "#F5F5F5"} />
         </span>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-3 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/5 bg-black/70 p-3 opacity-100 backdrop-blur-md transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
           <p className="truncate text-sm font-medium text-[#F5F5F5]">
             {poster.title} <span className="text-white/60">· {poster.year}</span>
           </p>

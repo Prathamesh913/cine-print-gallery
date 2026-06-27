@@ -4,10 +4,12 @@ import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
 import { Lightbox } from "@/components/Lightbox";
 import { Footer } from "@/components/Footer";
-import { POSTERS, type Poster } from "@/lib/posters";
+import { type Poster } from "@/lib/posters";
+import { fetchNotionPosters } from "@/lib/notion";
 import { useSaved } from "@/lib/saved";
 
 export const Route = createFileRoute("/saved")({
+  loader: () => fetchNotionPosters(),
   head: () => ({
     meta: [
       { title: "Saved — CinePrint" },
@@ -18,9 +20,10 @@ export const Route = createFileRoute("/saved")({
 });
 
 function SavedPage() {
+  const postersList = Route.useLoaderData();
   const { saved } = useSaved();
   const [open, setOpen] = useState<Poster | null>(null);
-  const posters = useMemo(() => POSTERS.filter((p) => saved.includes(p.id)), [saved]);
+  const posters = useMemo(() => postersList.filter((p) => saved.includes(p.id)), [postersList, saved]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
