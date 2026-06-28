@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Search, Palette, Film, CalendarRange } from "lucide-react";
+import { ChevronDown, Search, Film, CalendarRange, Paintbrush, Sparkles } from "lucide-react";
 import { type PosterStyle, type PosterGenre } from "@/lib/posters";
 
 interface Props {
@@ -8,12 +8,15 @@ interface Props {
   style: PosterStyle | "All";
   genre: PosterGenre | "All";
   decade: string | "All";
+  artist: string | "All";
   styles: PosterStyle[];
   genres: PosterGenre[];
   decades: string[];
+  artists: string[];
   onStyle: (s: PosterStyle | "All") => void;
   onGenre: (g: PosterGenre | "All") => void;
   onDecade: (d: string | "All") => void;
+  onArtist: (a: string | "All") => void;
 }
 
 export function FilterBar({
@@ -22,30 +25,35 @@ export function FilterBar({
   style,
   genre,
   decade,
+  artist,
   styles,
   genres,
   decades,
+  artists,
   onStyle,
   onGenre,
   onDecade,
+  onArtist,
 }: Props) {
-  const [openDropdown, setOpenDropdown] = useState<"style" | "genre" | "decade" | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<"style" | "genre" | "decade" | "artist" | null>(null);
 
   const activeCount =
     (style !== "All" ? 1 : 0) +
     (genre !== "All" ? 1 : 0) +
-    (decade !== "All" ? 1 : 0);
+    (decade !== "All" ? 1 : 0) +
+    (artist !== "All" ? 1 : 0);
 
   const handleClearAll = () => {
     onStyle("All");
     onGenre("All");
     onDecade("All");
+    onArtist("All");
     setOpenDropdown(null);
   };
 
   return (
     <div
-      className="sticky top-[60px] z-30 border-b border-white/5 px-4 py-3 backdrop-blur-md sm:px-6"
+      className="sticky top-[48px] sm:top-[68px] z-30 border-b border-white/5 px-4 py-3 backdrop-blur-md sm:px-6"
       style={{ backgroundColor: "rgba(18,18,18,0.8)" }}
     >
       <div className="mx-auto flex max-w-[1600px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -63,13 +71,25 @@ export function FilterBar({
         {/* Right Side: Filters */}
         <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
           <Dropdown
-            icon={<Palette size={13} />}
+            icon={<Paintbrush size={13} />}
+            label="Artist"
+            value={artist}
+            options={artists}
+            onSelect={onArtist}
+            isOpen={openDropdown === "artist"}
+            onToggle={() => setOpenDropdown(openDropdown === "artist" ? null : "artist")}
+            align="left"
+          />
+
+          <Dropdown
+            icon={<Sparkles size={13} />}
             label="Style"
             value={style}
             options={styles}
             onSelect={onStyle}
             isOpen={openDropdown === "style"}
             onToggle={() => setOpenDropdown(openDropdown === "style" ? null : "style")}
+            align="left"
           />
 
           <Dropdown
@@ -80,6 +100,7 @@ export function FilterBar({
             onSelect={onGenre}
             isOpen={openDropdown === "genre"}
             onToggle={() => setOpenDropdown(openDropdown === "genre" ? null : "genre")}
+            align="right"
           />
 
           <Dropdown
@@ -90,6 +111,7 @@ export function FilterBar({
             onSelect={onDecade}
             isOpen={openDropdown === "decade"}
             onToggle={() => setOpenDropdown(openDropdown === "decade" ? null : "decade")}
+            align="right"
           />
 
           {activeCount > 0 && (
@@ -114,9 +136,23 @@ interface DropdownProps {
   onSelect: (val: any) => void;
   isOpen: boolean;
   onToggle: () => void;
+  align?: "left" | "right";
+  optionRenderer?: (opt: string) => React.ReactNode;
+  triggerSwatch?: React.ReactNode;
 }
 
-function Dropdown({ icon, label, value, options, onSelect, isOpen, onToggle }: DropdownProps) {
+function Dropdown({
+  icon,
+  label,
+  value,
+  options,
+  onSelect,
+  isOpen,
+  onToggle,
+  align = "right",
+  optionRenderer,
+  triggerSwatch,
+}: DropdownProps) {
   return (
     <div className="relative">
       <button
@@ -129,6 +165,7 @@ function Dropdown({ icon, label, value, options, onSelect, isOpen, onToggle }: D
         }}
       >
         <span className={value !== "All" ? "text-[#FF6B6B]" : "text-white/50"}>{icon}</span>
+        {triggerSwatch}
         <span>{value !== "All" ? `${label}: ${value}` : label}</span>
         <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
@@ -138,7 +175,7 @@ function Dropdown({ icon, label, value, options, onSelect, isOpen, onToggle }: D
           {/* Backdrop to close when clicking outside */}
           <div className="fixed inset-0 z-40" onClick={onToggle} />
           
-          <div className="absolute right-0 mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/10 bg-[#1a1a1a] p-1.5 shadow-2xl z-50 backdrop-blur-md">
+          <div className={`absolute ${align === "left" ? "left-0" : "right-0"} mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/10 bg-[#1a1a1a] p-1.5 shadow-2xl z-50 backdrop-blur-md`}>
             <button
               onClick={() => {
                 onSelect("All");
@@ -159,13 +196,13 @@ function Dropdown({ icon, label, value, options, onSelect, isOpen, onToggle }: D
                   onSelect(opt);
                   onToggle();
                 }}
-                className="w-full rounded-lg px-3 py-2 text-left text-xs transition"
+                className="w-full rounded-lg px-3 py-2 text-left text-xs transition flex items-center gap-2"
                 style={{
                   backgroundColor: value === opt ? "rgba(255, 107, 107, 0.1)" : "transparent",
                   color: value === opt ? "#FF6B6B" : "rgba(245, 245, 245, 0.8)",
                 }}
               >
-                {opt}
+                {optionRenderer ? optionRenderer(opt) : opt}
               </button>
             ))}
           </div>

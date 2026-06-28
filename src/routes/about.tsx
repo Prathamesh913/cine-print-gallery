@@ -6,8 +6,8 @@ import { Github, Twitter, Mail, Globe, Sparkles, MessageSquare, ExternalLink } f
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — CinePrint" },
-      { name: "description", content: "CinePrint is a curated collection of alternative film and TV posters." },
+      { title: "About CinePrint — Curated Alternative Film & TV Art Gallery" },
+      { name: "description", content: "Learn about CinePrint, a curated digital archive of custom alternative movie posters, minimalist film art, and television key designs created by independent designers." },
     ],
   }),
   component: About,
@@ -24,69 +24,134 @@ function About() {
             ABOUT CINEPRINT
           </span>
           <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="mt-2 text-3xl font-bold sm:text-4xl">
-            Celebrating alternative poster art.
+            Celebrating alternative movie posters & custom film art.
           </h1>
           <p className="mt-6 text-base leading-relaxed text-white/70">
-            CinePrint is a digital gallery celebrating alternative film and television poster design. We curate minimalist artwork, bold vector layouts, and retro aesthetics created by talented designers globally.
+            CinePrint is a curated digital gallery celebrating custom alternative movie posters and television key art design. We archive minimalist film poster artwork, bold vector layouts, and retro cinematic designs created by independent designers and illustrators globally. Explore fan-made visual re-imaginations of cinematic masterpieces, download high-resolution ticket print designs, and discover talented poster artists.
           </p>
         </div>
 
-        {/* Creator Card */}
-        <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8 backdrop-blur-md relative overflow-hidden">
-          {/* Subtle neon glowing accent */}
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 h-24 w-24 rounded-full bg-[#FF6B6B]/10 blur-xl"></div>
-          
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B] shrink-0 border border-[#FF6B6B]/20">
-              <Sparkles size={28} className="animate-pulse" />
+        {/* Creator Cinema Ticket Pass */}
+        <div className="mt-12 rounded-2xl border border-white/10 bg-[#161616] relative overflow-hidden flex flex-col sm:flex-row shadow-2xl">
+          {/* Left Pane: Main Curator Pass (70% on desktop) */}
+          <div className="w-full sm:w-[70%] p-6 sm:p-8 flex flex-col justify-between relative">
+            {/* Red Curator Stamp */}
+            <div className="absolute top-6 right-6 border border-[#FF6B6B]/30 text-[#FF6B6B]/40 font-mono text-[9px] uppercase py-0.5 px-2 tracking-[0.2em] rounded -rotate-6 select-none pointer-events-none">
+              CURATOR PASS
             </div>
-            
-            <div className="text-center sm:text-left flex-grow">
-              <span className="text-xs uppercase tracking-widest text-[#FF6B6B] font-semibold">
-                Creator & Curator
+
+            <div>
+              <span style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xs uppercase tracking-[0.25em] text-[#FF6B6B]">
+                CREATOR & CURATOR
               </span>
-              <h2 style={{ fontFamily: "Poppins, sans-serif" }} className="mt-1 text-xl font-semibold text-white">
+              <h2 style={{ fontFamily: "Bebas Neue, sans-serif" }} className="mt-1 text-5xl tracking-wide uppercase text-white font-bold leading-none">
                 Prathamesh
               </h2>
-              <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              <p className="mt-4 text-sm text-white/70 leading-relaxed font-sans max-w-md">
                 Design Engineer, movie enthusiast, and typography lover. Created CinePrint to archive and share custom visual re-imaginations of cinema masterpieces.
               </p>
+            </div>
 
-              {/* Social Channels */}
-              <div className="mt-6 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                <a
-                  href="https://github.com/Prathamesh913"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] hover:border-transparent transition-all duration-300"
-                >
-                  <Github size={14} />
-                  GitHub
-                </a>
-                <a
-                  href="https://x.com/Prathamesh913"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] hover:border-transparent transition-all duration-300"
-                >
-                  <Twitter size={14} />
-                  Twitter
-                </a>
-                <a
-                  href="mailto:prathameshjadhav913@gmail.com"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] hover:border-transparent transition-all duration-300"
-                >
-                  <Mail size={14} />
-                  Email
-                </a>
-                <a
-                  href="https://prathameshdesigns.framer.website/"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] hover:border-transparent transition-all duration-300"
-                >
-                  <Globe size={14} />
-                  Portfolio
-                </a>
+            {/* Social channels as retro ticket tags */}
+            <div className="mt-8 flex flex-wrap gap-2.5">
+              <a
+                href="https://github.com/Prathamesh913"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+              >
+                <Github size={13} />
+                <span>GITHUB</span>
+              </a>
+              <a
+                href="https://x.com/Prathamesh913"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+              >
+                <Twitter size={13} />
+                <span>TWITTER</span>
+              </a>
+              <a
+                href="mailto:prathameshjadhav913@gmail.com"
+                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+              >
+                <Mail size={13} />
+                <span>EMAIL</span>
+              </a>
+              <a
+                href="https://prathameshdesigns.framer.website/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+              >
+                <Globe size={13} />
+                <span>PORTFOLIO</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Separation line (Vertical on desktop, horizontal on mobile) */}
+          <div className="border-t border-dotted border-white/20 w-full h-0 sm:w-0 sm:h-auto sm:border-t-0 sm:border-l sm:border-dotted sm:my-4 sm:mx-1 sm:opacity-100"></div>
+
+          {/* Right Pane: Stub / Details (30% on desktop) */}
+          <div className="w-full sm:w-[30%] bg-white/[0.02] p-6 sm:p-8 flex flex-row sm:flex-col justify-between items-center sm:items-stretch sm:text-left text-center">
+            {/* Ticket Info Stack */}
+            <div className="space-y-3 text-left">
+              <div>
+                <p className="text-[9px] font-mono tracking-widest text-white/30 uppercase">SECTION</p>
+                <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-white">ARCHIVE</p>
               </div>
+              <div>
+                <p className="text-[9px] font-mono tracking-widest text-white/30 uppercase">TICKET NO.</p>
+                <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-[#FF6B6B]">#0001</p>
+              </div>
+              <div className="sm:block hidden">
+                <p className="text-[9px] font-mono tracking-widest text-white/30 uppercase">ADMIT</p>
+                <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-white">ONE CURATOR</p>
+              </div>
+            </div>
+
+            {/* Retro Barcode Container */}
+            <div className="flex flex-col items-center sm:items-start gap-1 sm:mt-6">
+              <div className="flex items-end h-10 gap-[1.5px] opacity-75">
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[3px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[4px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[3px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[5px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[3px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[5px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[3px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[5px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[3px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[5px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[3px] bg-white"></div>
+                <div className="h-full w-[2px] bg-white"></div>
+                <div className="h-full w-[1px] bg-white"></div>
+                <div className="h-full w-[5px] bg-white"></div>
+              </div>
+              <span className="text-[8px] font-mono tracking-[0.25em] text-white/30">C1N3-PR1NT</span>
             </div>
           </div>
         </div>

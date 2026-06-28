@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Heart, Share2, ExternalLink } from "lucide-react";
 import type { Poster } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
+import { Link } from "@tanstack/react-router";
 import { ShareModal } from "./ShareModal";
 
 interface Props {
@@ -38,7 +39,7 @@ export function Lightbox({ poster, onClose }: Props) {
 
   const share = async () => {
     const url = typeof window !== "undefined" ? window.location.href : "";
-    const data = { title: `${poster.title} — CinePrint`, text: `${poster.title} by ${poster.artist}`, url };
+    const data = { title: `${poster.title} — CinePrint`, text: `${poster.title} by ${poster.artist} on CinePrint!`, url };
     if (navigator.share) {
       try { await navigator.share(data); return; } catch { /* fall through */ }
     }
@@ -91,7 +92,20 @@ export function Lightbox({ poster, onClose }: Props) {
           <div className="space-y-1.5 text-sm">
             <p className="text-white/70">
               by{" "}
-              {poster.artistUrl ? (
+              {poster.artists && poster.artists.length > 0 ? (
+                poster.artists.map((art, idx) => (
+                  <span key={idx}>
+                    {idx > 0 && " & "}
+                    {art.url ? (
+                      <a href={art.url} target="_blank" rel="noreferrer" className="text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B]">
+                        {art.name}
+                      </a>
+                    ) : (
+                      <span className="text-[#F5F5F5]">{art.name}</span>
+                    )}
+                  </span>
+                ))
+              ) : poster.artistUrl ? (
                 <a href={poster.artistUrl} target="_blank" rel="noreferrer" className="text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B]">
                   {poster.artist}
                 </a>
@@ -115,6 +129,17 @@ export function Lightbox({ poster, onClose }: Props) {
               <span key={g} className="rounded-full border border-white/10 px-2.5 py-1 text-xs text-white/60">{g}</span>
             ))}
           </div>
+
+          {((!poster.artist || poster.artist.toLowerCase() === "unknown") ||
+            (!poster.source || poster.source.toLowerCase() === "unknown")) && (
+            <p className="mt-2 text-[11px] leading-relaxed text-white/40">
+              Know the artist or source of this poster? Reach out via socials on the{" "}
+              <Link to="/about" className="text-white/60 underline hover:text-[#FF6B6B]">
+                About
+              </Link>{" "}
+              page so I can update the details!
+            </p>
+          )}
 
           <div className="mt-auto flex flex-wrap gap-2 pt-4">
             <button

@@ -43,3 +43,13 @@ dist-ssr
 test-notion.cjs
 test-prototype.cjs
 
+tsconfig.json
+vite.config.ts
+eslint.config.js
+tanstack.config.ts
+components.json
+bun.lock
+bunfig.toml
+AGENTS.md
+.prettierignore
+.prettierrc

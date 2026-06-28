@@ -13,10 +13,10 @@ export const Route = createFileRoute("/")({
   loader: () => fetchNotionPosters(),
   head: () => ({
     meta: [
-      { title: "CinePrint — Alternative Movie & TV Posters" },
-      { name: "description", content: "A curated gallery of fan-made alternative posters for films and TV." },
-      { property: "og:title", content: "CinePrint" },
-      { property: "og:description", content: "A curated gallery of fan-made alternative posters." },
+      { title: "CinePrint — Curated Alternative Movie & TV Posters Gallery" },
+      { name: "description", content: "Explore a curated gallery of custom alternative movie posters, minimalist film art, and television key designs created by talented designers globally." },
+      { property: "og:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
+      { property: "og:description", content: "Curated gallery of custom alternative movie posters and minimalist film art." },
     ],
   }),
   component: Home,
@@ -38,6 +38,7 @@ function Home() {
   const [style, setStyle] = useState<PosterStyle | "All">("All");
   const [genre, setGenre] = useState<PosterGenre | "All">("All");
   const [decade, setDecade] = useState<string | "All">("All");
+  const [artist, setArtist] = useState<string | "All">("All");
   const [open, setOpen] = useState<Poster | null>(null);
 
   const styles = useMemo(() => {
@@ -63,6 +64,18 @@ function Home() {
     return Array.from(decs).sort();
   }, [posters]);
 
+  const artists = useMemo(() => {
+    const art = new Set<string>();
+    posters.forEach((p) => {
+      if (p.artists && p.artists.length > 0) {
+        p.artists.forEach((a) => a.name && art.add(a.name));
+      } else if (p.artist) {
+        art.add(p.artist);
+      }
+    });
+    return Array.from(art).filter((name) => name !== "Unknown").sort();
+  }, [posters]);
+
   const [shuffledPosters, setShuffledPosters] = useState<Poster[]>(posters);
 
   useEffect(() => {
@@ -84,11 +97,17 @@ function Home() {
         const dec = Math.floor(p.year / 10) * 10;
         if (`${dec}s` !== decade) return false;
       }
+      if (artist !== "All") {
+        const hasArtist = p.artists && p.artists.length > 0
+          ? p.artists.some((a) => a.name === artist)
+          : p.artist === artist;
+        if (!hasArtist) return false;
+      }
       if (!q) return true;
       const hay = [p.title, p.artist, ...p.genre, ...p.tags, p.style].join(" ").toLowerCase();
       return hay.includes(q);
     });
-  }, [shuffledPosters, dq, style, genre, decade]);
+  }, [shuffledPosters, dq, style, genre, decade, artist]);
 
   if (posters.length === 0) {
     return (
@@ -126,15 +145,18 @@ function Home() {
         style={style}
         genre={genre}
         decade={decade}
+        artist={artist}
         styles={styles}
         genres={genres}
         decades={decades}
+        artists={artists}
         onStyle={setStyle}
         onGenre={setGenre}
         onDecade={setDecade}
+        onArtist={setArtist}
       />
       <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 flex-grow flex flex-col justify-center">
-        <h1 className="sr-only">CinePrint gallery</h1>
+        <h1 className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</h1>
         {filtered.length === 0 ? (
           <div className="flex w-full min-h-[50vh] flex-col items-center justify-center py-12 text-center">
             <div className="relative mb-6 text-white/20 animate-pulse">
@@ -165,12 +187,13 @@ function Home() {
                   Clear Search
                 </button>
               )}
-              {(style !== "All" || genre !== "All" || decade !== "All") && (
+              {(style !== "All" || genre !== "All" || decade !== "All" || artist !== "All") && (
                 <button
                   onClick={() => {
                     setStyle("All");
                     setGenre("All");
                     setDecade("All");
+                    setArtist("All");
                   }}
                   className="rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] hover:bg-[#FF8585] transition"
                 >

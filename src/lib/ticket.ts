@@ -54,14 +54,17 @@ export async function generateTicketBlob(poster: Poster): Promise<Blob> {
 
   const width = 1000;
   const height = 460;
-  
+  const scale = 3; // 3x scale up for high-resolution ticket output
   const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = width * scale;
+  canvas.height = height * scale;
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     throw new Error("Could not get 2D context");
   }
+
+  // Scale the context coordinate system to match base coordinates
+  ctx.scale(scale, scale);
 
   // 1. Draw background card (cream/vintage paper)
   ctx.fillStyle = "#F5EAD4";

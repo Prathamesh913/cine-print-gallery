@@ -121,7 +121,8 @@ export function ShareModal({ poster, onClose }: Props) {
         await navigator.share({
           files: [file],
           title: `${poster.title} — CinePrint Ticket`,
-          text: `Check out this retro ticket for ${poster.title}!`,
+          text: `Check out this retro ticket for ${poster.title} on CinePrint! ${window.location.origin}`,
+          url: window.location.origin,
         });
       } else {
         // Fallback: Copy current window URL

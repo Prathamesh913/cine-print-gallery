@@ -54,20 +54,52 @@ export const fetchNotionPosters = createServerFn({ method: "POST" })
 
         if (imageUrls.length === 0) return [];
 
-        return imageUrls.map((url, index) => ({
-          id: index === 0 ? page.id : `${page.id}-${index}`,
-          title: props.Name?.title[0]?.plain_text || props.Title?.title[0]?.plain_text || "Untitled",
-          year: props.Year?.number || 0,
-          artist: props.Artist?.rich_text[0]?.plain_text || "Unknown",
-          artistUrl: props["Artist URL"]?.url || undefined,
-          source: props.Source?.rich_text[0]?.plain_text || "Unknown",
-          sourceUrl: props["Source URL"]?.url || "",
-          image: url,
-          style: props.Style?.select?.name || "Minimalist",
-          genre: props.Genre?.multi_select?.map((g: any) => g.name) || [],
-          tags: props.Tags?.multi_select?.map((t: any) => t.name) || [],
-          note: props.Note?.rich_text[0]?.plain_text || undefined,
-        }));
+        const artistRaw = props.Artist?.rich_text[0]?.plain_text || "Unknown";
+        const artistParts = artistRaw.split("|").map((s: string) => s.trim());
+
+        let artistUrlRaw = "";
+        const artistUrlProp = props["Artist URL"];
+        if (artistUrlProp) {
+          if (artistUrlProp.type === "url" && artistUrlProp.url) {
+            artistUrlRaw = artistUrlProp.url;
+          } else if (artistUrlProp.type === "rich_text" && artistUrlProp.rich_text?.length > 0) {
+            artistUrlRaw = artistUrlProp.rich_text[0].plain_text || "";
+          }
+        }
+        const artistUrlParts = artistUrlRaw.split("|").map((s: string) => s.trim());
+
+        return imageUrls.map((url, index) => {
+          // Resolve artist names/URLs for this specific image index
+          const posterArtistRaw = artistParts[index] || artistParts[0] || "Unknown";
+          const posterArtistUrlRaw = artistUrlParts[index] || artistUrlParts[0] || "";
+
+          // Parse multiple artists within this poster (comma delimited)
+          const artistNames = posterArtistRaw.split(/[,]+/).map((s: string) => s.trim()).filter(Boolean);
+          const artistUrls = posterArtistUrlRaw.split(/[,]+/).map((s: string) => s.trim()).filter(Boolean);
+
+          const artists = artistNames.map((name: string, i: number) => ({
+            name,
+            url: artistUrls[i] || undefined,
+          }));
+
+          const artistNamesJoined = artistNames.join(" & ");
+
+          return {
+            id: index === 0 ? page.id : `${page.id}-${index}`,
+            title: props.Name?.title[0]?.plain_text || props.Title?.title[0]?.plain_text || "Untitled",
+            year: props.Year?.number || 0,
+            artists,
+            artist: artistNamesJoined || "Unknown",
+            artistUrl: artists[0]?.url || undefined,
+            source: props.Source?.rich_text[0]?.plain_text || "Unknown",
+            sourceUrl: props["Source URL"]?.url || "",
+            image: url,
+            style: props.Style?.select?.name || "Minimalist",
+            genre: props.Genre?.multi_select?.map((g: any) => g.name) || [],
+            tags: props.Tags?.multi_select?.map((t: any) => t.name) || [],
+            note: props.Note?.rich_text[0]?.plain_text || undefined,
+          };
+        });
       });
     } catch (error) {
       console.error("Failed fetching from Notion:", error);

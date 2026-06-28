@@ -8,8 +8,8 @@ import { submitPosterToNotion } from "@/lib/notion";
 export const Route = createFileRoute("/submit")({
   head: () => ({
     meta: [
-      { title: "Submit — CinePrint" },
-      { name: "description", content: "Suggest a poster or submit your artwork to CinePrint." },
+      { title: "Submit Poster Artwork — CinePrint Gallery" },
+      { name: "description", content: "Submit your custom alternative movie poster illustrations or recommend fan-made movie designs to the CinePrint archive." },
     ],
   }),
   component: Submit,
@@ -82,15 +82,15 @@ function Submit() {
       <Header showSearch={false} />
       <main className="mx-auto w-full max-w-xl px-6 py-16 flex-grow flex flex-col justify-center">
         <span style={{ fontFamily: "Bebas Neue, sans-serif", color: "#FF6B6B" }} className="text-sm tracking-[0.3em]">
-          SUBMIT A POSTER
+          SUBMIT ALTERNATIVE ART
         </span>
         <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="mt-2 text-3xl font-semibold sm:text-4xl">
-          {role === "fan" ? "Found something brilliant?" : "Showcase your artwork"}
+          {role === "fan" ? "Submit Custom Movie Poster Designs" : "Showcase Your Fan-Made Film Art"}
         </h1>
         <p className="mt-3 text-white/60 text-sm">
           {role === "fan"
-            ? "Send us alternative posters you love. We'll credit the artist and add it to our archive."
-            : "Submit your own alternative movie poster designs directly to the CinePrint gallery."}
+            ? "Discovered alternative movie posters or custom print illustrations you love? Share them with us, and we'll credit the original poster artist in our archive."
+            : "Are you an independent graphic designer or illustrator? Submit your own alternative movie posters and vector designs directly to our curated gallery."}
         </p>
 
         {/* Role Selector Toggle */}
