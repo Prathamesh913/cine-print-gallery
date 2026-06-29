@@ -1,13 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 
 interface Props {
   query?: string;
   onQueryChange?: (v: string) => void;
   showSearch?: boolean;
+  onFeelingLucky?: () => void;
 }
 
-export function Header({ query = "", onQueryChange, showSearch = true }: Props) {
+export function Header({ query = "", onQueryChange, showSearch = true, onFeelingLucky }: Props) {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ backgroundColor: "rgba(18,18,18,0.8)" }}>
       <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
@@ -31,6 +32,16 @@ export function Header({ query = "", onQueryChange, showSearch = true }: Props) 
         )}
 
         <nav className="ml-auto flex items-center gap-1 text-sm sm:gap-2">
+          {onFeelingLucky && (
+            <button
+              onClick={onFeelingLucky}
+              title="Feeling Lucky? Show a random poster."
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-white/70 transition-colors hover:text-[#FF6B6B]"
+            >
+              <Sparkles size={16} />
+              <span className="hidden sm:inline">Lucky</span>
+            </button>
+          )}
           <NavLink to="/about">About</NavLink>
           <NavLink to="/submit">Submit</NavLink>
           <NavLink to="/saved">Saved</NavLink>

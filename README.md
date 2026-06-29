@@ -7,21 +7,35 @@ CinePrint is a premium digital gallery celebrating custom alternative movie post
 ## 📸 Screenshots
 
 ### 🖼️ Curated Archive & Filters
+
 Explore posters filtered dynamically by title, artist, style, decade, and genre.
+
 ![CinePrint Homepage](screenshots/homepage.png)
 
 ### 🎫 Retro Ticket Generator
+
 Generate, copy, download, or share high-resolution vintage ticket prints of alternative posters.
+
 ![Vintage Ticket Generator](screenshots/ticket_generator.png)
 
 ### 📽️ Interactive Lightbox
+
 View detailed credits, co-creator profiles, and movie specifications in a cinematic lightbox.
+
 ![Poster Detail Lightbox](screenshots/lightbox.png)
 
 ---
 
 ## ✨ Features
 
+- **Premium Context Menu**: Right-click on desktop or long-press (500ms hold) on mobile to summon a glassmorphic context menu to Pin/Unpin posters and Open high-res images in a new tab. Fully optimized with screen bounds collision detection and outside interaction auto-close.
+- **Cinematic Lightbox Navigation**: Fast keyboard navigation using Left/Right arrow keys with smooth, cross-faded card transitions. Features hover-activated navigation button overlays and subtle `<kbd>` guide indicators.
+- **Random Poster ("Feeling Lucky")**: A Sparkles icon button in the header nav bar that opens a completely random poster. Respects current active/filtered list arrays to maintain navigation index continuity.
+- **Dynamic Poster Counter**: Monospace indicator showing matching results count above the grid. Updates in real-time as search queries and dropdown filters are modified.
+- **Interactive 3D Ticket Tilt & Glare**: Visual ticket stub previews respond dynamically:
+  - Desktop: Tilts in response to mouse cursor hover positions.
+  - Mobile: Rotates utilizing the device's orientation gyroscope (with relative calibration offsets).
+  - Shifting radial light glare overlays mimic real-world metallic reflections.
 - **Multi-Dimensional Filtering**: Search and filter by Style, Genre, Decade, and Artist.
 - **Vintage Ticket Generator**: Render high-resolution (3000x1380) tickets on the fly using a canvas compiler:
   - Dynamic dates, show schedules, and seat numbering.
@@ -107,4 +121,4 @@ npm run build
 
 ---
 
-*CinePrint is curated and maintained by [Prathamesh](https://github.com/Prathamesh913).*
+_CinePrint is curated and maintained by [Prathamesh](https://github.com/Prathamesh913)._

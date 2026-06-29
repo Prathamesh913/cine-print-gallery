@@ -7,18 +7,33 @@ import { ShareModal } from "./ShareModal";
 
 interface Props {
   poster: Poster | null;
+  posters?: Poster[];
+  onNavigate?: (p: Poster) => void;
   onClose: () => void;
 }
 
-export function Lightbox({ poster, onClose }: Props) {
+export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   const { isSaved, toggle } = useSaved();
   const [zoom, setZoom] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const currentIndex = poster ? posters.findIndex((p) => p.id === poster.id) : -1;
+  const prevPoster = currentIndex > 0 ? posters[currentIndex - 1] : null;
+  const nextPoster = currentIndex < posters.length - 1 ? posters[currentIndex + 1] : null;
 
   useEffect(() => {
     if (!poster) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      } else if (e.key === "ArrowLeft" && prevPoster && onNavigate) {
+        onNavigate(prevPoster);
+      } else if (e.key === "ArrowRight" && nextPoster && onNavigate) {
+        onNavigate(nextPoster);
+      }
+    };
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -26,11 +41,12 @@ export function Lightbox({ poster, onClose }: Props) {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [poster, onClose]);
+  }, [poster, onClose, prevPoster, nextPoster, onNavigate]);
 
   useEffect(() => {
     setZoom(false);
     setCopied(false);
+    setImageLoaded(false);
   }, [poster]);
 
   if (!poster) return null;
@@ -65,17 +81,66 @@ export function Lightbox({ poster, onClose }: Props) {
       </button>
 
       <div
+        key={poster.id}
         onClick={(e) => e.stopPropagation()}
-        className="grid w-full max-w-6xl gap-6 md:grid-cols-[3fr_2fr]"
+        className="grid w-full max-w-6xl gap-6 md:grid-cols-[3fr_2fr] animate-in fade-in zoom-in-95 duration-200 ease-out"
       >
-        <div className="flex items-start justify-center">
-          <img
-            src={poster.image}
-            alt={`${poster.title} (${poster.year})`}
-            onClick={() => setZoom((z) => !z)}
-            className="max-h-[85vh] w-full cursor-zoom-in rounded-md object-contain transition-transform duration-300"
-            style={zoom ? { transform: "scale(1.25)", cursor: "zoom-out" } : undefined}
-          />
+        <div className="flex flex-col items-center w-full">
+          <div className="relative flex items-start justify-center group/nav w-full">
+            {/* Previous Arrow Button Indicator */}
+            {prevPoster && onNavigate && (
+              <button
+                onClick={() => onNavigate(prevPoster)}
+                aria-label="Previous Poster"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-black/80 hover:text-white sm:flex hidden"
+              >
+                <span className="text-xs">←</span>
+              </button>
+            )}
+
+            <img
+              key={poster.id}
+              src={poster.image}
+              alt={`${poster.title} (${poster.year})`}
+              onLoad={() => setImageLoaded(true)}
+              onClick={() => setZoom((z) => !z)}
+              className={`max-h-[85vh] w-full cursor-zoom-in rounded-md object-contain transition-all duration-300 ${
+                imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
+              }`}
+              style={zoom ? { transform: "scale(1.25)", cursor: "zoom-out" } : undefined}
+            />
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/5 animate-pulse rounded-md" />
+            )}
+
+            {/* Next Arrow Button Indicator */}
+            {nextPoster && onNavigate && (
+              <button
+                onClick={() => onNavigate(nextPoster)}
+                aria-label="Next Poster"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-black/80 hover:text-white sm:flex hidden"
+              >
+                <span className="text-xs">→</span>
+              </button>
+            )}
+          </div>
+
+          {/* Keyboard navigation helper */}
+          {(prevPoster || nextPoster) && (
+            <div className="mt-4 hidden sm:flex items-center justify-center gap-3 text-[10px] tracking-widest font-mono text-white/30 uppercase select-none">
+              {prevPoster && (
+                <span className="flex items-center gap-1.5">
+                  <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/40">←</kbd> PREV
+                </span>
+              )}
+              {prevPoster && nextPoster && <span>·</span>}
+              {nextPoster && (
+                <span className="flex items-center gap-1.5">
+                  NEXT <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/40">→</kbd>
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-4 md:py-4">

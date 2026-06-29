@@ -25,13 +25,24 @@ function SavedPage() {
   const [open, setOpen] = useState<Poster | null>(null);
   const posters = useMemo(() => postersList.filter((p) => saved.includes(p.id)), [postersList, saved]);
 
+  const handleFeelingLucky = () => {
+    if (posters.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * posters.length);
+    setOpen(posters[randomIndex]);
+  };
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
-      <Header showSearch={false} />
+      <Header showSearch={false} onFeelingLucky={handleFeelingLucky} />
       <main className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6">
         <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="mb-6 text-2xl font-semibold">
           Pinned
         </h1>
+        {posters.length > 0 && (
+          <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/40 uppercase">
+            Showing {posters.length} poster{posters.length !== 1 && "s"}
+          </div>
+        )}
         {posters.length === 0 ? (
           <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
             <p className="text-white/60">Nothing pinned yet. Start discovering posters you love.</p>
@@ -44,7 +55,7 @@ function SavedPage() {
         )}
       </main>
       <Footer />
-      <Lightbox poster={open} onClose={() => setOpen(null)} />
+      <Lightbox poster={open} posters={posters} onNavigate={setOpen} onClose={() => setOpen(null)} />
     </div>
   );
 }

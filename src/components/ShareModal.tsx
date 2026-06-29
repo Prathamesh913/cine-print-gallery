@@ -16,6 +16,112 @@ export function ShareModal({ poster, onClose }: Props) {
   const [copied, setCopied] = useState(false);
   const [sharing, setSharing] = useState(false);
 
+  const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({
+    transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
+    transition: "transform 0.5s ease",
+  });
+
+  const [glareStyle, setGlareStyle] = useState<React.CSSProperties>({
+    opacity: 0,
+    background: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
+  });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const xc = x / rect.width - 0.5;
+    const yc = 0.5 - y / rect.height;
+
+    const maxRotate = 15;
+    const rotateX = yc * maxRotate;
+    const rotateY = xc * maxRotate;
+
+    const glareX = (x / rect.width) * 100;
+    const glareY = (y / rect.height) * 100;
+
+    setTiltStyle({
+      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
+      transition: "transform 0.05s ease-out",
+    });
+
+    setGlareStyle({
+      opacity: 1,
+      background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 80%)`,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTiltStyle({
+      transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
+      transition: "transform 0.5s ease-in-out",
+    });
+    setGlareStyle({
+      opacity: 0,
+      background: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
+    });
+  };
+
+  useEffect(() => {
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (!isTouch) return;
+
+    let initialBeta: number | null = null;
+    let initialGamma: number | null = null;
+
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      const { beta, gamma } = e;
+      if (beta === null || gamma === null) return;
+
+      if (initialBeta === null) initialBeta = beta;
+      if (initialGamma === null) initialGamma = gamma;
+
+      const maxTilt = 15;
+      const deltaBeta = Math.min(Math.max(beta - initialBeta, -maxTilt), maxTilt);
+      const deltaGamma = Math.min(Math.max(gamma - initialGamma, -maxTilt), maxTilt);
+
+      const rotateX = deltaBeta;
+      const rotateY = -deltaGamma;
+
+      const lightX = 50 + (deltaGamma / maxTilt) * 50;
+      const lightY = 50 + (deltaBeta / maxTilt) * 50;
+
+      setTiltStyle({
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
+        transition: "transform 0.1s ease-out",
+      });
+      setGlareStyle({
+        opacity: 0.8,
+        background: `radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 80%)`,
+      });
+    };
+
+    const enableGyro = () => {
+      const reqPermission = (DeviceOrientationEvent as any).requestPermission;
+      if (typeof reqPermission === "function") {
+        reqPermission()
+          .then((state: string) => {
+            if (state === "granted") {
+              window.addEventListener("deviceorientation", handleOrientation);
+            }
+          })
+          .catch(console.error);
+      } else {
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+      window.removeEventListener("touchstart", enableGyro);
+    };
+
+    window.addEventListener("touchstart", enableGyro);
+
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
+      window.removeEventListener("touchstart", enableGyro);
+    };
+  }, []);
+
   useEffect(() => {
     if (!poster) return;
 
@@ -122,7 +228,6 @@ export function ShareModal({ poster, onClose }: Props) {
           files: [file],
           title: `${poster.title} — CinePrint Ticket`,
           text: `Check out this retro ticket for ${poster.title} on CinePrint! ${window.location.origin}`,
-          url: window.location.origin,
         });
       } else {
         // Fallback: Copy current window URL
@@ -169,8 +274,18 @@ export function ShareModal({ poster, onClose }: Props) {
               <span className="text-xs">Printing Ticket...</span>
             </div>
           ) : imageUrl ? (
-            <div className="w-full overflow-hidden rounded-lg shadow-lg border border-[#2b261d]/10">
-              <img src={imageUrl} alt="Retro Ticket Preview" className="h-auto w-full object-contain" />
+            <div 
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={tiltStyle}
+              className="w-full overflow-hidden rounded-lg shadow-lg border border-[#2b261d]/10 relative group cursor-pointer select-none"
+            >
+              <img src={imageUrl} alt="Retro Ticket Preview" className="h-auto w-full object-contain pointer-events-none" />
+              {/* Dynamic light reflection glare overlay */}
+              <div 
+                style={glareStyle}
+                className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+              />
             </div>
           ) : (
             <div className="text-sm text-white/40">Failed to render ticket preview.</div>

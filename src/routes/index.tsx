@@ -136,9 +136,15 @@ function Home() {
     );
   }
 
+  const handleFeelingLucky = () => {
+    if (filtered.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * filtered.length);
+    setOpen(filtered[randomIndex]);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
-      <Header query={query} onQueryChange={setQuery} showSearch={false} />
+      <Header query={query} onQueryChange={setQuery} showSearch={false} onFeelingLucky={handleFeelingLucky} />
       <FilterBar
         query={query}
         onQueryChange={setQuery}
@@ -157,6 +163,11 @@ function Home() {
       />
       <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 flex-grow flex flex-col justify-center">
         <h1 className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</h1>
+        {filtered.length > 0 && (
+          <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/40 uppercase">
+            Showing {filtered.length} poster{filtered.length !== 1 && "s"}
+          </div>
+        )}
         {filtered.length === 0 ? (
           <div className="flex w-full min-h-[50vh] flex-col items-center justify-center py-12 text-center">
             <div className="relative mb-6 text-white/20 animate-pulse">
@@ -207,7 +218,7 @@ function Home() {
         )}
       </main>
       <Footer />
-      <Lightbox poster={open} onClose={() => setOpen(null)} />
+      <Lightbox poster={open} posters={filtered} onNavigate={setOpen} onClose={() => setOpen(null)} />
     </div>
   );
 }

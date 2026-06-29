@@ -6,16 +6,19 @@ import { useSaved } from "@/lib/saved";
 interface Props {
   poster: Poster;
   onOpen: (p: Poster) => void;
+  onContextMenu: (x: number, y: number, poster: Poster) => void;
 }
 
 // Global cache to track which image URLs have already finished loading
 const loadedImages = new Set<string>();
 
-export function PosterCard({ poster, onOpen }: Props) {
+export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
   const [loaded, setLoaded] = useState(() => loadedImages.has(poster.image));
   const { isSaved, toggle } = useSaved();
   const saved = isSaved(poster.id);
   const imgRef = useRef<HTMLImageElement>(null);
+  const touchTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [longPressActive, setLongPressActive] = useState(false);
 
   useEffect(() => {
     // If image is already complete in DOM (e.g. from browser cache), set loaded immediately
@@ -25,19 +28,73 @@ export function PosterCard({ poster, onOpen }: Props) {
     }
   }, [poster.image]);
 
+  useEffect(() => {
+    return () => {
+      if (touchTimerRef.current) {
+        clearTimeout(touchTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleLoad = () => {
     loadedImages.add(poster.image);
     setLoaded(true);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const clientX = touch.clientX;
+    const clientY = touch.clientY;
+    
+    setLongPressActive(false);
+    touchTimerRef.current = setTimeout(() => {
+      setLongPressActive(true);
+      onContextMenu(clientX, clientY, poster);
+    }, 500);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchTimerRef.current) {
+      clearTimeout(touchTimerRef.current);
+    }
+    if (longPressActive) {
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchMove = () => {
+    if (touchTimerRef.current) {
+      clearTimeout(touchTimerRef.current);
+    }
+  };
+
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onContextMenu(e.clientX, e.clientY, poster);
+  };
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (longPressActive) {
+      e.preventDefault();
+      e.stopPropagation();
+      setLongPressActive(false);
+      return;
+    }
+    onOpen(poster);
+  };
+
   return (
     <button
-      onClick={() => onOpen(poster)}
+      onClick={handleCardClick}
+      onContextMenu={handleRightClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchMove}
       className="group relative block w-full overflow-hidden rounded-md text-left transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl"
       style={{ backgroundColor: "#1E1E1E" }}
     >
       <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
-        {!loaded && <div className="absolute inset-0 animate-pulse bg-white/5" />}
+        {!loaded && <div className="absolute inset-0 bg-white/5 animate-pulse" />}
         <img
           ref={imgRef}
           src={poster.image}
