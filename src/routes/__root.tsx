@@ -160,7 +160,11 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster />
-      <Analytics />
+      <Analytics
+        scriptSrc="/api/insights/script.js"
+        viewEndpoint="/api/insights/view"
+        eventEndpoint="/api/insights/event"
+      />
     </QueryClientProvider>
   );
 }
