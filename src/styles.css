@@ -62,12 +62,19 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    border-color: var(--color-border);
+    font-synthesis: none;
+  }
   html, body {
     background-color: #121212;
     color: #F5F5F5;
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+  p { text-wrap: pretty; }
+  h1, h2, h3, h4 { text-wrap: balance; }
   ::selection { background: #FF6B6B; color: #121212; }
 }
 

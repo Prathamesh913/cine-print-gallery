@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Heart } from "lucide-react";
 import type { Poster } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
+import { useCornerSmoothing } from "@/lib/smoothing";
 
 interface Props {
   poster: Poster;
@@ -19,6 +20,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
   const imgRef = useRef<HTMLImageElement>(null);
   const touchTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [longPressActive, setLongPressActive] = useState(false);
+  const cardSmoothing = useCornerSmoothing<HTMLButtonElement>(16, 60);
 
   useEffect(() => {
     // If image is already complete in DOM (e.g. from browser cache), set loaded immediately
@@ -85,13 +87,14 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
 
   return (
     <button
+      ref={cardSmoothing.ref}
       onClick={handleCardClick}
       onContextMenu={handleRightClick}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchMove={handleTouchMove}
-      className="group relative block w-full overflow-hidden rounded-md text-left transition-transform duration-300 hover:scale-[1.02] hover:shadow-2xl"
-      style={{ backgroundColor: "#1E1E1E" }}
+      className="group relative block w-full overflow-hidden text-left transition-transform duration-200 hover:scale-[1.02] active:scale-[0.97] hover:shadow-2xl"
+      style={{ backgroundColor: "#1E1E1E", ...cardSmoothing.style }}
     >
       <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
         {!loaded && <div className="absolute inset-0 bg-white/5 animate-pulse" />}
@@ -101,7 +104,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
           alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
           loading="lazy"
           onLoad={handleLoad}
-          className={`h-full w-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
+          className={`h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
 
         <span

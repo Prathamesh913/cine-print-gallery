@@ -3,6 +3,7 @@ import { X, Copy, Download, Share2, Printer, Loader2 } from "lucide-react";
 import { type Poster } from "@/lib/posters";
 import { generateTicketBlob } from "@/lib/ticket";
 import { toast } from "sonner";
+import { useCornerSmoothing } from "@/lib/smoothing";
 
 interface Props {
   poster: Poster | null;
@@ -15,6 +16,9 @@ export function ShareModal({ poster, onClose }: Props) {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [sharing, setSharing] = useState(false);
+  // Exit animation state
+  const [visible, setVisible] = useState(false);
+  const ticketSmoothing = useCornerSmoothing<HTMLDivElement>(16, 60);
 
   const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({
     transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
@@ -121,6 +125,17 @@ export function ShareModal({ poster, onClose }: Props) {
       window.removeEventListener("touchstart", enableGyro);
     };
   }, []);
+
+  useEffect(() => {
+    if (poster) {
+      requestAnimationFrame(() => setVisible(true));
+    }
+  }, [!!poster]);
+
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(onClose, 200);
+  };
 
   useEffect(() => {
     if (!poster) return;
@@ -246,17 +261,18 @@ export function ShareModal({ poster, onClose }: Props) {
 
   return (
     <div
-      onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm"
+      onClick={handleClose}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm transition-opacity duration-200"
+      style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none" }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className="relative flex w-full max-w-3xl flex-col rounded-2xl border border-white/10 bg-[#181818] p-6 shadow-2xl"
       >
         <button
-          onClick={onClose}
+          onClick={handleClose}
           aria-label="Close"
-          className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/5 text-[#F5F5F5] transition hover:bg-white/10"
+          className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/5 text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-90"
         >
           <X size={16} />
         </button>
@@ -275,10 +291,11 @@ export function ShareModal({ poster, onClose }: Props) {
             </div>
           ) : imageUrl ? (
             <div 
+              ref={ticketSmoothing.ref}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
-              style={tiltStyle}
-              className="w-full overflow-hidden rounded-lg shadow-lg border border-[#2b261d]/10 relative group cursor-pointer select-none"
+              style={{ ...tiltStyle, ...ticketSmoothing.style }}
+              className="w-full overflow-hidden shadow-lg border border-white/8 relative group cursor-pointer select-none"
             >
               <img src={imageUrl} alt="Retro Ticket Preview" className="h-auto w-full object-contain pointer-events-none" />
               {/* Dynamic light reflection glare overlay */}
@@ -297,7 +314,9 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleCopy}
             disabled={loading || !blob}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition hover:bg-white/10 disabled:opacity-50"
+            className={`inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50 ${
+              copied ? "scale-110" : "scale-100"
+            }`}
           >
             <Copy size={16} />
             {copied ? "Copied!" : "Copy Image"}
@@ -305,7 +324,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleDownload}
             disabled={loading || !imageUrl}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition hover:bg-white/10 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
           >
             <Download size={16} />
             Download
@@ -313,7 +332,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handlePrint}
             disabled={loading || !imageUrl}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition hover:bg-white/10 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
           >
             <Printer size={16} />
             Print Ticket
@@ -321,7 +340,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleShare}
             disabled={loading || !blob || sharing}
-            className="inline-flex items-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition hover:bg-[#FF8585] disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-all duration-150 hover:bg-[#FF8585] active:scale-95 disabled:opacity-50"
           >
             {sharing ? (
               <>

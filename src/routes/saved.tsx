@@ -1,8 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
-import { Lightbox } from "@/components/Lightbox";
 import { Footer } from "@/components/Footer";
 import { type Poster } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
@@ -22,13 +21,17 @@ export const Route = createFileRoute("/saved")({
 function SavedPage() {
   const postersList = Route.useLoaderData();
   const { saved } = useSaved();
-  const [open, setOpen] = useState<Poster | null>(null);
+  const navigate = useNavigate();
   const posters = useMemo(() => postersList.filter((p) => saved.includes(p.id)), [postersList, saved]);
+
+  const handleOpen = (p: Poster) => {
+    navigate({ to: "/poster/$id", params: { id: p.id } });
+  };
 
   const handleFeelingLucky = () => {
     if (posters.length === 0) return;
     const randomIndex = Math.floor(Math.random() * posters.length);
-    setOpen(posters[randomIndex]);
+    handleOpen(posters[randomIndex]);
   };
 
   return (
@@ -51,11 +54,10 @@ function SavedPage() {
             </Link>
           </div>
         ) : (
-          <PosterGrid posters={posters} onOpen={setOpen} />
+          <PosterGrid posters={posters} onOpen={handleOpen} />
         )}
       </main>
       <Footer />
-      <Lightbox poster={open} posters={posters} onNavigate={setOpen} onClose={() => setOpen(null)} />
     </div>
   );
 }

@@ -36,7 +36,7 @@ export function Header({ query = "", onQueryChange, showSearch = true, onFeeling
             <button
               onClick={onFeelingLucky}
               title="Feeling Lucky? Show a random poster."
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-white/70 transition-colors hover:text-[#FF6B6B]"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-white/70 transition-all duration-150 hover:text-[#FF6B6B] active:scale-95"
             >
               <Sparkles size={16} />
               <span className="hidden sm:inline">Lucky</span>
@@ -45,6 +45,7 @@ export function Header({ query = "", onQueryChange, showSearch = true, onFeeling
           <NavLink to="/about">About</NavLink>
           <NavLink to="/submit">Submit</NavLink>
           <NavLink to="/saved">Saved</NavLink>
+          {/* <NavLink to="/constellation">Galaxy</NavLink> */}
         </nav>
       </div>
 

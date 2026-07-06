@@ -53,7 +53,7 @@ export function PosterGrid({ posters, onOpen, pageSize = 24 }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {visible.map((p) => (
           <div key={p.id}>
             <PosterCard poster={p} onOpen={onOpen} onContextMenu={handleContextMenu} />

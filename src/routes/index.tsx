@@ -1,10 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Film, Search } from "lucide-react";
 import { Header } from "@/components/Header";
 import { FilterBar } from "@/components/FilterBar";
 import { PosterGrid } from "@/components/PosterGrid";
-import { Lightbox } from "@/components/Lightbox";
 import { Footer } from "@/components/Footer";
 import { type Poster, type PosterStyle, type PosterGenre } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
@@ -33,13 +32,17 @@ function useDebounced<T>(value: T, ms = 300) {
 
 function Home() {
   const posters = Route.useLoaderData();
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const dq = useDebounced(query, 300);
   const [style, setStyle] = useState<PosterStyle | "All">("All");
   const [genre, setGenre] = useState<PosterGenre | "All">("All");
   const [decade, setDecade] = useState<string | "All">("All");
   const [artist, setArtist] = useState<string | "All">("All");
-  const [open, setOpen] = useState<Poster | null>(null);
+
+  const handleOpen = (p: Poster) => {
+    navigate({ to: "/poster/$id", params: { id: p.id } });
+  };
 
   const styles = useMemo(() => {
     const s = new Set<string>();
@@ -139,7 +142,7 @@ function Home() {
   const handleFeelingLucky = () => {
     if (filtered.length === 0) return;
     const randomIndex = Math.floor(Math.random() * filtered.length);
-    setOpen(filtered[randomIndex]);
+    handleOpen(filtered[randomIndex]);
   };
 
   return (
@@ -164,7 +167,7 @@ function Home() {
       <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 flex-grow flex flex-col justify-center">
         <h1 className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</h1>
         {filtered.length > 0 && (
-          <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/40 uppercase">
+          <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/40 uppercase tabular-nums">
             Showing {filtered.length} poster{filtered.length !== 1 && "s"}
           </div>
         )}
@@ -193,7 +196,7 @@ function Home() {
               {query && (
                 <button
                   onClick={() => setQuery("")}
-                  className="rounded-full bg-white/5 border border-white/10 px-5 py-2 text-sm font-medium text-[#F5F5F5] hover:bg-white/10 transition"
+                  className="rounded-full bg-white/5 border border-white/10 px-5 py-2 text-sm font-medium text-[#F5F5F5] hover:bg-white/10 active:scale-95 transition-all duration-150"
                 >
                   Clear Search
                 </button>
@@ -206,7 +209,7 @@ function Home() {
                     setDecade("All");
                     setArtist("All");
                   }}
-                  className="rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] hover:bg-[#FF8585] transition"
+                  className="rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] hover:bg-[#FF8585] active:scale-95 transition-all duration-150"
                 >
                   Reset Filters
                 </button>
@@ -214,11 +217,10 @@ function Home() {
             </div>
           </div>
         ) : (
-          <PosterGrid posters={filtered} onOpen={setOpen} />
+          <PosterGrid posters={filtered} onOpen={handleOpen} />
         )}
       </main>
       <Footer />
-      <Lightbox poster={open} posters={filtered} onNavigate={setOpen} onClose={() => setOpen(null)} />
     </div>
   );
 }

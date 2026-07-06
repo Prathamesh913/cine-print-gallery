@@ -56,7 +56,7 @@ function Submit() {
       setDone(true);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || "Failed to submit poster. Please check Notion database configuration.");
+      setErrorMsg("Failed to submit poster. Please check your inputs or try again later.");
     } finally {
       setIsSubmitting(false);
     }

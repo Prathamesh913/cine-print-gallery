@@ -1,15 +1,39 @@
-import { Client } from "@notionhq/client";
 import { createServerFn } from "@tanstack/react-start";
 import { type Poster } from "./posters";
 
-const notion = new Client({ auth: process.env.NOTION_KEY || "" });
-const databaseId = process.env.NOTION_DATABASE_ID || "";
+let cachedClient: any = null;
+let cachedDbId: string = "";
+
+async function getNotionClient() {
+  if (typeof window !== "undefined") {
+    return { notion: null, databaseId: "" };
+  }
+  if (!process.env.NOTION_KEY || !process.env.NOTION_DATABASE_ID) {
+    return { notion: null, databaseId: "" };
+  }
+  if (!cachedClient) {
+    const { Client } = await import("@notionhq/client");
+    cachedClient = new Client({ auth: process.env.NOTION_KEY });
+    cachedDbId = process.env.NOTION_DATABASE_ID;
+  }
+  return { notion: cachedClient, databaseId: cachedDbId };
+}
+
+let cachedPosters: Poster[] | null = null;
+let lastFetchTime = 0;
+const CACHE_TTL = 2 * 60 * 1000; // 2 minutes in-memory cache
 
 export const fetchNotionPosters = createServerFn({ method: "POST" })
   .handler(async (): Promise<Poster[]> => {
-    if (!process.env.NOTION_KEY || !process.env.NOTION_DATABASE_ID) {
+    const { notion, databaseId } = await getNotionClient();
+    if (!notion || !databaseId) {
       console.warn("NOTION_KEY or NOTION_DATABASE_ID missing.");
       return [];
+    }
+
+    const now = Date.now();
+    if (cachedPosters && (now - lastFetchTime < CACHE_TTL)) {
+      return cachedPosters;
     }
 
     try {
@@ -36,14 +60,14 @@ export const fetchNotionPosters = createServerFn({ method: "POST" })
         },
       });
 
-      return response.results.flatMap((page: any) => {
+      const parsed = response.results.flatMap((page: any) => {
         const props = page.properties;
         const imageUrlProp = props["Image URL"];
         let imageUrls: string[] = [];
 
         if (imageUrlProp) {
           if (imageUrlProp.type === "url" && imageUrlProp.url) {
-            imageUrls.push(imageUrlProp.url);
+            imageUrls = imageUrlProp.url.split(/[\n,]+/).map((u: string) => u.trim()).filter(Boolean);
           } else if (imageUrlProp.type === "rich_text" && imageUrlProp.rich_text?.length > 0) {
             const text = imageUrlProp.rich_text[0].plain_text || "";
             imageUrls = text.split(/[\n,]+/).map((u: string) => u.trim()).filter(Boolean);
@@ -68,6 +92,20 @@ export const fetchNotionPosters = createServerFn({ method: "POST" })
         }
         const artistUrlParts = artistUrlRaw.split("|").map((s: string) => s.trim());
 
+        const sourceRaw = props.Source?.rich_text[0]?.plain_text || "Unknown";
+        const sourceParts = sourceRaw.split("|").map((s: string) => s.trim());
+
+        let sourceUrlRaw = "";
+        const sourceUrlProp = props["Source URL"];
+        if (sourceUrlProp) {
+          if (sourceUrlProp.type === "url" && sourceUrlProp.url) {
+            sourceUrlRaw = sourceUrlProp.url;
+          } else if (sourceUrlProp.type === "rich_text" && sourceUrlProp.rich_text?.length > 0) {
+            sourceUrlRaw = sourceUrlProp.rich_text[0].plain_text || "";
+          }
+        }
+        const sourceUrlParts = sourceUrlRaw.split(/[\n,|]+/).map((s: string) => s.trim()).filter(Boolean);
+
         return imageUrls.map((url, index) => {
           // Resolve artist names/URLs for this specific image index
           const posterArtistRaw = artistParts[index] || artistParts[0] || "Unknown";
@@ -91,8 +129,8 @@ export const fetchNotionPosters = createServerFn({ method: "POST" })
             artists,
             artist: artistNamesJoined || "Unknown",
             artistUrl: artists[0]?.url || undefined,
-            source: props.Source?.rich_text[0]?.plain_text || "Unknown",
-            sourceUrl: props["Source URL"]?.url || "",
+            source: sourceParts[index] || sourceParts[0] || "Unknown",
+            sourceUrl: sourceUrlParts[index] || sourceUrlParts[0] || "",
             image: url,
             style: props.Style?.select?.name || "Minimalist",
             genre: props.Genre?.multi_select?.map((g: any) => g.name) || [],
@@ -101,6 +139,10 @@ export const fetchNotionPosters = createServerFn({ method: "POST" })
           };
         });
       });
+
+      cachedPosters = parsed;
+      lastFetchTime = now;
+      return parsed;
     } catch (error) {
       console.error("Failed fetching from Notion:", error);
       return [];
@@ -111,6 +153,25 @@ export const getBase64Image = createServerFn({ method: "POST" })
   .validator((url: string) => url)
   .handler(async ({ data: url }): Promise<string> => {
     try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        throw new Error("Invalid protocol. Only http/https images are permitted.");
+      }
+
+      const host = parsed.hostname.toLowerCase();
+      const isPrivateOrLoopback = 
+        host === "localhost" || 
+        host === "127.0.0.1" || 
+        host === "::1" ||
+        host.startsWith("192.168.") || 
+        host.startsWith("10.") || 
+        host.startsWith("172.16.") || 
+        host.startsWith("169.254."); // Block cloud metadata addresses
+
+      if (isPrivateOrLoopback) {
+        throw new Error("Invalid request host.");
+      }
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`);
@@ -121,7 +182,7 @@ export const getBase64Image = createServerFn({ method: "POST" })
       return `data:${contentType};base64,${base64}`;
     } catch (error) {
       console.error("Failed to proxy image:", error);
-      throw error;
+      throw new Error("Unable to load specified image path.");
     }
   });
 
@@ -138,7 +199,8 @@ export const submitPosterToNotion = createServerFn({ method: "POST" })
     isCopyrightConfirmed: boolean;
   }) => data)
   .handler(async ({ data }): Promise<{ success: boolean; pageId: string }> => {
-    if (!process.env.NOTION_KEY || !process.env.NOTION_DATABASE_ID) {
+    const { notion, databaseId } = await getNotionClient();
+    if (!notion || !databaseId) {
       throw new Error("NOTION_KEY or NOTION_DATABASE_ID environment variable is missing.");
     }
 

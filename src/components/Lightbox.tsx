@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Heart, Share2, ExternalLink } from "lucide-react";
-import type { Poster } from "@/lib/posters";
+import { type Poster, slugifyArtist } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
 import { Link } from "@tanstack/react-router";
 import { ShareModal } from "./ShareModal";
@@ -18,19 +18,33 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-
+  // Exit animation state — keeps component mounted while fading out
+  const [visible, setVisible] = useState(false);
+  // Track whether last nav was via keyboard to skip slide animation
+  const keyboardNavRef = useRef(false);
   const currentIndex = poster ? posters.findIndex((p) => p.id === poster.id) : -1;
   const prevPoster = currentIndex > 0 ? posters[currentIndex - 1] : null;
   const nextPoster = currentIndex < posters.length - 1 ? posters[currentIndex + 1] : null;
 
+  // Fade-in when poster becomes available
+  useEffect(() => {
+    if (poster) {
+      // Defer one frame to allow CSS transition to play
+      requestAnimationFrame(() => setVisible(true));
+    }
+  }, [!!poster]);
+
+  // Keyboard events
   useEffect(() => {
     if (!poster) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        handleClose();
       } else if (e.key === "ArrowLeft" && prevPoster && onNavigate) {
+        keyboardNavRef.current = true;
         onNavigate(prevPoster);
       } else if (e.key === "ArrowRight" && nextPoster && onNavigate) {
+        keyboardNavRef.current = true;
         onNavigate(nextPoster);
       }
     };
@@ -41,13 +55,21 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [poster, onClose, prevPoster, nextPoster, onNavigate]);
+  }, [poster, prevPoster, nextPoster, onNavigate]);
 
+  // Reset transient state on poster change
   useEffect(() => {
     setZoom(false);
     setCopied(false);
     setImageLoaded(false);
+    // Reset keyboard flag after each navigation
+    keyboardNavRef.current = false;
   }, [poster]);
+
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(onClose, 200);
+  };
 
   if (!poster) return null;
 
@@ -66,16 +88,23 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
     } catch {}
   };
 
+  // Skip content animation when navigating via keyboard (instant) per none-keyboard-navigation rule
+  const skipAnimation = keyboardNavRef.current;
+
   return (
     <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto px-4 py-8 sm:px-8"
-      style={{ backgroundColor: "rgba(18,18,18,0.95)" }}
+      onClick={handleClose}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto px-4 py-8 sm:px-8 transition-opacity duration-200"
+      style={{
+        backgroundColor: "rgba(18,18,18,0.95)",
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? "auto" : "none",
+      }}
     >
       <button
-        onClick={onClose}
+        onClick={handleClose}
         aria-label="Close"
-        className="fixed right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/10 text-[#F5F5F5] backdrop-blur transition hover:bg-white/20"
+        className="fixed right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/10 text-[#F5F5F5] backdrop-blur transition-all duration-150 hover:bg-white/20 active:scale-90"
       >
         <X size={20} />
       </button>
@@ -83,16 +112,18 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
       <div
         key={poster.id}
         onClick={(e) => e.stopPropagation()}
-        className="grid w-full max-w-6xl gap-6 md:grid-cols-[3fr_2fr] animate-in fade-in zoom-in-95 duration-200 ease-out"
+        className={`grid w-full max-w-6xl gap-6 md:grid-cols-[3fr_2fr] ${
+          skipAnimation ? "" : "animate-in fade-in zoom-in-95 duration-200 ease-out"
+        }`}
       >
         <div className="flex flex-col items-center w-full">
           <div className="relative flex items-start justify-center group/nav w-full">
             {/* Previous Arrow Button Indicator */}
             {prevPoster && onNavigate && (
               <button
-                onClick={() => onNavigate(prevPoster)}
+                onClick={() => { keyboardNavRef.current = false; onNavigate(prevPoster); }}
                 aria-label="Previous Poster"
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-black/80 hover:text-white sm:flex hidden"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 group-hover/nav:opacity-100 transition-all duration-150 hover:bg-black/80 hover:text-white active:scale-90 sm:flex hidden"
               >
                 <span className="text-xs">←</span>
               </button>
@@ -104,21 +135,21 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               alt={`${poster.title} (${poster.year})`}
               onLoad={() => setImageLoaded(true)}
               onClick={() => setZoom((z) => !z)}
-              className={`max-h-[85vh] w-full cursor-zoom-in rounded-md object-contain transition-all duration-300 ${
+              className={`max-h-[85vh] w-full cursor-zoom-in rounded-lg object-contain transition-all duration-200 ${
                 imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
               }`}
               style={zoom ? { transform: "scale(1.25)", cursor: "zoom-out" } : undefined}
             />
             {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/5 animate-pulse rounded-md" />
+              <div className="absolute inset-0 flex items-center justify-center bg-white/5 animate-pulse rounded-xl" />
             )}
 
             {/* Next Arrow Button Indicator */}
             {nextPoster && onNavigate && (
               <button
-                onClick={() => onNavigate(nextPoster)}
+                onClick={() => { keyboardNavRef.current = false; onNavigate(nextPoster); }}
                 aria-label="Next Poster"
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 group-hover/nav:opacity-100 transition-opacity hover:bg-black/80 hover:text-white sm:flex hidden"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 group-hover/nav:opacity-100 transition-all duration-150 hover:bg-black/80 hover:text-white active:scale-90 sm:flex hidden"
               >
                 <span className="text-xs">→</span>
               </button>
@@ -127,7 +158,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
 
           {/* Keyboard navigation helper */}
           {(prevPoster || nextPoster) && (
-            <div className="mt-4 hidden sm:flex items-center justify-center gap-3 text-[10px] tracking-widest font-mono text-white/30 uppercase select-none">
+            <div className="mt-4 hidden sm:flex items-center justify-center gap-3 text-[10px] tracking-widest font-mono text-white/30 uppercase select-none tabular-nums">
               {prevPoster && (
                 <span className="flex items-center gap-1.5">
                   <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/40">←</kbd> PREV
@@ -162,20 +193,58 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                   <span key={idx}>
                     {idx > 0 && " & "}
                     {art.url ? (
-                      <a href={art.url} target="_blank" rel="noreferrer" className="text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B]">
+                      <a
+                        href={art.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B]"
+                      >
                         {art.name}
                       </a>
                     ) : (
                       <span className="text-[#F5F5F5]">{art.name}</span>
                     )}
+                    <span className="ml-1.5 text-xs text-white/40">
+                      (
+                      <Link
+                        to="/artist/$slug"
+                        params={{ slug: slugifyArtist(art.name) }}
+                        preload="intent"
+                        className="underline hover:text-[#FF6B6B]"
+                      >
+                        view gallery
+                      </Link>
+                      )
+                    </span>
                   </span>
                 ))
-              ) : poster.artistUrl ? (
-                <a href={poster.artistUrl} target="_blank" rel="noreferrer" className="text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B]">
-                  {poster.artist}
-                </a>
               ) : (
-                <span className="text-[#F5F5F5]">{poster.artist}</span>
+                <span>
+                  {poster.artistUrl ? (
+                    <a
+                      href={poster.artistUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B]"
+                    >
+                      {poster.artist}
+                    </a>
+                  ) : (
+                    <span className="text-[#F5F5F5]">{poster.artist}</span>
+                  )}
+                  <span className="ml-1.5 text-xs text-white/40">
+                    (
+                    <Link
+                      to="/artist/$slug"
+                      params={{ slug: slugifyArtist(poster.artist) }}
+                      preload="intent"
+                      className="underline hover:text-[#FF6B6B]"
+                    >
+                      view gallery
+                    </Link>
+                    )
+                  </span>
+                </span>
               )}
             </p>
             <p className="text-white/70">
@@ -209,7 +278,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
           <div className="mt-auto flex flex-wrap gap-2 pt-4">
             <button
               onClick={() => toggle(poster.id)}
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition"
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95"
               style={{
                 backgroundColor: saved ? "#FF6B6B" : "transparent",
                 color: saved ? "#121212" : "#F5F5F5",
@@ -221,7 +290,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
             </button>
             <button
               onClick={() => setShareOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition hover:border-white/30"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:border-white/30 active:scale-95"
             >
               <Share2 size={16} />
               Share
@@ -229,7 +298,14 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
           </div>
         </div>
       </div>
-      {shareOpen && <ShareModal poster={poster} onClose={() => setShareOpen(false)} />}
+
+      {/* ShareModal with exit animation */}
+      {shareOpen && (
+        <ShareModal
+          poster={poster}
+          onClose={() => setShareOpen(false)}
+        />
+      )}
     </div>
   );
 }

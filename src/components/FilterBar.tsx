@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Search, Film, CalendarRange, Paintbrush, Sparkles } from "lucide-react";
 import { type PosterStyle, type PosterGenre } from "@/lib/posters";
 
@@ -51,9 +52,11 @@ export function FilterBar({
     setOpenDropdown(null);
   };
 
+  const isAnyOpen = openDropdown !== null;
+
   return (
     <div
-      className="sticky top-[48px] sm:top-[68px] z-30 border-b border-white/5 px-4 py-3 backdrop-blur-md sm:px-6"
+      className={`sticky top-[48px] sm:top-[68px] border-b border-white/5 px-4 py-3 backdrop-blur-md sm:px-6 ${isAnyOpen ? "z-50" : "z-30"}`}
       style={{ backgroundColor: "rgba(18,18,18,0.8)" }}
     >
       <div className="mx-auto flex max-w-[1600px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -69,7 +72,7 @@ export function FilterBar({
         </div>
 
         {/* Right Side: Filters */}
-        <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
+        <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide w-full sm:w-auto sm:ml-auto sm:overflow-x-visible sm:flex-wrap pb-1 sm:pb-0">
           <Dropdown
             icon={<Paintbrush size={13} />}
             label="Artist"
@@ -117,7 +120,7 @@ export function FilterBar({
           {activeCount > 0 && (
             <button
               onClick={handleClearAll}
-              className="text-xs font-semibold text-white/40 hover:text-white transition pl-1"
+              className="text-xs font-semibold text-white/40 hover:text-white active:scale-95 transition-all duration-150 pl-1 shrink-0"
             >
               Clear all
             </button>
@@ -153,11 +156,51 @@ function Dropdown({
   optionRenderer,
   triggerSwatch,
 }: DropdownProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const optionsList = (
+    <>
+      <button
+        onClick={() => {
+          onSelect("All");
+          onToggle();
+        }}
+        className="w-full rounded-lg px-3 py-2 text-left text-xs transition"
+        style={{
+          backgroundColor: value === "All" ? "rgba(255, 107, 107, 0.1)" : "transparent",
+          color: value === "All" ? "#FF6B6B" : "rgba(245, 245, 245, 0.8)",
+        }}
+      >
+        All
+      </button>
+      {options.map((opt) => (
+        <button
+          key={opt}
+          onClick={() => {
+            onSelect(opt);
+            onToggle();
+          }}
+          className="w-full rounded-lg px-3 py-2 text-left text-xs transition flex items-center gap-2"
+          style={{
+            backgroundColor: value === opt ? "rgba(255, 107, 107, 0.1)" : "transparent",
+            color: value === opt ? "#FF6B6B" : "rgba(245, 245, 245, 0.8)",
+          }}
+        >
+          {optionRenderer ? optionRenderer(opt) : opt}
+        </button>
+      ))}
+    </>
+  );
+
   return (
-    <div className="relative">
+    <div className="relative shrink-0">
       <button
         onClick={onToggle}
-        className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+        className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all duration-150 active:scale-95"
         style={{
           borderColor: value !== "All" ? "#FF6B6B" : "rgba(255, 255, 255, 0.1)",
           backgroundColor: value !== "All" ? "rgba(255, 107, 107, 0.1)" : "rgba(255, 255, 255, 0.03)",
@@ -172,40 +215,22 @@ function Dropdown({
 
       {isOpen && (
         <>
-          {/* Backdrop to close when clicking outside */}
-          <div className="fixed inset-0 z-40" onClick={onToggle} />
-          
-          <div className={`absolute ${align === "left" ? "left-0" : "right-0"} mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/10 bg-[#1a1a1a] p-1.5 shadow-2xl z-50 backdrop-blur-md`}>
-            <button
-              onClick={() => {
-                onSelect("All");
-                onToggle();
-              }}
-              className="w-full rounded-lg px-3 py-2 text-left text-xs transition"
-              style={{
-                backgroundColor: value === "All" ? "rgba(255, 107, 107, 0.1)" : "transparent",
-                color: value === "All" ? "#FF6B6B" : "rgba(245, 245, 245, 0.8)",
-              }}
-            >
-              All
-            </button>
-            {options.map((opt) => (
-              <button
-                key={opt}
-                onClick={() => {
-                  onSelect(opt);
-                  onToggle();
-                }}
-                className="w-full rounded-lg px-3 py-2 text-left text-xs transition flex items-center gap-2"
-                style={{
-                  backgroundColor: value === opt ? "rgba(255, 107, 107, 0.1)" : "transparent",
-                  color: value === opt ? "#FF6B6B" : "rgba(245, 245, 245, 0.8)",
-                }}
-              >
-                {optionRenderer ? optionRenderer(opt) : opt}
-              </button>
-            ))}
+          {/* Desktop Overlay & Dropdown (rendered inline, hidden on mobile) */}
+          <div className="fixed inset-0 z-40 hidden sm:block" onClick={onToggle} />
+          <div className={`absolute ${align === "left" ? "left-0" : "right-0"} mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/10 bg-[#1a1a1a] p-1.5 shadow-2xl z-50 backdrop-blur-md hidden sm:block`}>
+            {optionsList}
           </div>
+
+          {/* Mobile Overlay & Dropdown (portaled to body to escape stacking context constraints, hidden on desktop) */}
+          {mounted && typeof document !== "undefined" && createPortal(
+            <>
+              <div className="fixed top-[152px] inset-x-0 bottom-0 z-40 bg-black/60 backdrop-blur-sm sm:hidden" onClick={onToggle} />
+              <div className="fixed top-[152px] inset-x-4 max-h-[60vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#1a1a1a] p-2.5 shadow-2xl z-50 backdrop-blur-md sm:hidden">
+                {optionsList}
+              </div>
+            </>,
+            document.body
+          )}
         </>
       )}
     </div>

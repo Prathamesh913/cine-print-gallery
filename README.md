@@ -36,6 +36,7 @@ View detailed credits, co-creator profiles, and movie specifications in a cinema
   - Desktop: Tilts in response to mouse cursor hover positions.
   - Mobile: Rotates utilizing the device's orientation gyroscope (with relative calibration offsets).
   - Shifting radial light glare overlays mimic real-world metallic reflections.
+- **Dynamic Artist Showcase Pages**: Dynamic `/artist/$slug` portfolio views for every creator. Allows users to view all works by a specific artist. Includes a custom layout with dynamic poster counters, back-to-gallery navigation, direct external portfolio links, and cinematic lightbox integration. Easily shareable for organic traffic.
 - **Multi-Dimensional Filtering**: Search and filter by Style, Genre, Decade, and Artist.
 - **Vintage Ticket Generator**: Render high-resolution (3000x1380) tickets on the fly using a canvas compiler:
   - Dynamic dates, show schedules, and seat numbering.

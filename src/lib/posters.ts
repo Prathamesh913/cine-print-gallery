@@ -22,3 +22,13 @@ export interface Poster {
   note?: string;
 }
 
+export function slugifyArtist(name: string): string {
+  if (!name || typeof name !== "string") return "unknown";
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/-+/g, "-");
+}
+

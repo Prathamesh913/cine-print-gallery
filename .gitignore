@@ -53,3 +53,6 @@ bunfig.toml
 AGENTS.md
 .prettierignore
 .prettierrc
+.agents/
+skills-lock.json
+plans/
