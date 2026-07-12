@@ -12,7 +12,7 @@ export function Header({ query = "", onQueryChange, showSearch = true, onFeeling
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md" style={{ backgroundColor: "rgba(18,18,18,0.8)" }}>
       <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
-        <Link to="/" className="flex shrink-0 items-center gap-2">
+        <Link to="/" className="flex shrink-0 items-center gap-2" data-cuelume-hover="tick">
           <FrameIcon />
           <span style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-2xl tracking-[0.12em] sm:text-3xl">
             CINEPRINT
@@ -70,6 +70,7 @@ function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
   return (
     <Link
       to={to}
+      data-cuelume-hover="tick"
       className="rounded-full px-3 py-1.5 text-white/70 transition-colors hover:text-[#F5F5F5]"
       activeProps={{ style: { color: "#FF6B6B" } }}
     >

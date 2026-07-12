@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import type { Poster } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
 import { useCornerSmoothing } from "@/lib/smoothing";
+import { play } from "cuelume";
 
 interface Props {
   poster: Poster;
@@ -110,7 +111,11 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
         <span
           onClick={(e) => {
             e.stopPropagation();
+            const wasSaved = saved;
             toggle(poster.id);
+            if (!wasSaved) {
+              play("chime");
+            }
           }}
           role="button"
           aria-label={saved ? "Unpin poster" : "Pin poster"}

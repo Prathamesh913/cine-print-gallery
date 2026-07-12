@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Pin, PinOff, ExternalLink, User } from "lucide-react";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
+import { play } from "cuelume";
 
 interface ContextMenuProps {
   x: number;
@@ -61,7 +62,11 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
     >
       <button
         onClick={() => {
+          const wasSaved = saved;
           toggle(poster.id);
+          if (!wasSaved) {
+            play("chime");
+          }
           onClose();
         }}
         className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] active:scale-95 rounded transition-all"

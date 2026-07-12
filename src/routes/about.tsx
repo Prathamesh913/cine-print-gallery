@@ -31,8 +31,15 @@ function About() {
           </p>
         </div>
 
+        {/* Highlighted Project Notice */}
+        <div className="mt-8 border-l-2 border-[#FF6B6B] bg-[#FF6B6B]/5 px-4 py-3 rounded-r-lg text-left">
+          <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+            CinePrint is a non-commercial fan project. All poster art belongs to the respective artists/studios. If you are an artist and want your work removed, please contact me and it will be taken down immediately.
+          </p>
+        </div>
+
         {/* Creator Cinema Ticket Pass */}
-        <div className="mt-12 rounded-2xl border border-white/10 bg-[#161616] relative overflow-hidden flex flex-col sm:flex-row shadow-2xl">
+        <div className="mt-8 rounded-2xl border border-white/10 bg-[#161616] relative overflow-hidden flex flex-col sm:flex-row shadow-2xl">
           {/* Left Pane: Main Curator Pass (70% on desktop) */}
           <div className="w-full sm:w-[70%] p-6 sm:p-8 flex flex-col justify-between relative">
             {/* Red Curator Stamp */}

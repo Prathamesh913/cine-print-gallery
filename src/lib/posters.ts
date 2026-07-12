@@ -20,6 +20,15 @@ export interface Poster {
   genre: PosterGenre[];
   tags: string[];
   note?: string;
+  mediaType?: string;
+  tmdbId?: string;
+  imdbId?: string;
+  seasonNumber?: number;
+  collectionName?: string;
+  posterImageUrl?: string;
+  backgroundUrl?: string;
+  libraryNames?: string[];
+  slug?: string;
 }
 
 export function slugifyArtist(name: string): string {

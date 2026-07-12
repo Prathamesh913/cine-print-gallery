@@ -4,6 +4,7 @@ import { type Poster } from "@/lib/posters";
 import { generateTicketBlob } from "@/lib/ticket";
 import { toast } from "sonner";
 import { useCornerSmoothing } from "@/lib/smoothing";
+import { play } from "cuelume";
 
 interface Props {
   poster: Poster | null;
@@ -152,6 +153,7 @@ export function ShareModal({ poster, onClose }: Props) {
         setBlob(b);
         setImageUrl(URL.createObjectURL(b));
         setLoading(false);
+        play("sparkle");
       })
       .catch((err) => {
         console.error(err);

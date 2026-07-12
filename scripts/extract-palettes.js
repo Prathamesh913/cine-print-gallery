@@ -214,8 +214,16 @@ async function main() {
         }
       }
 
+      const rawSlug = props.Slug?.rich_text?.[0]?.plain_text;
+      const cleanSlug = rawSlug ? rawSlug.trim().toLowerCase().replace(/\s+/g, "-") : undefined;
+
       imageUrls.forEach((url, index) => {
-        const id = index === 0 ? page.id : `${page.id}-${index}`;
+        let id = "";
+        if (cleanSlug) {
+          id = imageUrls.length > 1 ? `${cleanSlug}-${index + 1}` : cleanSlug;
+        } else {
+          id = index === 0 ? page.id : `${page.id}-${index}`;
+        }
         postersToProcess.push({ id, imageUrl: url });
       });
     }

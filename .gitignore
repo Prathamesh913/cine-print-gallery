@@ -56,3 +56,8 @@ AGENTS.md
 .agents/
 skills-lock.json
 plans/
+
+# Firebase
+firebase-admin-key.json
+
+migrate-to-firebase.cjs

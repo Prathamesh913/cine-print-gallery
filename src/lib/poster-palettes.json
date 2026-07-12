@@ -478,5 +478,530 @@
       "s": 34,
       "l": 18
     }
+  },
+  "the-mummy-1999": {
+    "palette": [
+      "#150503",
+      "#391205",
+      "#6a2c09",
+      "#aa560f",
+      "#ea9828"
+    ],
+    "primary": "#150503",
+    "hsl": {
+      "h": 7,
+      "s": 75,
+      "l": 5
+    }
+  },
+  "obsession-2025": {
+    "palette": [
+      "#1d1a1f",
+      "#c34d66",
+      "#a13f54",
+      "#6e313f",
+      "#3c232b"
+    ],
+    "primary": "#1d1a1f",
+    "hsl": {
+      "h": 276,
+      "s": 9,
+      "l": 11
+    }
+  },
+  "peacemaker": {
+    "palette": [
+      "#802326",
+      "#342e27",
+      "#bf9663",
+      "#936e4c",
+      "#62503d"
+    ],
+    "primary": "#802326",
+    "hsl": {
+      "h": 358,
+      "s": 57,
+      "l": 32
+    }
+  },
+  "marty-supreme": {
+    "palette": [
+      "#efc6a7",
+      "#0a0808",
+      "#565d68",
+      "#9d9391",
+      "#e28a3f"
+    ],
+    "primary": "#efc6a7",
+    "hsl": {
+      "h": 26,
+      "s": 69,
+      "l": 80
+    }
+  },
+  "friday-the-13th-2009": {
+    "palette": [
+      "#3f1f29",
+      "#191a20",
+      "#7a2a2e",
+      "#b43733",
+      "#403a48"
+    ],
+    "primary": "#3f1f29",
+    "hsl": {
+      "h": 341,
+      "s": 34,
+      "l": 18
+    }
+  },
+  "backrooms": {
+    "palette": [
+      "#010000",
+      "#382507",
+      "#1f1503",
+      "#664009",
+      "#aa7c1b"
+    ],
+    "primary": "#010000",
+    "hsl": {
+      "h": 0,
+      "s": 100,
+      "l": 0
+    }
+  },
+  "mother-2009": {
+    "palette": [
+      "#8499aa",
+      "#a7bac9",
+      "#c3d2df",
+      "#676f6f",
+      "#2d363a"
+    ],
+    "primary": "#8499aa",
+    "hsl": {
+      "h": 207,
+      "s": 18,
+      "l": 59
+    }
+  },
+  "parasite": {
+    "palette": [
+      "#33322b",
+      "#6d7a77",
+      "#d1a663",
+      "#966c3b",
+      "#c3c2b8"
+    ],
+    "primary": "#33322b",
+    "hsl": {
+      "h": 52,
+      "s": 9,
+      "l": 18
+    }
+  },
+  "midsommar": {
+    "palette": [
+      "#f3eee5",
+      "#a29188",
+      "#7c635a",
+      "#c1bcb3",
+      "#dcd7cd"
+    ],
+    "primary": "#f3eee5",
+    "hsl": {
+      "h": 39,
+      "s": 37,
+      "l": 93
+    }
+  },
+  "furiosa-a-mad-max-saga": {
+    "palette": [
+      "#cec0ab",
+      "#140f0b",
+      "#3e2d20",
+      "#6d513a",
+      "#9f8562"
+    ],
+    "primary": "#cec0ab",
+    "hsl": {
+      "h": 36,
+      "s": 26,
+      "l": 74
+    }
+  },
+  "the-woman-who-ran": {
+    "palette": [
+      "#ebe5e7",
+      "#dbd1c4",
+      "#4c4748",
+      "#f1cb42",
+      "#9d9798"
+    ],
+    "primary": "#ebe5e7",
+    "hsl": {
+      "h": 340,
+      "s": 13,
+      "l": 91
+    }
+  },
+  "mighty-morphin-power-rangers-the-movie": {
+    "palette": [
+      "#260f1e",
+      "#3d2941",
+      "#cfa2a5",
+      "#84505d",
+      "#7368a4"
+    ],
+    "primary": "#260f1e",
+    "hsl": {
+      "h": 321,
+      "s": 43,
+      "l": 10
+    }
+  },
+  "art-of-a-hit-2024": {
+    "palette": [
+      "#0d0c0c",
+      "#7e0c0d",
+      "#2d1516",
+      "#d9d9d9",
+      "#565656"
+    ],
+    "primary": "#0d0c0c",
+    "hsl": {
+      "h": 0,
+      "s": 4,
+      "l": 5
+    }
+  },
+  "no-other-choice-2025": {
+    "palette": [
+      "#f3eee6",
+      "#8a7e6b",
+      "#605246",
+      "#b3ac9d",
+      "#dcd8cd"
+    ],
+    "primary": "#f3eee6",
+    "hsl": {
+      "h": 37,
+      "s": 35,
+      "l": 93
+    }
+  },
+  "heat-1995": {
+    "palette": [
+      "#f5f6f6",
+      "#d1d4d5",
+      "#b6afae",
+      "#292a2b",
+      "#6b6b6d"
+    ],
+    "primary": "#f5f6f6",
+    "hsl": {
+      "h": 180,
+      "s": 5,
+      "l": 96
+    }
+  },
+  "nosferatu-2024": {
+    "palette": [
+      "#303230",
+      "#d3d4cf",
+      "#555655",
+      "#b8b8b5",
+      "#7f807e"
+    ],
+    "primary": "#303230",
+    "hsl": {
+      "h": 120,
+      "s": 2,
+      "l": 19
+    }
+  },
+  "rogue-one-a-star-wars-story": {
+    "palette": [
+      "#fbf2e3",
+      "#2f201f",
+      "#dc2429",
+      "#665b57",
+      "#c1aba1"
+    ],
+    "primary": "#fbf2e3",
+    "hsl": {
+      "h": 38,
+      "s": 75,
+      "l": 94
+    }
+  },
+  "the-substance": {
+    "palette": [
+      "#d92d86",
+      "#e5bcaf",
+      "#7ba141",
+      "#8d2057",
+      "#2d181c"
+    ],
+    "primary": "#d92d86",
+    "hsl": {
+      "h": 329,
+      "s": 69,
+      "l": 51
+    }
+  },
+  "the-killer-2023": {
+    "palette": [
+      "#070909",
+      "#0a1717",
+      "#0e2c2c",
+      "#214443",
+      "#6a1110"
+    ],
+    "primary": "#070909",
+    "hsl": {
+      "h": 180,
+      "s": 13,
+      "l": 3
+    }
+  },
+  "one-battle-after-another": {
+    "palette": [
+      "#b25b1d",
+      "#d9cabc",
+      "#c98b59",
+      "#473619",
+      "#7c745c"
+    ],
+    "primary": "#b25b1d",
+    "hsl": {
+      "h": 25,
+      "s": 72,
+      "l": 41
+    }
+  },
+  "metropolis-1927": {
+    "palette": [
+      "#f5ecd2",
+      "#e1c86e",
+      "#d7d4a8",
+      "#4f4d2b",
+      "#98914f"
+    ],
+    "primary": "#f5ecd2",
+    "hsl": {
+      "h": 45,
+      "s": 64,
+      "l": 89
+    }
+  },
+  "stranger-things": {
+    "palette": [
+      "#1e1624",
+      "#63303f",
+      "#ae5f5a",
+      "#4a5679",
+      "#efd6c7"
+    ],
+    "primary": "#1e1624",
+    "hsl": {
+      "h": 274,
+      "s": 24,
+      "l": 11
+    }
+  },
+  "black-widow": {
+    "palette": [
+      "#f5ede8",
+      "#050504",
+      "#b00808",
+      "#c95452",
+      "#493836"
+    ],
+    "primary": "#f5ede8",
+    "hsl": {
+      "h": 23,
+      "s": 39,
+      "l": 94
+    }
+  },
+  "the-platform": {
+    "palette": [
+      "#021014",
+      "#0d2f37",
+      "#73101e",
+      "#361017",
+      "#b4aba9"
+    ],
+    "primary": "#021014",
+    "hsl": {
+      "h": 193,
+      "s": 82,
+      "l": 4
+    }
+  },
+  "kill-bill-vol-1": {
+    "palette": [
+      "#fdfdfd",
+      "#d6cecd",
+      "#11100d",
+      "#948887",
+      "#fdfdfd"
+    ],
+    "primary": "#fdfdfd",
+    "hsl": {
+      "h": 0,
+      "s": 0,
+      "l": 99
+    }
+  },
+  "cure-1997": {
+    "palette": [
+      "#040404",
+      "#110e0b",
+      "#000000",
+      "#625545",
+      "#f3f1eb"
+    ],
+    "primary": "#040404",
+    "hsl": {
+      "h": 0,
+      "s": 0,
+      "l": 2
+    }
+  },
+  "mother-2017": {
+    "palette": [
+      "#28321c",
+      "#585042",
+      "#7a7671",
+      "#a59f9e",
+      "#751718"
+    ],
+    "primary": "#28321c",
+    "hsl": {
+      "h": 87,
+      "s": 28,
+      "l": 15
+    }
+  },
+  "the-shape-of-water": {
+    "palette": [
+      "#294f5a",
+      "#3b717f",
+      "#fcfcfc",
+      "#1a3239",
+      "#679daa"
+    ],
+    "primary": "#294f5a",
+    "hsl": {
+      "h": 193,
+      "s": 37,
+      "l": 26
+    }
+  },
+  "frankenstein-2025": {
+    "palette": [
+      "#69271f",
+      "#2b1c16",
+      "#896b61",
+      "#4d433d",
+      "#d8c4b5"
+    ],
+    "primary": "#69271f",
+    "hsl": {
+      "h": 6,
+      "s": 54,
+      "l": 27
+    }
+  },
+  "everything-everywhere-all-at-once": {
+    "palette": [
+      "#642b2e",
+      "#c9a79f",
+      "#7a656a",
+      "#b36c47",
+      "#2e4263"
+    ],
+    "primary": "#642b2e",
+    "hsl": {
+      "h": 357,
+      "s": 40,
+      "l": 28
+    }
+  },
+  "2001-a-space-odyssey": {
+    "palette": [
+      "#0d3675",
+      "#99a8ba",
+      "#bec4cb",
+      "#58789f",
+      "#dd9236"
+    ],
+    "primary": "#0d3675",
+    "hsl": {
+      "h": 216,
+      "s": 80,
+      "l": 25
+    }
+  },
+  "the-handmaiden": {
+    "palette": [
+      "#0f141c",
+      "#0c4d6a",
+      "#da8756",
+      "#7c675a",
+      "#f0e3e3"
+    ],
+    "primary": "#0f141c",
+    "hsl": {
+      "h": 217,
+      "s": 30,
+      "l": 8
+    }
+  },
+  "tenet": {
+    "palette": [
+      "#f0f3f1",
+      "#e4eaea",
+      "#bac4c4",
+      "#778a8f",
+      "#27282b"
+    ],
+    "primary": "#f0f3f1",
+    "hsl": {
+      "h": 140,
+      "s": 11,
+      "l": 95
+    }
+  },
+  "nope": {
+    "palette": [
+      "#e6e6e8",
+      "#0d0c11",
+      "#acacaf",
+      "#343337",
+      "#68676a"
+    ],
+    "primary": "#e6e6e8",
+    "hsl": {
+      "h": 240,
+      "s": 4,
+      "l": 91
+    }
+  },
+  "hamnet": {
+    "palette": [
+      "#deebc8",
+      "#262107",
+      "#553f15",
+      "#a17137",
+      "#b6b083"
+    ],
+    "primary": "#deebc8",
+    "hsl": {
+      "h": 82,
+      "s": 47,
+      "l": 85
+    }
   }
 }
