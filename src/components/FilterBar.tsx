@@ -56,7 +56,7 @@ export function FilterBar({
 
   return (
     <div
-      className={`sticky top-[48px] sm:top-[68px] border-b border-white/5 px-4 py-3 sm:px-6 ${isAnyOpen ? "z-50" : "z-30"}`}
+      className={`sticky top-[48px] sm:top-[68px] border-b border-white/5 px-4 py-3 backdrop-blur-md sm:px-6 ${isAnyOpen ? "z-50" : "z-30"}`}
       style={{ backgroundColor: "rgba(18,18,18,0.8)" }}
     >
       <div className="mx-auto flex max-w-[1600px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
