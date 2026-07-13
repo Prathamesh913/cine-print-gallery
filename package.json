@@ -4,11 +4,10 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "prebuild": "node scripts/extract-palettes.js",
+    "prebuild": "node scripts/extract-palettes.js && node scripts/generate-sitemap.js",
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "postbuild": "node scripts/generate-sitemap.js",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."

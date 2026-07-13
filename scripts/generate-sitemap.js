@@ -3,7 +3,7 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const distDir = resolve(__dirname, "..", "dist");
+const outDir = resolve(__dirname, "..", "public");
 const siteUrl = process.env.SITE_URL || "https://cine-print-gallery.vercel.app";
 
 const pages = [
@@ -49,9 +49,9 @@ Sitemap: ${siteUrl}/sitemap.xml
 `;
 }
 
-mkdirSync(distDir, { recursive: true });
+mkdirSync(outDir, { recursive: true });
 
-writeFileSync(resolve(distDir, "sitemap.xml"), generateSitemap(), "utf-8");
-writeFileSync(resolve(distDir, "robots.txt"), generateRobots(), "utf-8");
+writeFileSync(resolve(outDir, "sitemap.xml"), generateSitemap(), "utf-8");
+writeFileSync(resolve(outDir, "robots.txt"), generateRobots(), "utf-8");
 
-console.log(`✓ sitemap.xml & robots.txt generated in ${distDir}`);
+console.log(`✓ sitemap.xml & robots.txt generated in ${outDir}`);
