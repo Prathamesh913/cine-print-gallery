@@ -312,11 +312,11 @@ export function ShareModal({ poster, onClose }: Props) {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-6 flex flex-wrap justify-end gap-2">
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end sm:gap-2">
           <button
             onClick={handleCopy}
             disabled={loading || !blob}
-            className={`inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50 ${
+            className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50 ${
               copied ? "scale-110" : "scale-100"
             }`}
           >
@@ -326,7 +326,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleDownload}
             disabled={loading || !imageUrl}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
           >
             <Download size={16} />
             Download
@@ -334,7 +334,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handlePrint}
             disabled={loading || !imageUrl}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
           >
             <Printer size={16} />
             Print Ticket
@@ -342,7 +342,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleShare}
             disabled={loading || !blob || sharing}
-            className="inline-flex items-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-all duration-150 hover:bg-[#FF8585] active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-all duration-150 hover:bg-[#FF8585] active:scale-95 disabled:opacity-50"
           >
             {sharing ? (
               <>
