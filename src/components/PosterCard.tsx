@@ -48,7 +48,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
     const touch = e.touches[0];
     const clientX = touch.clientX;
     const clientY = touch.clientY;
-    
+
     setLongPressActive(false);
     touchTimerRef.current = setTimeout(() => {
       setLongPressActive(true);
@@ -94,7 +94,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchMove={handleTouchMove}
-      className="group relative block w-full overflow-hidden text-left transition-transform duration-200 hover:scale-[1.02] active:scale-[0.97] hover:shadow-2xl"
+      className="group relative block w-full overflow-hidden text-left transition-transform duration-200 ease-[var(--ease-out)] hoverable:hover:scale-[1.02] active:scale-[0.97] hoverable:hover:shadow-2xl"
       style={{ backgroundColor: "#1E1E1E", ...cardSmoothing.style }}
     >
       <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
@@ -105,7 +105,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
           alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
           loading="lazy"
           onLoad={handleLoad}
-          className={`h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+          className={`h-full w-full object-cover transition-opacity duration-200 ease-[var(--ease-out)] ${loaded ? "opacity-100" : "opacity-0"}`}
         />
 
         <span
@@ -119,13 +119,17 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
           }}
           role="button"
           aria-label={saved ? "Unpin poster" : "Pin poster"}
-          className="absolute right-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/50 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 sm:opacity-0"
+          className="absolute right-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/50 opacity-0 backdrop-blur-sm transition-opacity duration-200 ease-[var(--ease-out)] hoverable:group-hover:opacity-100 sm:opacity-0"
           style={saved ? { opacity: 1 } : undefined}
         >
-          <Heart size={16} fill={saved ? "#FF6B6B" : "none"} stroke={saved ? "#FF6B6B" : "#F5F5F5"} />
+          <Heart
+            size={16}
+            fill={saved ? "#FF6B6B" : "none"}
+            stroke={saved ? "#FF6B6B" : "#F5F5F5"}
+          />
         </span>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/5 bg-black/70 p-3 opacity-100 backdrop-blur-md transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/5 bg-black/70 p-3 opacity-100 backdrop-blur-md transition-opacity duration-200 ease-[var(--ease-out)] sm:opacity-0 hoverable:sm:group-hover:opacity-100">
           <p className="truncate text-sm font-medium text-[#F5F5F5]">
             {poster.title} <span className="text-white/60">· {poster.year}</span>
           </p>

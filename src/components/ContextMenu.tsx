@@ -58,7 +58,7 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
     <div
       ref={menuRef}
       style={{ top: posY, left: posX }}
-      className="fixed z-[150] w-40 overflow-hidden rounded-lg border border-white/10 bg-[#161616]/95 p-1 shadow-2xl backdrop-blur-md"
+      className="fixed z-[150] w-40 overflow-hidden rounded-lg border border-white/10 bg-[#161616]/95 p-1 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-125 ease-[var(--ease-out)]"
     >
       <button
         onClick={() => {
@@ -69,7 +69,7 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
           }
           onClose();
         }}
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] active:scale-95 rounded transition-all"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 rounded transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)]"
       >
         {saved ? (
           <>
@@ -85,13 +85,12 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
       </button>
       <button
         onClick={() => {
-          const artistName = poster.artists && poster.artists.length > 0
-            ? poster.artists[0].name
-            : poster.artist;
+          const artistName =
+            poster.artists && poster.artists.length > 0 ? poster.artists[0].name : poster.artist;
           navigate({ to: "/artist/$slug", params: { slug: slugifyArtist(artistName) } });
           onClose();
         }}
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] active:scale-95 rounded transition-all"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 rounded transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)]"
       >
         <User size={12} className="shrink-0" />
         <span>View Artist</span>
@@ -101,7 +100,7 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
           window.open(poster.image, "_blank");
           onClose();
         }}
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hover:bg-[#FF6B6B] hover:text-[#121212] active:scale-95 rounded transition-all"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 rounded transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)]"
       >
         <ExternalLink size={12} className="shrink-0" />
         <span>Open in new tab</span>

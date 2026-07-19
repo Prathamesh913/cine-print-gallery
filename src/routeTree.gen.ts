@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as SavedRouteImport } from './routes/saved'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ConstellationRouteImport } from './routes/constellation'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,6 +27,16 @@ const SubmitRoute = SubmitRouteImport.update({
 const SavedRoute = SavedRouteImport.update({
   id: '/saved',
   path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConstellationRoute = ConstellationRouteImport.update({
@@ -57,6 +69,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/constellation': typeof ConstellationRoute
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
@@ -66,6 +80,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/constellation': typeof ConstellationRoute
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
@@ -76,6 +92,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/constellation': typeof ConstellationRoute
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
@@ -87,6 +105,8 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/constellation'
+    | '/login'
+    | '/profile'
     | '/saved'
     | '/submit'
     | '/artist/$slug'
@@ -96,6 +116,8 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/constellation'
+    | '/login'
+    | '/profile'
     | '/saved'
     | '/submit'
     | '/artist/$slug'
@@ -105,6 +127,8 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/constellation'
+    | '/login'
+    | '/profile'
     | '/saved'
     | '/submit'
     | '/artist/$slug'
@@ -115,6 +139,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ConstellationRoute: typeof ConstellationRoute
+  LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
   SubmitRoute: typeof SubmitRoute
   ArtistSlugRoute: typeof ArtistSlugRoute
@@ -135,6 +161,20 @@ declare module '@tanstack/react-router' {
       path: '/saved'
       fullPath: '/saved'
       preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/constellation': {
@@ -179,6 +219,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ConstellationRoute: ConstellationRoute,
+  LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
   SubmitRoute: SubmitRoute,
   ArtistSlugRoute: ArtistSlugRoute,

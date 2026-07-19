@@ -36,7 +36,9 @@ export function FilterBar({
   onDecade,
   onArtist,
 }: Props) {
-  const [openDropdown, setOpenDropdown] = useState<"style" | "genre" | "decade" | "artist" | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<"style" | "genre" | "decade" | "artist" | null>(
+    null,
+  );
 
   const activeCount =
     (style !== "All" ? 1 : 0) +
@@ -120,7 +122,7 @@ export function FilterBar({
           {activeCount > 0 && (
             <button
               onClick={handleClearAll}
-              className="text-xs font-semibold text-white/40 hover:text-white active:scale-95 transition-all duration-150 pl-1 shrink-0"
+              className="text-xs font-semibold text-white/40 hoverable:hover:text-white active:scale-95 transition-[transform,color] duration-150 ease-[var(--ease-out)] pl-1 shrink-0"
             >
               Clear all
             </button>
@@ -169,7 +171,7 @@ function Dropdown({
           onSelect("All");
           onToggle();
         }}
-        className="w-full rounded-lg px-3 py-2 text-left text-xs transition"
+        className="w-full rounded-lg px-3 py-2 text-left text-xs transition-colors duration-150"
         style={{
           backgroundColor: value === "All" ? "rgba(255, 107, 107, 0.1)" : "transparent",
           color: value === "All" ? "#FF6B6B" : "rgba(245, 245, 245, 0.8)",
@@ -184,7 +186,7 @@ function Dropdown({
             onSelect(opt);
             onToggle();
           }}
-          className="w-full rounded-lg px-3 py-2 text-left text-xs transition flex items-center gap-2"
+          className="w-full rounded-lg px-3 py-2 text-left text-xs transition-colors duration-150 flex items-center gap-2"
           style={{
             backgroundColor: value === opt ? "rgba(255, 107, 107, 0.1)" : "transparent",
             color: value === opt ? "#FF6B6B" : "rgba(245, 245, 245, 0.8)",
@@ -200,37 +202,48 @@ function Dropdown({
     <div className="relative shrink-0">
       <button
         onClick={onToggle}
-        className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all duration-150 active:scale-95"
+        className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-[transform,border-color,background-color] duration-150 ease-[var(--ease-out)] active:scale-95"
         style={{
           borderColor: value !== "All" ? "#FF6B6B" : "rgba(255, 255, 255, 0.1)",
-          backgroundColor: value !== "All" ? "rgba(255, 107, 107, 0.1)" : "rgba(255, 255, 255, 0.03)",
+          backgroundColor:
+            value !== "All" ? "rgba(255, 107, 107, 0.1)" : "rgba(255, 255, 255, 0.03)",
           color: value !== "All" ? "#FF6B6B" : "rgba(245, 245, 245, 0.75)",
         }}
       >
         <span className={value !== "All" ? "text-[#FF6B6B]" : "text-white/50"}>{icon}</span>
         {triggerSwatch}
         <span>{value !== "All" ? `${label}: ${value}` : label}</span>
-        <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown
+          size={12}
+          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {isOpen && (
         <>
-          {/* Desktop Overlay & Dropdown (rendered inline, hidden on mobile) */}
+          {/* Desktop Overlay & Dropdown */}
           <div className="fixed inset-0 z-40 hidden sm:block" onClick={onToggle} />
-          <div className={`absolute ${align === "left" ? "left-0" : "right-0"} mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/10 bg-[#1a1a1a] p-1.5 shadow-2xl z-50 backdrop-blur-md hidden sm:block`}>
+          <div
+            className={`absolute ${align === "left" ? "left-0" : "right-0"} mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/10 bg-[#1a1a1a] p-1.5 shadow-2xl z-50 backdrop-blur-md hidden sm:block animate-in fade-in zoom-in-95 duration-150 ease-[var(--ease-out)] origin-[var(--dropdown-origin)]`}
+          >
             {optionsList}
           </div>
 
-          {/* Mobile Overlay & Dropdown (portaled to body to escape stacking context constraints, hidden on desktop) */}
-          {mounted && typeof document !== "undefined" && createPortal(
-            <>
-              <div className="fixed top-[152px] inset-x-0 bottom-0 z-40 bg-black/60 backdrop-blur-sm sm:hidden" onClick={onToggle} />
-              <div className="fixed top-[152px] inset-x-4 max-h-[60vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#1a1a1a] p-2.5 shadow-2xl z-50 backdrop-blur-md sm:hidden">
-                {optionsList}
-              </div>
-            </>,
-            document.body
-          )}
+          {/* Mobile Overlay & Dropdown */}
+          {mounted &&
+            typeof document !== "undefined" &&
+            createPortal(
+              <>
+                <div
+                  className="fixed top-[152px] inset-x-0 bottom-0 z-40 bg-black/60 backdrop-blur-sm sm:hidden animate-in fade-in duration-150"
+                  onClick={onToggle}
+                />
+                <div className="fixed top-[152px] inset-x-4 max-h-[60vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#1a1a1a] p-2.5 shadow-2xl z-50 backdrop-blur-md sm:hidden animate-in fade-in zoom-in-95 duration-150 ease-[var(--ease-out)] origin-top">
+                  {optionsList}
+                </div>
+              </>,
+              document.body,
+            )}
         </>
       )}
     </div>

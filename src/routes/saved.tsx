@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
 import { Footer } from "@/components/Footer";
 import { type Poster } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
 import { useSaved } from "@/lib/saved";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/saved")({
   loader: () => fetchNotionPosters(),
@@ -19,10 +20,20 @@ export const Route = createFileRoute("/saved")({
 });
 
 function SavedPage() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const postersList = Route.useLoaderData();
   const { saved } = useSaved();
-  const navigate = useNavigate();
-  const posters = useMemo(() => postersList.filter((p) => saved.includes(p.id)), [postersList, saved]);
+  const posters = useMemo(
+    () => postersList.filter((p) => saved.includes(p.id)),
+    [postersList, saved],
+  );
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate({ to: "/profile" });
+    }
+  }, [user, loading, navigate]);
 
   const handleOpen = (p: Poster) => {
     navigate({ to: "/poster/$id", params: { id: p.id } });
@@ -49,7 +60,10 @@ function SavedPage() {
         {posters.length === 0 ? (
           <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
             <p className="text-white/60">Nothing pinned yet. Start discovering posters you love.</p>
-            <Link to="/" className="rounded-full border border-white/15 px-4 py-2 text-sm hover:border-[#FF6B6B] hover:text-[#FF6B6B]">
+            <Link
+              to="/"
+              className="rounded-full border border-white/15 px-4 py-2 text-sm hover:border-[#FF6B6B] hover:text-[#FF6B6B]"
+            >
               Browse the gallery
             </Link>
           </div>

@@ -23,12 +23,13 @@ export function ShareModal({ poster, onClose }: Props) {
 
   const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({
     transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
-    transition: "transform 0.5s ease",
+    transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)",
   });
 
   const [glareStyle, setGlareStyle] = useState<React.CSSProperties>({
     opacity: 0,
-    background: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
+    background:
+      "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
   });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -61,11 +62,12 @@ export function ShareModal({ poster, onClose }: Props) {
   const handleMouseLeave = () => {
     setTiltStyle({
       transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
-      transition: "transform 0.5s ease-in-out",
+      transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)",
     });
     setGlareStyle({
       opacity: 0,
-      background: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
+      background:
+        "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
     });
   };
 
@@ -264,7 +266,7 @@ export function ShareModal({ poster, onClose }: Props) {
   return (
     <div
       onClick={handleClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm transition-opacity duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm transition-opacity duration-200 ease-[var(--ease-out)]"
       style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none" }}
     >
       <div
@@ -274,12 +276,15 @@ export function ShareModal({ poster, onClose }: Props) {
         <button
           onClick={handleClose}
           aria-label="Close"
-          className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/5 text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-90"
+          className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/5 text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-90"
         >
           <X size={16} />
         </button>
 
-        <h3 style={{ fontFamily: "Poppins, sans-serif" }} className="mb-1 text-lg font-semibold text-[#F5F5F5]">
+        <h3
+          style={{ fontFamily: "Poppins, sans-serif" }}
+          className="mb-1 text-lg font-semibold text-[#F5F5F5]"
+        >
           Poster Ticket
         </h3>
         <p className="mb-6 text-xs text-white/50">Save or share this ticket of {poster.title}</p>
@@ -292,18 +297,22 @@ export function ShareModal({ poster, onClose }: Props) {
               <span className="text-xs">Printing Ticket...</span>
             </div>
           ) : imageUrl ? (
-            <div 
+            <div
               ref={ticketSmoothing.ref}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               style={{ ...tiltStyle, ...ticketSmoothing.style }}
               className="w-full overflow-hidden shadow-lg border border-white/8 relative group cursor-pointer select-none"
             >
-              <img src={imageUrl} alt="Retro Ticket Preview" className="h-auto w-full object-contain pointer-events-none" />
+              <img
+                src={imageUrl}
+                alt="Retro Ticket Preview"
+                className="h-auto w-full object-contain pointer-events-none"
+              />
               {/* Dynamic light reflection glare overlay */}
-              <div 
+              <div
                 style={glareStyle}
-                className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+                className="absolute inset-0 pointer-events-none transition-opacity duration-200 ease-[var(--ease-out)]"
               />
             </div>
           ) : (
@@ -316,7 +325,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleCopy}
             disabled={loading || !blob}
-            className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50 ${
+            className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-95 disabled:opacity-50 ${
               copied ? "scale-110" : "scale-100"
             }`}
           >
@@ -326,7 +335,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleDownload}
             disabled={loading || !imageUrl}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-95 disabled:opacity-50"
           >
             <Download size={16} />
             Download
@@ -334,7 +343,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handlePrint}
             disabled={loading || !imageUrl}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-95 disabled:opacity-50"
           >
             <Printer size={16} />
             Print Ticket
@@ -342,7 +351,7 @@ export function ShareModal({ poster, onClose }: Props) {
           <button
             onClick={handleShare}
             disabled={loading || !blob || sharing}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-all duration-150 hover:bg-[#FF8585] active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF8585] active:scale-95 disabled:opacity-50"
           >
             {sharing ? (
               <>

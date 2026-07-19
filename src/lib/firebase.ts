@@ -21,4 +21,30 @@ if (typeof window === "undefined") {
   }
 }
 
+// Admin SDK for server-side writes (bypasses security rules)
+let _adminRes: { db: any; isAdmin: boolean } | null = null;
+
+export async function getAdminDb(): Promise<{ db: any; isAdmin: boolean }> {
+  if (_adminRes) return _adminRes;
+  try {
+    const { initializeApp: initAdmin, getApps: getAdminApps, cert } =
+      await import("firebase-admin/app");
+    const { getFirestore: getAdminFirestore } = await import("firebase-admin/firestore");
+
+    const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+    const app =
+      getAdminApps().length === 0
+        ? initAdmin(
+            serviceAccountRaw ? { credential: cert(JSON.parse(serviceAccountRaw)) } : undefined,
+          )
+        : getAdminApps()[0];
+    _adminRes = { db: getAdminFirestore(app), isAdmin: true };
+    return _adminRes;
+  } catch (e) {
+    console.warn("Firebase Admin SDK not available, falling back to client SDK", e);
+    _adminRes = { db, isAdmin: false };
+    return _adminRes;
+  }
+}
+
 export { db };
