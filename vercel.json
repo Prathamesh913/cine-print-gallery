@@ -4,5 +4,12 @@
       "source": "/api/insights/:match*",
       "destination": "/_vercel/insights/:match*"
     }
+  ],
+"redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://cineprint.click/$1",
+      "permanent": true
+    }
   ]
 }
