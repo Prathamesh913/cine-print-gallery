@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = resolve(__dirname, "..", "public");
-const siteUrl = process.env.SITE_URL || "https://cine-print-gallery.vercel.app";
+const siteUrl = process.env.SITE_URL || "https://cineprint.click";
 
 const pages = [
   { loc: "/", priority: 1.0, changefreq: "weekly" },

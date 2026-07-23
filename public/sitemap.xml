@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://cine-print-gallery.vercel.app/</loc>
+    <loc>https://cineprint.click/</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://cine-print-gallery.vercel.app/about</loc>
+    <loc>https://cine-print-gallery.vercel.apphttps://cineprint.click/</loc>
+    <loc>https://cineprint.click/about</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://cine-print-gallery.vercel.app/submit</loc>
+    <loc>https://cineprint.click/submit</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://cine-print-gallery.vercel.app/saved</loc>
+    <loc>https://cineprint.click/saved</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://cine-print-gallery.vercel.app/constellation</loc>
+    <loc>https://cineprint.click/constellation</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
