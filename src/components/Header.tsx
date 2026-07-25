@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Search, Sparkles, User, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useCornerSmoothing } from "@/lib/smoothing";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,8 +30,6 @@ interface Props {
 export function Header({ query = "", onQueryChange, showSearch = true, onFeelingLucky }: Props) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const cancelSmooth = useCornerSmoothing<HTMLButtonElement>(10, 60);
-  const actionSmooth = useCornerSmoothing<HTMLButtonElement>(10, 60);
 
   return (
     <header
@@ -118,12 +115,11 @@ export function Header({ query = "", onQueryChange, showSearch = true, onFeeling
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel ref={cancelSmooth.ref} style={cancelSmooth.style}>
+                  <AlertDialogCancel className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-95">
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
-                    ref={actionSmooth.ref}
-                    style={actionSmooth.style}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF8585] active:scale-95"
                     onClick={signOut}
                   >
                     Log out
