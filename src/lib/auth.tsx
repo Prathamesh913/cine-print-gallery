@@ -2,14 +2,41 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { User, Auth } from "firebase/auth";
 import { toast } from "sonner";
 
+export type SignInResult =
+  | { ok: true }
+  | { ok: false; code: string; message: string; redirecting?: boolean };
+
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signingIn: boolean;
+  signInWithGoogle: () => Promise<SignInResult>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+function messageForAuthCode(code: string, fallback?: string): string {
+  switch (code) {
+    case "auth/popup-closed-by-user":
+    case "auth/cancelled-popup-request":
+      return "Sign-in was cancelled. You can try again when you're ready.";
+    case "auth/popup-blocked":
+      return "Pop-up was blocked. Allow pop-ups for this site, or try again.";
+    case "auth/operation-not-allowed":
+      return "Google sign-in is temporarily unavailable. Please try again later.";
+    case "auth/unauthorized-domain":
+      return "This domain isn't authorized for sign-in yet.";
+    case "auth/configuration-not-found":
+      return "Sign-in isn't configured correctly. Please try again later.";
+    case "auth/network-request-failed":
+      return "Network error. Check your connection and try again.";
+    case "auth-not-ready":
+      return "Sign-in isn't ready yet. Please try again in a moment.";
+    default:
+      return fallback || "Sign-in failed. Please try again.";
+  }
+}
 
 // --- Firebase Auth: eagerly start init on the client ---
 let firebaseAuth: Auth | null = null;
@@ -66,6 +93,7 @@ async function ensureActions() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
     initAuth()
@@ -78,7 +106,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await ensureActions();
         const mod = await import("firebase/auth");
 
-        // Handle redirect result (e.g. fallback from popup-blocked)
         try {
           const result = await mod.getRedirectResult(auth);
           if (result?.user) {
@@ -91,6 +118,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const unsubscribe = mod.onAuthStateChanged(auth, async (firebaseUser) => {
           setUser(firebaseUser);
           setLoading(false);
+          if (firebaseUser) {
+            setSigningIn(false);
+          }
 
           if (firebaseUser) {
             try {
@@ -117,51 +147,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const signInWithGoogle = async () => {
-    await ensureActions();
-    if (!firebaseAuth) {
-      toast.error("Firebase Auth is not ready yet. Please try again.");
-      return;
+  const signInWithGoogle = async (): Promise<SignInResult> => {
+    if (signingIn) {
+      return {
+        ok: false,
+        code: "auth/in-progress",
+        message: "Sign-in is already in progress.",
+      };
     }
+
+    setSigningIn(true);
     try {
+      await ensureActions();
+      if (!firebaseAuth) {
+        setSigningIn(false);
+        return {
+          ok: false,
+          code: "auth-not-ready",
+          message: messageForAuthCode("auth-not-ready"),
+        };
+      }
+
       const { GoogleAuthProvider } = await import("firebase/auth");
       const provider = new GoogleAuthProvider();
-      // Try popup first; if blocked, fall back to redirect
-      await cachedSignInWithPopup!(firebaseAuth, provider);
-    } catch (err: any) {
-      let errorCode = err?.code || "";
 
-      if (errorCode === "auth/popup-blocked" && cachedSignInWithRedirect) {
-        toast("Popup was blocked. Redirecting to Google sign-in...");
-        try {
-          const { GoogleAuthProvider } = await import("firebase/auth");
-          const provider = new GoogleAuthProvider();
-          await cachedSignInWithRedirect(firebaseAuth, provider);
-          return;
-        } catch (redirectErr: any) {
-          err = redirectErr;
-          errorCode = redirectErr?.code || "";
+      try {
+        await cachedSignInWithPopup!(firebaseAuth, provider);
+        setSigningIn(false);
+        return { ok: true };
+      } catch (err: unknown) {
+        const firstErr = err as { code?: string; message?: string };
+        let errorCode = firstErr?.code || "";
+
+        if (errorCode === "auth/popup-blocked" && cachedSignInWithRedirect) {
+          toast("Popup was blocked. Redirecting to Google sign-in...");
+          try {
+            await cachedSignInWithRedirect(firebaseAuth, provider);
+            return {
+              ok: false,
+              code: "auth/popup-blocked",
+              message: "Redirecting to Google sign-in…",
+              redirecting: true,
+            };
+          } catch (redirectErr: unknown) {
+            const re = redirectErr as { code?: string; message?: string };
+            errorCode = re?.code || "";
+            const message = messageForAuthCode(errorCode, re?.message);
+            console.error("Google sign-in error:", redirectErr);
+            setSigningIn(false);
+            return { ok: false, code: errorCode || "auth/unknown", message };
+          }
         }
-      }
 
-      if (errorCode === "auth/popup-closed-by-user") {
-        toast("Sign-in cancelled.", {
-          description: "You closed the sign-in window before completing authentication.",
-        });
-      } else if (errorCode === "auth/operation-not-allowed") {
-        toast.error(
-          "Google sign-in is not enabled. Please contact the site owner to enable it in the Firebase Console.",
-        );
-      } else if (errorCode === "auth/unauthorized-domain") {
-        toast.error("This domain is not authorized for sign-in. Please contact the site owner.");
-      } else if (errorCode === "auth/configuration-not-found") {
-        toast.error(
-          "Firebase auth configuration not found. Please check the Firebase Console settings.",
-        );
-      } else {
-        toast.error(err?.message || "Sign in failed. Please try again.");
+        const message = messageForAuthCode(errorCode, firstErr?.message);
+        if (
+          errorCode !== "auth/popup-closed-by-user" &&
+          errorCode !== "auth/cancelled-popup-request"
+        ) {
+          console.error("Google sign-in error:", err);
+        }
+        setSigningIn(false);
+        return { ok: false, code: errorCode || "auth/unknown", message };
       }
-      console.error("Google sign-in error:", err);
+    } catch (err: unknown) {
+      const e = err as { code?: string; message?: string };
+      setSigningIn(false);
+      return {
+        ok: false,
+        code: e?.code || "auth/unknown",
+        message: messageForAuthCode(e?.code || "", e?.message),
+      };
     }
   };
 
@@ -173,7 +228,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signingIn, signInWithGoogle, signOut }}>
       {children}
     </AuthContext.Provider>
   );

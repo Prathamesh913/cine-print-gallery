@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Search, Sparkles, User, LogOut } from "lucide-react";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { Search, Sparkles, User, LogOut, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   DropdownMenu,
@@ -25,11 +25,50 @@ interface Props {
   onQueryChange?: (v: string) => void;
   showSearch?: boolean;
   onFeelingLucky?: () => void;
+  variant?: "default" | "auth";
 }
 
-export function Header({ query = "", onQueryChange, showSearch = true, onFeelingLucky }: Props) {
+export function Header({
+  query = "",
+  onQueryChange,
+  showSearch = true,
+  onFeelingLucky,
+  variant = "default",
+}: Props) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const router = useRouter();
+  const currentPath = router.state.location.pathname;
+  const loginSearch = currentPath !== "/login" ? { redirect: currentPath } : undefined;
+
+  if (variant === "auth") {
+    return (
+      <header
+        className="sticky top-0 z-40 backdrop-blur-md"
+        style={{ backgroundColor: "rgba(18,18,18,0.8)" }}
+      >
+        <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
+          <Link to="/" className="flex shrink-0 items-center gap-2" data-cuelume-hover="tick">
+            <FrameIcon />
+            <span
+              style={{ fontFamily: "Bebas Neue, sans-serif" }}
+              className="text-2xl tracking-[0.12em] sm:text-3xl"
+            >
+              CINEPRINT
+            </span>
+          </Link>
+
+          <Link
+            to="/"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-white/50 transition-colors duration-150 hoverable:hover:text-white/70 active:scale-95"
+          >
+            <ArrowLeft size={14} />
+            Back to gallery
+          </Link>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header
@@ -128,7 +167,9 @@ export function Header({ query = "", onQueryChange, showSearch = true, onFeeling
               </AlertDialogContent>
             </AlertDialog>
           ) : (
-            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/login" search={loginSearch}>
+              Login
+            </NavLink>
           )}
           {/* <NavLink to="/constellation">Galaxy</NavLink> */}
         </nav>
@@ -151,10 +192,19 @@ export function Header({ query = "", onQueryChange, showSearch = true, onFeeling
   );
 }
 
-function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
+function NavLink({
+  to,
+  search,
+  children,
+}: {
+  to: string;
+  search?: Record<string, unknown>;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       to={to}
+      search={search}
       data-cuelume-hover="tick"
       className="rounded-full px-3 py-1.5 text-white/70 transition-colors duration-150 hoverable:hover:text-[#F5F5F5]"
       activeProps={{ style: { color: "#FF6B6B" } }}

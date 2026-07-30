@@ -37,7 +37,7 @@ function ProfilePage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate({ to: "/login" });
+      navigate({ to: "/login", search: { redirect: "/profile" } });
     }
   }, [user, loading, navigate]);
 
