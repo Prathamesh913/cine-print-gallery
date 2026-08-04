@@ -6,7 +6,7 @@ async function getDb() {
   if (!db) throw new Error("Firestore not initialized");
 
   if (isAdmin) {
-    const { FieldValue } = await import("firebase-admin/firestore");
+    const { FieldValue, Timestamp: AdminTimestamp } = await import("firebase-admin/firestore");
     return {
       docRef: (path: string, ...segments: string[]) => db.doc([path, ...segments].join("/")),
       getDoc: (ref: any) => ref.get(),
@@ -15,6 +15,7 @@ async function getDb() {
       arrayUnion: (...args: any[]) => FieldValue.arrayUnion(...args),
       arrayRemove: (...args: any[]) => FieldValue.arrayRemove(...args),
       serverTimestamp: () => FieldValue.serverTimestamp(),
+      timestampFromDate: (date: Date) => AdminTimestamp.fromDate(date),
     };
   }
 
@@ -27,6 +28,7 @@ async function getDb() {
     arrayUnion: (...args: any[]) => mod.arrayUnion(...args),
     arrayRemove: (...args: any[]) => mod.arrayRemove(...args),
     serverTimestamp: () => mod.serverTimestamp(),
+    timestampFromDate: (date: Date) => mod.Timestamp.fromDate(date),
   };
 }
 
@@ -37,22 +39,33 @@ export const ensureUserProfile = createServerFn({ method: "POST" })
       email: string | null;
       displayName: string | null;
       photoURL: string | null;
+      creationTime?: string | null;
     }) => data,
   )
   .handler(async ({ data }) => {
-    const { docRef, getDoc, setDoc, serverTimestamp } = await getDb();
+    const { docRef, getDoc, setDoc, updateDoc, serverTimestamp, timestampFromDate } = await getDb();
 
     const userRef = docRef("users", data.uid);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists) {
+      const createdAt = data.creationTime
+        ? timestampFromDate(new Date(data.creationTime))
+        : serverTimestamp();
       await setDoc(userRef, {
         uid: data.uid,
         email: data.email || "",
         displayName: data.displayName || "",
         photoURL: data.photoURL || null,
-        createdAt: serverTimestamp(),
+        createdAt,
         likedPostIds: [],
+      });
+      return;
+    }
+
+    if (!userSnap.data().createdAt && data.creationTime) {
+      await updateDoc(userRef, {
+        createdAt: timestampFromDate(new Date(data.creationTime)),
       });
     }
   });

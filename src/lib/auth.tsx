@@ -59,6 +59,14 @@ async function initAuth(): Promise<Auth | null> {
       appId: import.meta.env.VITE_FIREBASE_APP_ID,
     };
 
+    if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.authDomain) {
+      console.warn(
+        "Firebase Auth config is incomplete. Ensure VITE_FIREBASE_* env vars are set.",
+        firebaseConfig,
+      );
+      return null;
+    }
+
     const [{ initializeApp, getApps, getApp }, { getAuth }] = await Promise.all([
       import("firebase/app"),
       import("firebase/auth"),
@@ -131,6 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   email: firebaseUser.email,
                   displayName: firebaseUser.displayName,
                   photoURL: firebaseUser.photoURL,
+                  creationTime: firebaseUser.metadata?.creationTime ?? null,
                 },
               });
             } catch {
@@ -159,6 +168,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSigningIn(true);
     try {
       await ensureActions();
+      if (!firebaseAuth) {
+        await initAuth();
+      }
       if (!firebaseAuth) {
         setSigningIn(false);
         return {

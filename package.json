@@ -10,8 +10,11 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "sync:notion": "node scripts/sync-notion-to-firestore.js",
+    "sync:notion:dry": "node scripts/sync-notion-to-firestore.js --dry-run"
   },
+
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@notionhq/client": "^5.22.0",
@@ -55,7 +58,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.4.2",
     "embla-carousel-react": "^8.6.0",
-    "firebase": "^12.16.0",
+    "firebase": "^12.17.0",
     "input-otp": "^1.4.2",
     "jimp": "^1.6.1",
     "lucide-react": "^0.575.0",
