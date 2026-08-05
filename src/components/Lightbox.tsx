@@ -8,6 +8,14 @@ import { play } from "cuelume";
 import { getBase64Image } from "@/lib/notion";
 import { toast } from "sonner";
 
+const triggerHaptic = () => {
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    try {
+      navigator.vibrate(12);
+    } catch {}
+  }
+};
+
 const ImdbIcon = ({ className }: { className?: string }) => (
   <svg role="img" viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
     <path d="M22.3781 0H1.6218C.7411.0583.0587.7437.0018 1.5953l-.001 20.783c.0585.8761.7125 1.543 1.5559 1.6191A.337.337 0 0 0 1.6016 24h20.7971a.4579.4579 0 0 0 .0437-.002c.8727-.0768 1.5568-.8271 1.5568-1.7085V1.7098c0-.8914-.696-1.6416-1.584-1.7078A.3294.3294 0 0 0 22.3781 0zm0 .496a1.2144 1.2144 0 0 1 1.1252 1.2139v20.5797c0 .6377-.4875 1.1602-1.1045 1.2145H1.6016c-.5967-.0543-1.0645-.5297-1.1053-1.1258V1.6284C.5371 1.0185 1.0184.5364 1.6217.496h20.7564zM4.7954 8.2603v7.3636H2.8899V8.2603h1.9055zm6.5367 0v7.3636H9.6707v-4.9704l-.6711 4.9704H7.813l-.6986-4.8618-.0066 4.8618h-1.668V8.2603h2.468c.0748.4476.1492.9694.2307 1.5734l.2712 1.8713.4407-3.4447h2.4817zm2.9772 1.3289c.0742.0404.122.108.1417.2034.0279.0953.0345.3118.0345.6442v2.8548c0 .4881-.0345.7867-.0955.8954-.0609.1152-.2304.1695-.5018.1695V9.5211c.204 0 .3457.0205.4211.0681zm-.0211 6.0347c.4543 0 .8006-.0265 1.0245-.0742.2304-.0477.4204-.1357.5694-.2648.1556-.1218.2642-.298.3251-.5219.0611-.2238.1021-.6648.1021-1.3224v-2.5832c0-.6986-.0271-1.1668-.0742-1.4039-.041-.237-.1431-.4543-.3126-.6437-.1695-.1973-.4198-.3324-.7456-.421-.3191-.0808-.8542-.1285-1.7694-.1285h-1.4244v7.3636h2.3051zm5.14-1.7827c0 .3523-.0199.5762-.0544.6708-.033.0947-.1894.1424-.3046.1424-.1086 0-.19-.0477-.2238-.1351-.041-.0887-.0609-.2986-.0609-.6238v-1.9469c0-.3324.0199-.5423.0543-.6237.0338-.0808.1086-.122.2171-.122.1153 0 .2709.0412.3114.1425.041.0947.0609.2986.0609.6032v1.8926zm-2.4747-5.5809v7.3636h1.7157l.1152-.4675c.1556.1894.3251.3324.5152.4271.1828.0881.4608.1357.678.1357.3047 0 .5629-.0748.7802-.237.2165-.1562.3589-.3462.4198-.5628.0543-.2173.0887-.543.0887-.9841v-2.0675c0-.4409-.0139-.7324-.0344-.8681-.0199-.1357-.0742-.2781-.1695-.4204-.1021-.1425-.2437-.251-.4272-.3325-.1834-.0742-.3999-.1152-.6576-.1152-.2172 0-.4952.0477-.6846.1285-.1835.0887-.353.2238-.5086.4007V8.2603h-1.8309z"/>
@@ -118,6 +126,55 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   const [imageLoaded, setImageLoaded] = useState(false);
   // Exit animation state — keeps component mounted while fading out
   const [visible, setVisible] = useState(false);
+  
+  // Mobile bottom sheet state & touch swipe tracking
+  const [showDetails, setShowDetails] = useState(false);
+  const touchStartYRef = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartYRef.current === null) return;
+    const currentY = e.touches[0].clientY;
+    const deltaY = touchStartYRef.current - currentY;
+    
+    if (deltaY > 50 && !showDetails) {
+      setShowDetails(true);
+      triggerHaptic();
+      touchStartYRef.current = null;
+    } else if (deltaY < -50 && showDetails) {
+      setShowDetails(false);
+      triggerHaptic();
+      touchStartYRef.current = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartYRef.current = null;
+  };
+
+  const handlePosterTouchStart = (e: React.TouchEvent) => {
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handlePosterTouchMove = (e: React.TouchEvent) => {
+    if (touchStartYRef.current === null) return;
+    const currentY = e.touches[0].clientY;
+    const deltaY = touchStartYRef.current - currentY;
+    
+    if (deltaY > 50) {
+      setShowDetails(true);
+      triggerHaptic();
+      touchStartYRef.current = null;
+    } else if (deltaY < -50) {
+      handleClose();
+      triggerHaptic();
+      touchStartYRef.current = null;
+    }
+  };
+
   // Track whether last nav was via keyboard to skip slide animation
   const keyboardNavRef = useRef(false);
   const currentIndex = poster ? posters.findIndex((p) => p.id === poster.id) : -1;
@@ -168,6 +225,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   useEffect(() => {
     setZoom(false);
     setCopied(false);
+    setShowDetails(false);
     
     if (poster) {
       if (loadedUrlsRef.current.has(poster.image)) {
@@ -212,18 +270,27 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   };
 
   // Skip content animation when navigating via keyboard (instant) per none-keyboard-navigation rule
-  const skipAnimation = keyboardNavRef.current;
-
-  return (
+  const skipAnimation = keyboardNavRef.current;  return (
     <div
       onClick={handleClose}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto px-4 py-8 sm:px-8 transition-opacity duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden md:overflow-y-auto px-0 py-0 md:px-8 md:py-8 transition-opacity duration-200"
       style={{
         backgroundColor: "rgba(18,18,18,0.95)",
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "auto" : "none",
       }}
     >
+      {/* Mobile dimming overlay when details are open */}
+      <div 
+        onClick={() => {
+          setShowDetails(false);
+          triggerHaptic();
+        }}
+        className={`fixed inset-0 bg-black/60 transition-opacity duration-300 md:hidden z-20 ${
+          showDetails ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      />
+
       <button
         onClick={handleClose}
         aria-label="Close"
@@ -235,11 +302,16 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
       <div
         key={poster.id}
         onClick={(e) => e.stopPropagation()}
-        className={`grid w-full max-w-6xl gap-6 md:grid-cols-[3fr_2fr] ${
+        className={`grid w-full h-full md:h-auto max-w-6xl gap-6 md:grid-cols-[3fr_2fr] ${
           skipAnimation ? "" : "animate-in fade-in zoom-in-95 duration-200 ease-out"
         }`}
       >
-        <div className="flex flex-col items-center w-full">
+        <div 
+          className="flex flex-col items-center justify-center w-full h-full md:h-auto py-4 md:py-0"
+          onTouchStart={handlePosterTouchStart}
+          onTouchMove={handlePosterTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="relative flex items-start justify-center group/nav w-full">
             {/* Previous Arrow Button Indicator */}
             {prevPoster && onNavigate && (
@@ -252,7 +324,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               </button>
             )}
 
-            <div className={`relative flex items-center justify-center aspect-[2/3] max-h-[85vh] w-full max-w-[56.67vh] transition-all duration-300 rounded-xl ${
+            <div className={`relative flex items-center justify-center aspect-[2/3] max-h-[calc(100vh-120px)] md:max-h-[85vh] w-full max-w-[56.67vh] transition-all duration-300 rounded-xl ${
               !imageLoaded ? "bg-white/[0.02] border border-white/5" : "border border-transparent"
             }`}>
               <img
@@ -266,7 +338,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                   }
                 }}
                 onClick={() => setZoom((z) => !z)}
-                className={`max-h-[85vh] w-full cursor-zoom-in rounded-lg object-contain transition-all duration-200 ${
+                className={`max-h-[calc(100vh-120px)] md:max-h-[85vh] w-full cursor-zoom-in rounded-lg object-contain transition-all duration-200 ${
                   imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
                 }`}
                 style={zoom ? { transform: "scale(1.25)", cursor: "zoom-out" } : undefined}
@@ -314,238 +386,292 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
           )}
         </div>
 
-        <div className="flex flex-col gap-4 md:py-4">
-          <div>
-            <h2
-              style={{ fontFamily: "Poppins, sans-serif" }}
-              className="text-3xl font-semibold leading-tight text-[#F5F5F5] sm:text-4xl"
-            >
-              {poster.title}
-            </h2>
-            <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-white/55">
-              <span className="font-medium text-white/80">{poster.year}</span>
-              {(((poster.seasonNumber !== undefined && poster.seasonNumber !== null) || poster.collectionName) || poster.mediaType) && (
-                <>
-                  <span className="text-white/20">•</span>
-                  {poster.seasonNumber !== undefined && poster.seasonNumber !== null ? (
-                    <span className="rounded bg-[#FF6B6B]/15 border border-[#FF6B6B]/25 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-[#FF6B6B] font-semibold">
-                      Season {poster.seasonNumber}
-                    </span>
-                  ) : poster.collectionName ? (
-                    <span className="rounded bg-white/10 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-white/70">
-                      {poster.collectionName}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-white/50 capitalize font-medium">{poster.mediaType}</span>
-                  )}
-                </>
-              )}
-              <span className="text-white/20">•</span>
-              <div className="flex flex-wrap items-center text-xs text-white/50">
-                <span>{poster.style}</span>
-                {poster.genre.map((g) => (
-                  <span key={g}>
-                    <span className="mx-1 text-white/20">/</span>
-                    {g}
-                  </span>
-                ))}
+        <div 
+          className={`
+            fixed bottom-0 left-0 right-0 z-30 bg-[#161616] border-t border-white/10 rounded-t-3xl shadow-[0_-12px_40px_rgba(0,0,0,0.6)] 
+            transition-transform duration-300 ease-out flex flex-col max-h-[85vh]
+            md:relative md:bottom-auto md:left-auto md:right-auto md:z-auto md:bg-transparent md:border-none md:rounded-none md:shadow-none md:max-h-none md:transition-none md:translate-y-0
+            ${showDetails ? "translate-y-0" : "translate-y-[calc(100%-80px)]"}
+          `}
+        >
+          {/* Bottom Sheet Grab Header (visible on mobile only) */}
+          <div 
+            onClick={() => {
+              setShowDetails(!showDetails);
+              triggerHaptic();
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className={`flex flex-col items-center cursor-pointer md:hidden shrink-0 select-none ${
+              showDetails ? "py-2.5" : "py-3.5 px-6 border-b border-white/[0.03]"
+            }`}
+          >
+            {/* Grab Handle */}
+            <div className="w-12 h-1.5 rounded-full bg-white/15" />
+            
+            {/* Peek Title & Arrow */}
+            {!showDetails && (
+              <div className="flex items-center justify-between w-full mt-3 animate-in fade-in duration-200">
+                <div className="truncate flex-1 pr-4">
+                  <span className="text-sm font-semibold text-[#F5F5F5]">{poster.title}</span>
+                  <span className="text-xs text-white/40 ml-2">{poster.year}</span>
+                </div>
+                <span className="text-[10px] font-mono tracking-wider text-white/30 uppercase flex items-center gap-1.5">
+                  Swipe up 
+                  <span className="text-xs text-[#FF6B6B]">▲</span>
+                </span>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Structured Details Card */}
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] px-4 py-1 flex flex-col divide-y divide-white/5">
-            {/* Artist Row */}
-            <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Artist</span>
-              <div className="text-sm text-white/85">
-                {poster.artists && poster.artists.length > 0 ? (
-                  poster.artists.map((art, idx) => (
-                    <span key={idx} className="inline-flex items-center flex-wrap">
-                      {idx > 0 && <span className="mx-1 text-white/40">&</span>}
-                      <Link
-                        to="/artist/$slug"
-                        params={{ slug: slugifyArtist(art.name) }}
-                        preload="intent"
-                        className="font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
-                      >
-                        {art.name}
-                      </Link>
-                    </span>
-                  ))
-                ) : (
-                  <span className="inline-flex items-center flex-wrap">
-                    <Link
-                      to="/artist/$slug"
-                      params={{ slug: slugifyArtist(poster.artist) }}
-                      preload="intent"
-                      className="font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
-                    >
-                      {poster.artist}
-                    </Link>
-                  </span>
+          {/* Scrollable details container */}
+          <div className="overflow-y-auto px-6 py-6 flex-grow md:overflow-visible md:px-0 md:py-0 flex flex-col gap-4">
+            <div>
+              <div className="flex items-start justify-between gap-4">
+                <h2
+                  style={{ fontFamily: "Poppins, sans-serif" }}
+                  className="text-3xl font-semibold leading-tight text-[#F5F5F5] sm:text-4xl flex-1"
+                >
+                  {poster.title}
+                </h2>
+                {/* Swipe down indicator in line with the title (visible on mobile only when sheet is expanded) */}
+                <button
+                  onClick={() => {
+                    setShowDetails(false);
+                    triggerHaptic();
+                  }}
+                  className="md:hidden flex items-center gap-1.5 shrink-0 self-start mt-1.5 text-[9px] font-mono tracking-wider text-white/40 uppercase active:scale-95 transition-all select-none"
+                >
+                  <span>Swipe down</span>
+                  <span className="text-[10px] text-[#FF6B6B]">▼</span>
+                </button>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-white/55">
+                <span className="font-medium text-white/80">{poster.year}</span>
+                {(((poster.seasonNumber !== undefined && poster.seasonNumber !== null) || poster.collectionName) || poster.mediaType) && (
+                  <>
+                    <span className="text-white/20">•</span>
+                    {poster.seasonNumber !== undefined && poster.seasonNumber !== null ? (
+                      <span className="rounded bg-[#FF6B6B]/15 border border-[#FF6B6B]/25 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-[#FF6B6B] font-semibold">
+                        Season {poster.seasonNumber}
+                      </span>
+                    ) : poster.collectionName ? (
+                      <span className="rounded bg-white/10 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-white/70">
+                        {poster.collectionName}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-white/50 capitalize font-medium">{poster.mediaType}</span>
+                    )}
+                  </>
                 )}
-              </div>
-            </div>
-
-            {/* Artist Social Row */}
-            {artistSocials.length > 0 && (
-              <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Artist Social</span>
-                <div className="text-sm text-white/85 flex flex-wrap gap-x-3 gap-y-1">
-                  {artistSocials.map((url, idx) => {
-                    const displayLabel = (() => {
-                      try {
-                        const u = new URL(url);
-                        return u.hostname.replace("www.", "");
-                      } catch {
-                        return "Portfolio";
-                      }
-                    })();
-                    return (
-                      <a
-                        key={idx}
-                        href={url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
-                      >
-                        <span>{displayLabel}</span>
-                        <ExternalLink size={11} className="opacity-50" />
-                      </a>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Source Row */}
-            <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Source</span>
-              <div className="text-sm text-white/85">
-                {poster.sourceUrl ? (
-                  <a
-                    href={poster.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
-                  >
-                    <span>{poster.source}</span>
-                    <ExternalLink size={11} className="opacity-50" />
-                  </a>
-                ) : (
-                  <span className="text-[#F5F5F5]">{poster.source}</span>
-                )}
-              </div>
-            </div>
-
-            {/* Databases Row */}
-            {(poster.imdbId || poster.tmdbId) && (
-              <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">View On</span>
-                <div className="flex flex-wrap gap-2">
-                  {poster.imdbId && (
-                    <a
-                      href={`https://www.imdb.com/title/${poster.imdbId}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded bg-[#F5C518]/10 border border-[#F5C518]/20 px-2 py-0.5 text-[10px] font-semibold text-[#F5C518] hover:bg-[#F5C518]/20 active:scale-95 transition"
-                    >
-                      <ImdbIcon className="w-3 h-3 text-[#F5C518]" />
-                      <span>IMDb</span>
-                      <ExternalLink size={9} />
-                    </a>
-                  )}
-                  {poster.tmdbId && (
-                    <a
-                      href={
-                        poster.mediaType === "show"
-                          ? `https://www.themoviedb.org/tv/${poster.tmdbId}`
-                          : `https://www.themoviedb.org/movie/${poster.tmdbId}`
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded bg-[#01B4E4]/10 border border-[#01B4E4]/20 px-2 py-0.5 text-[10px] font-semibold text-[#01B4E4] hover:bg-[#01B4E4]/20 active:scale-95 transition"
-                    >
-                      <TmdbIcon className="w-3 h-3 text-[#01B4E4]" />
-                      <span>TMDb</span>
-                      <ExternalLink size={9} />
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Libraries Row */}
-            {poster.libraryNames && poster.libraryNames.length > 0 && (
-              <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Libraries</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {poster.libraryNames.map((lib) => (
-                    <span
-                      key={lib}
-                      className="rounded bg-[#FF6B6B]/5 border border-[#FF6B6B]/25 px-2 py-0.5 text-[10px] font-medium text-[#FF6B6B]/90"
-                    >
-                      {lib}
+                <span className="text-white/20">•</span>
+                <div className="flex flex-wrap items-center text-xs text-white/50">
+                  <span>{poster.style}</span>
+                  {poster.genre.map((g) => (
+                    <span key={g}>
+                      <span className="mx-1 text-white/20">/</span>
+                      {g}
                     </span>
                   ))}
                 </div>
               </div>
+            </div>
+
+            {/* Structured Details Card */}
+            <div className="rounded-xl border border-white/5 bg-white/[0.02] px-4 py-1 flex flex-col divide-y divide-white/5">
+              {/* Artist Row */}
+              <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Artist</span>
+                <div className="text-sm text-white/85">
+                  {poster.artists && poster.artists.length > 0 ? (
+                    poster.artists.map((art, idx) => (
+                      <span key={idx} className="inline-flex items-center flex-wrap">
+                        {idx > 0 && <span className="mx-1 text-white/40">&</span>}
+                        <Link
+                          to="/artist/$slug"
+                          params={{ slug: slugifyArtist(art.name) }}
+                          preload="intent"
+                          className="font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
+                        >
+                          {art.name}
+                        </Link>
+                      </span>
+                    ))
+                  ) : (
+                    <span className="inline-flex items-center flex-wrap">
+                      <Link
+                        to="/artist/$slug"
+                        params={{ slug: slugifyArtist(poster.artist) }}
+                        preload="intent"
+                        className="font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
+                      >
+                        {poster.artist}
+                      </Link>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Artist Social Row */}
+              {artistSocials.length > 0 && (
+                <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Artist Social</span>
+                  <div className="text-sm text-white/85 flex flex-wrap gap-x-3 gap-y-1">
+                    {artistSocials.map((url, idx) => {
+                      const displayLabel = (() => {
+                        try {
+                          const u = new URL(url);
+                          return u.hostname.replace("www.", "");
+                        } catch {
+                          return "Portfolio";
+                        }
+                      })();
+                      return (
+                        <a
+                          key={idx}
+                          href={url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
+                        >
+                          <span>{displayLabel}</span>
+                          <ExternalLink size={11} className="opacity-50" />
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Source Row */}
+              <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Source</span>
+                <div className="text-sm text-white/85">
+                  {poster.sourceUrl ? (
+                    <a
+                      href={poster.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 font-medium text-[#F5F5F5] underline underline-offset-4 hover:text-[#FF6B6B] transition"
+                    >
+                      <span>{poster.source}</span>
+                      <ExternalLink size={11} className="opacity-50" />
+                    </a>
+                  ) : (
+                    <span className="text-[#F5F5F5]">{poster.source}</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Databases Row */}
+              {(poster.imdbId || poster.tmdbId) && (
+                <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">View On</span>
+                  <div className="flex flex-wrap gap-2">
+                    {poster.imdbId && (
+                      <a
+                        href={`https://www.imdb.com/title/${poster.imdbId}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded bg-[#F5C518]/10 border border-[#F5C518]/20 px-2 py-0.5 text-[10px] font-semibold text-[#F5C518] hover:bg-[#F5C518]/20 active:scale-95 transition"
+                      >
+                        <ImdbIcon className="w-3 h-3 text-[#F5C518]" />
+                        <span>IMDb</span>
+                        <ExternalLink size={9} />
+                      </a>
+                    )}
+                    {poster.tmdbId && (
+                      <a
+                        href={
+                          poster.mediaType === "show"
+                            ? `https://www.themoviedb.org/tv/${poster.tmdbId}`
+                            : `https://www.themoviedb.org/movie/${poster.tmdbId}`
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded bg-[#01B4E4]/10 border border-[#01B4E4]/20 px-2 py-0.5 text-[10px] font-semibold text-[#01B4E4] hover:bg-[#01B4E4]/20 active:scale-95 transition"
+                      >
+                        <TmdbIcon className="w-3 h-3 text-[#01B4E4]" />
+                        <span>TMDb</span>
+                        <ExternalLink size={9} />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Libraries Row */}
+              {poster.libraryNames && poster.libraryNames.length > 0 && (
+                <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">Libraries</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {poster.libraryNames.map((lib) => (
+                      <span
+                        key={lib}
+                        className="rounded bg-[#FF6B6B]/5 border border-[#FF6B6B]/25 px-2 py-0.5 text-[10px] font-medium text-[#FF6B6B]/90"
+                      >
+                        {lib}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {poster.note && (
+              <p className="border-l-2 border-white/10 pl-3.5 italic text-sm text-white/50 leading-relaxed py-0.5">
+                "{poster.note}"
+              </p>
             )}
-          </div>
 
-          {poster.note && (
-            <p className="border-l-2 border-white/10 pl-3.5 italic text-sm text-white/50 leading-relaxed py-0.5">
-              "{poster.note}"
-            </p>
-          )}
+            {((!poster.artist || poster.artist.toLowerCase() === "unknown") ||
+              (!poster.source || poster.source.toLowerCase() === "unknown")) && (
+              <p className="text-[11px] leading-relaxed text-white/35">
+                Know the artist or source of this poster? Reach out via socials on the{" "}
+                <Link to="/about" className="text-white/60 underline hover:text-[#FF6B6B]">
+                  About
+                </Link>{" "}
+                page so I can update the details!
+              </p>
+            )}
 
-          {((!poster.artist || poster.artist.toLowerCase() === "unknown") ||
-            (!poster.source || poster.source.toLowerCase() === "unknown")) && (
-            <p className="text-[11px] leading-relaxed text-white/35">
-              Know the artist or source of this poster? Reach out via socials on the{" "}
-              <Link to="/about" className="text-white/60 underline hover:text-[#FF6B6B]">
-                About
-              </Link>{" "}
-              page so I can update the details!
-            </p>
-          )}
-
-          <div className="mt-auto flex flex-wrap gap-2 pt-4">
-            <button
-              onClick={() => {
-                const wasSaved = saved;
-                toggle(poster.id);
-                if (!wasSaved) {
-                  play("chime");
-                }
-              }}
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95"
-              style={{
-                backgroundColor: saved ? "#FF6B6B" : "transparent",
-                color: saved ? "#121212" : "#F5F5F5",
-                border: `1px solid ${saved ? "#FF6B6B" : "rgba(255,255,255,0.15)"}`,
-              }}
-            >
-              <Heart size={16} fill={saved ? "#121212" : "none"} />
-              {saved ? "Pinned" : "Pin it"}
-            </button>
-            <button
-              onClick={() => setShareOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:border-white/30 active:scale-95"
-            >
-              <Share2 size={16} />
-              Share
-            </button>
-            <button
-              onClick={handlePlexDownload}
-              disabled={downloading}
-              title="For personal, non-commercial media server use only."
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50"
-            >
-              {downloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-              Download
-            </button>
+             <div className="mt-auto flex w-full gap-2 pt-4 md:w-auto md:flex-wrap">
+              <button
+                onClick={() => {
+                  const wasSaved = saved;
+                  toggle(poster.id);
+                  if (!wasSaved) {
+                    play("chime");
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 active:scale-95 flex-1 md:flex-initial"
+                style={{
+                  backgroundColor: saved ? "#FF6B6B" : "transparent",
+                  color: saved ? "#121212" : "#F5F5F5",
+                  border: `1px solid ${saved ? "#FF6B6B" : "rgba(255,255,255,0.15)"}`,
+                }}
+              >
+                <Heart size={16} fill={saved ? "#121212" : "none"} />
+                {saved ? "Pinned" : "Pin it"}
+              </button>
+              <button
+                onClick={() => setShareOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:border-white/30 active:scale-95 flex-1 md:flex-initial"
+              >
+                <Share2 size={16} />
+                Share
+              </button>
+              <button
+                onClick={handlePlexDownload}
+                disabled={downloading}
+                title="For personal, non-commercial media server use only."
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 disabled:opacity-50 flex-1 md:flex-initial"
+              >
+                {downloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+                Download
+              </button>
+            </div>
           </div>
         </div>
       </div>
