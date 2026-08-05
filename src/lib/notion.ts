@@ -86,13 +86,13 @@ export const getBase64Image = createServerFn({ method: "POST" })
       }
 
       const host = parsed.hostname.toLowerCase();
-      const isPrivateOrLoopback = 
-        host === "localhost" || 
-        host === "127.0.0.1" || 
+      const isPrivateOrLoopback =
+        host === "localhost" ||
+        host === "127.0.0.1" ||
         host === "::1" ||
-        host.startsWith("192.168.") || 
-        host.startsWith("10.") || 
-        host.startsWith("172.16.") || 
+        host.startsWith("192.168.") ||
+        host.startsWith("10.") ||
+        host.startsWith("172.16.") ||
         host.startsWith("169.254."); // Block cloud metadata addresses
 
       if (isPrivateOrLoopback) {
@@ -164,3 +164,4 @@ export const submitPosterToNotion = createServerFn({ method: "POST" })
       throw new Error(`Failed all insertion attempts. Error: ${err.message}`);
     }
   });
+
