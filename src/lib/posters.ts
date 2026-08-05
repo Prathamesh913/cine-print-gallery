@@ -33,11 +33,12 @@ export interface Poster {
 
 export function slugifyArtist(name: string): string {
   if (!name || typeof name !== "string") return "unknown";
-  return name
+  const slug = name
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, "")
     .replace(/[\s_]+/g, "-")
     .replace(/-+/g, "-");
+  return slug || "unknown";
 }
 

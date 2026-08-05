@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
+import { GalleryErrorBoundary } from "@/components/GalleryErrorBoundary";
 import { Lightbox } from "@/components/Lightbox";
 import { Footer } from "@/components/Footer";
 import { type Poster, slugifyArtist } from "@/lib/posters";
@@ -145,7 +146,9 @@ function ArtistPage() {
             <p className="text-white/50 text-sm">We couldn't find any posters for this artist.</p>
           </div>
         ) : (
-          <PosterGrid posters={artistPosters} onOpen={handleOpen} />
+          <GalleryErrorBoundary>
+            <PosterGrid posters={artistPosters} onOpen={handleOpen} />
+          </GalleryErrorBoundary>
         )}
       </main>
 

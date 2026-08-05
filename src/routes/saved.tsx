@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
+import { GalleryErrorBoundary } from "@/components/GalleryErrorBoundary";
 import { Footer } from "@/components/Footer";
 import { type Poster } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
@@ -54,7 +55,9 @@ function SavedPage() {
             </Link>
           </div>
         ) : (
-          <PosterGrid posters={posters} onOpen={handleOpen} />
+          <GalleryErrorBoundary>
+            <PosterGrid posters={posters} onOpen={handleOpen} />
+          </GalleryErrorBoundary>
         )}
       </main>
       <Footer />

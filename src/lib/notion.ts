@@ -26,11 +26,44 @@ export const fetchNotionPosters = createServerFn({ method: "POST" })
 
       const posters: Poster[] = [];
       querySnapshot.forEach((doc) => {
-        const { createdAt, ...data } = doc.data();
-        posters.push({
+        const { createdAt, ...raw } = doc.data();
+        const data = raw || {};
+
+        let artists = undefined;
+        if (Array.isArray(data.artists)) {
+          artists = data.artists.map((a: any) => ({
+            name: String(a?.name || "Unknown").trim(),
+            url: a?.url ? String(a.url).trim() : undefined
+          }));
+        } else if (data.artist) {
+          artists = [{ name: String(data.artist).trim(), url: data.artistUrl ? String(data.artistUrl).trim() : undefined }];
+        }
+
+        const poster: Poster = {
           id: doc.id,
-          ...data,
-        } as Poster);
+          title: String(data.title || "Untitled").trim(),
+          year: Number(data.year) || 0,
+          artist: String(data.artist || "Unknown").trim(),
+          artists,
+          artistUrl: data.artistUrl ? String(data.artistUrl).trim() : undefined,
+          source: String(data.source || "Unknown").trim(),
+          sourceUrl: data.sourceUrl ? String(data.sourceUrl).trim() : "",
+          image: String(data.image || "").trim(),
+          style: String(data.style || "Minimalist").trim(),
+          genre: Array.isArray(data.genre) ? data.genre.map(String) : [],
+          tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+          note: data.note ? String(data.note).trim() : undefined,
+          mediaType: data.mediaType ? String(data.mediaType).trim() : undefined,
+          tmdbId: data.tmdbId ? String(data.tmdbId).trim() : undefined,
+          imdbId: data.imdbId ? String(data.imdbId).trim() : undefined,
+          seasonNumber: data.seasonNumber !== undefined && data.seasonNumber !== null ? Number(data.seasonNumber) : undefined,
+          collectionName: data.collectionName ? String(data.collectionName).trim() : undefined,
+          posterImageUrl: data.posterImageUrl ? String(data.posterImageUrl).trim() : undefined,
+          backgroundUrl: data.backgroundUrl ? String(data.backgroundUrl).trim() : undefined,
+          libraryNames: Array.isArray(data.libraryNames) ? data.libraryNames.map(String) : [],
+          slug: String(data.slug || "").trim() || String(data.title || "").toLowerCase().trim().replace(/\s+/g, "-") || "untitled"
+        };
+        posters.push(poster);
       });
 
       // Sort by creation date if needed, or leave order as fetched
