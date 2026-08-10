@@ -47,7 +47,7 @@ function urlOrText(prop) {
   return "";
 }
 
-function imageUrlsFromProp(prop) {
+export function imageUrlsFromProp(prop) {
   if (!prop) return [];
   if (prop.type === "url" && prop.url) {
     return prop.url
@@ -78,7 +78,9 @@ function slugify(value) {
 }
 
 function normalizeStatus(raw) {
-  const s = String(raw || "").trim().toLowerCase();
+  const s = String(raw || "")
+    .trim()
+    .toLowerCase();
   if (!s) return "review";
   if (s === "published") return "published";
   if (s === "review" || s === "in review") return "review";
@@ -87,10 +89,26 @@ function normalizeStatus(raw) {
   return s;
 }
 
-function parsePage(page) {
+export function parsePage(page) {
   const props = page.properties || {};
   const imageUrls = imageUrlsFromProp(props["Image URL"]);
   if (imageUrls.length === 0) return [];
+
+  const raindropId = textProp(props["Raindrop ID"]) || null;
+  const rawSlug = textProp(props.Slug);
+  const baseSlug = rawSlug
+    ? rawSlug.trim().toLowerCase().replace(/\s+/g, "-")
+    : slugify(textProp(props.Name) || textProp(props.Title) || "");
+
+  const tmdbId = textProp(props["TMDB ID"]) || textProp(props.tmdbId) || null;
+
+  // Legacy positional identity: a single Notion page may hold several artwork
+  // images in the "Image URL" property. The Firebase document ID is derived
+  // from the slug plus the image's position in that list (backrooms-1, ...).
+  // This identity is position-based and can drift if images are inserted,
+  // deleted or reordered. New automated records (one Raindrop bookmark per
+  // Notion page) must NOT use this strategy — they use artwork-{raindropId}.
+  const isAutomatedArtwork = Boolean(raindropId) && imageUrls.length === 1;
 
   const artistRaw = textProp(props.Artist) || "Unknown";
   const artistParts = artistRaw.split("|").map((s) => s.trim());
@@ -107,8 +125,7 @@ function parsePage(page) {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  const title =
-    textProp(props.Name) || textProp(props.Title) || "Untitled";
+  const title = textProp(props.Name) || textProp(props.Title) || "Untitled";
   const year = typeof props.Year?.number === "number" ? props.Year.number : 0;
   const style = props.Style?.select?.name || "Minimalist";
   const genre = multiSelect(props.Genre);
@@ -116,26 +133,16 @@ function parsePage(page) {
   const note = textProp(props.Note) || null;
   const status = normalizeStatus(selectName(props.Status) || "Published");
 
-  const rawSlug = textProp(props.Slug);
-  const baseSlug = rawSlug
-    ? rawSlug.trim().toLowerCase().replace(/\s+/g, "-")
-    : slugify(title);
-
   const mediaType = textProp(props["Media Type"]) || textProp(props.MediaType) || null;
-  const tmdbId = textProp(props["TMDB ID"]) || textProp(props.tmdbId) || null;
   const imdbId =
-    textProp(props["IMDb ID"]) ||
-    textProp(props["IMDB ID"]) ||
-    textProp(props.imdbId) ||
-    null;
+    textProp(props["IMDb ID"]) || textProp(props["IMDB ID"]) || textProp(props.imdbId) || null;
   const seasonNumber =
     typeof props["Season Number"]?.number === "number"
       ? props["Season Number"].number
       : typeof props.Season?.number === "number"
         ? props.Season.number
         : null;
-  const collectionName =
-    textProp(props.Collection) || textProp(props["Collection Name"]) || null;
+  const collectionName = textProp(props.Collection) || textProp(props["Collection Name"]) || null;
   const backgroundUrl = urlOrText(props["Background URL"]) || null;
   const libraryNames = multiSelect(props.Library).length
     ? multiSelect(props.Library)
@@ -162,7 +169,9 @@ function parsePage(page) {
     const artistNamesJoined = artistNames.join(" & ") || "Unknown";
 
     let id;
-    if (baseSlug) {
+    if (isAutomatedArtwork) {
+      id = `artwork-${raindropId}`;
+    } else if (baseSlug) {
       id = imageUrls.length > 1 ? `${baseSlug}-${index + 1}` : baseSlug;
     } else {
       id = index === 0 ? page.id : `${page.id}-${index}`;
@@ -171,6 +180,9 @@ function parsePage(page) {
     return {
       id,
       notionPageId: page.id,
+      artworkId: isAutomatedArtwork ? raindropId : null,
+      raindropId: isAutomatedArtwork ? raindropId : null,
+      titleId: tmdbId,
       title,
       year,
       artists,
@@ -192,7 +204,7 @@ function parsePage(page) {
       collectionName,
       backgroundUrl,
       libraryNames,
-      slug: id,
+      slug: isAutomatedArtwork ? baseSlug : id,
     };
   });
 }
@@ -229,7 +241,7 @@ async function fetchAllNotionPages(notion) {
   return pages;
 }
 
-function initAdmin() {
+export function initAdmin() {
   if (getApps().length > 0) return getFirestore();
 
   let serviceAccount = null;
@@ -253,6 +265,27 @@ function initAdmin() {
   return getFirestore();
 }
 
+export function computeConflicts(posters) {
+  const byId = new Map();
+  const conflictingIds = new Set();
+
+  for (const poster of posters) {
+    if (byId.has(poster.id)) {
+      conflictingIds.add(poster.id);
+    } else {
+      byId.set(poster.id, poster);
+    }
+  }
+
+  const conflicts = [...conflictingIds].map((id) => {
+    const pages = posters.filter((p) => p.id === id).map((p) => p.notionPageId);
+    return { id, title: byId.get(id).title, notionPageIds: [...new Set(pages)] };
+  });
+  const uniquePosters = posters.filter((p) => !conflictingIds.has(p.id));
+
+  return { uniquePosters, conflicts };
+}
+
 async function main() {
   console.log("--- Notion → Firestore poster sync ---");
   if (dryRun) console.log("Mode: dry-run (no writes)");
@@ -270,15 +303,58 @@ async function main() {
   const posters = pages.flatMap(parsePage);
   console.log(`Parsed ${posters.length} poster records`);
 
-  const byStatus = posters.reduce((acc, p) => {
+  const { uniquePosters, conflicts } = computeConflicts(posters);
+
+  for (const conflict of conflicts) {
+    console.error(
+      `CONFLICT: Firebase ID "${conflict.id}" (${conflict.title}) is produced by multiple Notion pages: ${conflict.notionPageIds.join(", ")}. Skipping to avoid overwriting one artwork with another.`,
+    );
+  }
+
+  const byStatus = uniquePosters.reduce((acc, p) => {
     acc[p.status] = (acc[p.status] || 0) + 1;
     return acc;
   }, {});
   console.log("By status:", byStatus);
 
   if (dryRun) {
-    console.log("Sample (first 3):");
-    console.log(JSON.stringify(posters.slice(0, 3), null, 2));
+    const automated = uniquePosters.filter((p) => p.artworkId);
+    const legacy = uniquePosters.filter((p) => !p.artworkId);
+
+    for (const poster of automated) {
+      console.log("NEW ARTWORK:");
+      console.log(poster.title);
+      console.log(`Raindrop ID: ${poster.artworkId}`);
+      console.log(`Firebase ID: ${poster.id}`);
+      console.log("");
+    }
+
+    const legacyByPage = new Map();
+    for (const poster of legacy) {
+      if (!legacyByPage.has(poster.notionPageId)) {
+        legacyByPage.set(poster.notionPageId, []);
+      }
+      legacyByPage.get(poster.notionPageId).push(poster.id);
+    }
+
+    for (const [pageId, ids] of legacyByPage) {
+      console.log("LEGACY:");
+      console.log(`Notion page: ${pageId}`);
+      console.log("Firebase IDs:");
+      for (const id of ids) {
+        console.log(id);
+      }
+      console.log("");
+    }
+
+    if (conflicts.length > 0) {
+      console.log("CONFLICTS (skipped):");
+      for (const conflict of conflicts) {
+        console.log(`- ${conflict.id} (${conflict.title})`);
+      }
+      console.log("");
+    }
+
     return;
   }
 
@@ -287,8 +363,8 @@ async function main() {
   const BATCH_LIMIT = 400;
 
   let written = 0;
-  for (let i = 0; i < posters.length; i += BATCH_LIMIT) {
-    const chunk = posters.slice(i, i + BATCH_LIMIT);
+  for (let i = 0; i < uniquePosters.length; i += BATCH_LIMIT) {
+    const chunk = uniquePosters.slice(i, i + BATCH_LIMIT);
     const batch = db.batch();
     for (const poster of chunk) {
       const { id, ...data } = poster;
@@ -305,11 +381,11 @@ async function main() {
     }
     await batch.commit();
     written += chunk.length;
-    console.log(`Upserted ${written}/${posters.length}`);
+    console.log(`Upserted ${written}/${uniquePosters.length}`);
   }
 
   if (prune) {
-    const notionIds = new Set(posters.map((p) => p.id));
+    const notionIds = new Set(uniquePosters.map((p) => p.id));
     const snap = await col.where("notionPageId", "!=", null).get();
     let pruned = 0;
     let batch = db.batch();
@@ -343,7 +419,11 @@ async function main() {
   console.log("Done.");
 }
 
-main().catch((err) => {
-  console.error("Sync failed:", err);
-  process.exit(1);
-});
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isMain) {
+  main().catch((err) => {
+    console.error("Sync failed:", err);
+    process.exit(1);
+  });
+}

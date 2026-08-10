@@ -4,6 +4,7 @@ import type { Poster } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
 import { useCornerSmoothing } from "@/lib/smoothing";
 import { play } from "cuelume";
+import { PosterImage } from "./PosterImage";
 
 interface Props {
   poster: Poster;
@@ -99,9 +100,10 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
     >
       <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
         {!loaded && <div className="absolute inset-0 bg-white/5 animate-pulse" />}
-        <img
+        <PosterImage
+          poster={poster}
+          purpose="gallery"
           ref={imgRef}
-          src={poster.image}
           alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
           loading="lazy"
           onLoad={handleLoad}
