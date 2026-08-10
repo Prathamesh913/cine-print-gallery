@@ -41,7 +41,7 @@ export function PosterGrid({ posters, onOpen, pageSize = 24 }: Props) {
 
   if (posters.length === 0) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center text-center text-white/50">
+      <div className="flex min-h-[40vh] items-center justify-center text-center text-white/65">
         <p>No posters match your search. Try a different word.</p>
       </div>
     );

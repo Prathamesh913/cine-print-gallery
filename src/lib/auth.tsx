@@ -145,6 +145,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } catch {
               // non-critical — user doc will be created on first like if this fails
             }
+            try {
+              const { prefetchUserProfile } = await import("./user-profile");
+              void prefetchUserProfile(
+                firebaseUser.uid,
+                firebaseUser.metadata?.creationTime ?? null,
+              );
+            } catch {
+              // non-critical — profile loads on the profile page if prefetch fails
+            }
           }
         });
 

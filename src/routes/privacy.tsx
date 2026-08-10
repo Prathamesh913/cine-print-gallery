@@ -19,7 +19,7 @@ function PrivacyPage() {
   return (
     <div
       className="flex min-h-screen flex-col"
-      style={{ backgroundColor: "#121212", color: "#F5F5F5" }}
+      style={{ backgroundColor: "#000000", color: "#F5F5F5" }}
     >
       <Header showSearch={false} />
       <main className="mx-auto w-full max-w-2xl flex-grow px-6 py-16">
@@ -35,7 +35,7 @@ function PrivacyPage() {
         >
           Privacy Policy
         </h1>
-        <p className="mt-2 text-sm text-white/50">Last updated: July 25, 2026</p>
+        <p className="mt-2 text-sm text-white/65">Last updated: July 25, 2026</p>
 
         <div className="mt-10 space-y-8 text-sm leading-relaxed text-white/70">
           <section>

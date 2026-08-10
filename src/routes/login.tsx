@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Save, MonitorSmartphone, Heart, Loader2 } from "lucide-react";
 import { fetchNotionPosters } from "@/lib/notion";
 import type { Poster } from "@/lib/posters";
+import { PosterImage } from "@/components/PosterImage";
 
 interface LoginSearch {
   redirect?: string;
@@ -110,7 +111,7 @@ function LoginPage() {
   return (
     <div
       className="relative flex min-h-screen flex-col"
-      style={{ backgroundColor: "#121212", color: "#F5F5F5" }}
+      style={{ backgroundColor: "#000000", color: "#F5F5F5" }}
     >
       <Header showSearch={false} variant="auth" />
 
@@ -118,7 +119,7 @@ function LoginPage() {
         {/* Login panel */}
         <section className="flex w-full items-center justify-center px-6 py-12 md:w-[36%] md:py-0 md:pl-8 lg:pl-12">
           <div className="w-full max-w-sm">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-8 backdrop-blur-md sm:p-10">
+            <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-8 backdrop-blur-md sm:p-10">
               <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-[#FF6B6B]/10">
                 <FrameIcon />
               </div>
@@ -195,11 +196,11 @@ function LoginPage() {
                 </p>
               )}
 
-              <p className="mt-4 text-xs text-white/40">
+              <p className="mt-4 text-xs text-white/55">
                 Only Google sign-in — no password to manage.
               </p>
 
-              <p className="mt-3 text-xs text-white/50">
+              <p className="mt-3 text-xs text-white/65">
                 By signing in, you agree to our{" "}
                 <Link
                   to="/privacy"
@@ -240,7 +241,7 @@ function LoginPage() {
             </div>
           ) : (
             <div className="flex h-full items-center justify-center">
-              <div className="rounded-xl bg-white/[0.03] p-6 text-center">
+              <div className="rounded-xl bg-white/[0.06] p-6 text-center">
                 <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-[#FF6B6B]/5">
                   <svg
                     width="18"
@@ -255,7 +256,7 @@ function LoginPage() {
                     <path d="M21 21 H15 M21 21 V15" />
                   </svg>
                 </div>
-                <p className="mt-3 text-xs text-white/20">Loading gallery…</p>
+                <p className="mt-3 text-xs text-white/30">Loading gallery…</p>
               </div>
             </div>
           )}
@@ -276,8 +277,9 @@ function VisualPosterCard({ poster }: { poster: Poster }) {
       style={{ aspectRatio: "2 / 3", backgroundColor: "#1E1E1E" }}
     >
       {!loaded && <div className="absolute inset-0 animate-pulse bg-white/5" />}
-      <img
-        src={poster.image}
+      <PosterImage
+        poster={poster}
+        purpose="gallery"
         alt=""
         loading="lazy"
         onLoad={() => setLoaded(true)}

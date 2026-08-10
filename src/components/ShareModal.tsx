@@ -204,7 +204,7 @@ export function ShareModal({ poster, onClose }: Props) {
         <head>
           <title>Print CinePrint Ticket - ${poster.title}</title>
           <style>
-            body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #121212; }
+            body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #000000; }
             img { max-width: 100%; max-height: 100%; object-fit: contain; }
             @media print {
               body { background-color: #ffffff; }
@@ -271,7 +271,7 @@ export function ShareModal({ poster, onClose }: Props) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex w-full max-w-3xl flex-col rounded-2xl border border-white/10 bg-[#181818] p-6 shadow-2xl"
+        className="relative flex w-full max-w-3xl flex-col rounded-2xl border border-white/15 bg-[#202020] p-6 shadow-2xl"
       >
         <button
           onClick={handleClose}
@@ -287,7 +287,7 @@ export function ShareModal({ poster, onClose }: Props) {
         >
           Poster Ticket
         </h3>
-        <p className="mb-6 text-xs text-white/50">Save or share this ticket of {poster.title}</p>
+        <p className="mb-6 text-xs text-white/65">Save or share this ticket of {poster.title}</p>
 
         {/* Ticket Container */}
         <div className="flex min-h-[220px] items-center justify-center rounded-xl bg-black/40 p-4 border border-white/5">
@@ -302,7 +302,7 @@ export function ShareModal({ poster, onClose }: Props) {
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               style={{ ...tiltStyle, ...ticketSmoothing.style }}
-              className="w-full overflow-hidden shadow-lg border border-white/8 relative group cursor-pointer select-none"
+              className="w-full overflow-hidden shadow-lg border border-white/12 relative group cursor-pointer select-none"
             >
               <img
                 src={imageUrl}
@@ -316,7 +316,7 @@ export function ShareModal({ poster, onClose }: Props) {
               />
             </div>
           ) : (
-            <div className="text-sm text-white/40">Failed to render ticket preview.</div>
+            <div className="text-sm text-white/55">Failed to render ticket preview.</div>
           )}
         </div>
 

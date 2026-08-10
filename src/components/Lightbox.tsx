@@ -1,12 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Heart, Share2, ExternalLink, Download, Loader2 } from "lucide-react";
+import {
+  X,
+  Heart,
+  Share2,
+  ExternalLink,
+  Download,
+  Loader2,
+  FolderPlus,
+  MoreHorizontal,
+} from "lucide-react";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
 import { Link } from "@tanstack/react-router";
 import { ShareModal } from "./ShareModal";
+import { AddToCollectionModal } from "./AddToCollectionModal";
+import { PosterImage } from "./PosterImage";
 import { play } from "cuelume";
 import { getBase64Image } from "@/lib/notion";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const triggerHaptic = () => {
   if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -89,6 +106,7 @@ interface Props {
 export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   const { isSaved, toggle } = useSaved();
   const [downloading, setDownloading] = useState(false);
+  const [collectionOpen, setCollectionOpen] = useState(false);
 
   const handlePlexDownload = async () => {
     if (!poster || downloading) return;
@@ -116,18 +134,16 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
     filename = filename.replace(/[\\/:*?"<>|]/g, "_");
 
     setDownloading(true);
-    const toastId = toast.loading(`Preparing high-res download for Plex/Jellyfin...`);
+    const toastId = toast.loading("Preparing high-res download for Plex/Jellyfin...");
 
     try {
       const base64Data = await getBase64Image({ data: downloadUrl });
-
       const link = document.createElement("a");
       link.href = base64Data;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       toast.success(`Downloaded: ${filename}`, { id: toastId });
       play("success");
     } catch (err) {
@@ -306,7 +322,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
       onClick={handleClose}
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden md:overflow-y-auto px-0 py-0 md:px-8 md:py-8 transition-opacity duration-200"
       style={{
-        backgroundColor: "rgba(18,18,18,0.95)",
+        backgroundColor: "rgba(0,0,0,0.95)",
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "auto" : "none",
       }}
@@ -352,7 +368,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                   onNavigate(prevPoster);
                 }}
                 aria-label="Previous Poster"
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 hoverable:group-hover/nav:opacity-100 transition-[opacity,transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-black/80 hoverable:hover:text-white active:scale-95 sm:flex hidden"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/15 text-white/70 backdrop-blur-md opacity-0 hoverable:group-hover/nav:opacity-100 transition-[opacity,transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-black/80 hoverable:hover:text-white active:scale-95 sm:flex hidden"
               >
                 <span className="text-xs">←</span>
               </button>
@@ -360,12 +376,13 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
 
             <div
               className={`relative flex items-center justify-center aspect-[2/3] max-h-[calc(100vh-120px)] md:max-h-[85vh] w-full max-w-[56.67vh] transition-transform duration-200 ease-[var(--ease-out)] rounded-xl ${
-                !imageLoaded ? "bg-white/[0.02] border border-white/5" : "border border-transparent"
+                !imageLoaded ? "bg-white/[0.05] border border-white/5" : "border border-transparent"
               }`}
             >
-              <img
-                key={poster.id}
-                src={poster.image}
+              <PosterImage
+                key={`${poster.id}-${zoom ? "original" : "detail"}`}
+                poster={poster}
+                purpose={zoom ? "original" : "detail"}
                 alt={`${poster.title} (${poster.year})`}
                 onLoad={() => {
                   setImageLoaded(true);
@@ -388,7 +405,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                       style={{ animationDuration: "3.5s" }}
                     />
                   </div>
-                  <span className="text-[10px] tracking-[0.25em] font-mono text-white/40 uppercase animate-pulse">
+                  <span className="text-[10px] tracking-[0.25em] font-mono text-white/55 uppercase animate-pulse">
                     Loading Poster
                   </span>
                 </div>
@@ -403,7 +420,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                   onNavigate(nextPoster);
                 }}
                 aria-label="Next Poster"
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/70 backdrop-blur-md opacity-0 hoverable:group-hover/nav:opacity-100 transition-[opacity,transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-black/80 hoverable:hover:text-white active:scale-95 sm:flex hidden"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 border border-white/15 text-white/70 backdrop-blur-md opacity-0 hoverable:group-hover/nav:opacity-100 transition-[opacity,transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-black/80 hoverable:hover:text-white active:scale-95 sm:flex hidden"
               >
                 <span className="text-xs">→</span>
               </button>
@@ -412,10 +429,10 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
 
           {/* Keyboard navigation helper */}
           {(prevPoster || nextPoster) && (
-            <div className="mt-4 hidden sm:flex items-center justify-center gap-3 text-[10px] tracking-widest font-mono text-white/30 uppercase select-none tabular-nums">
+            <div className="mt-4 hidden sm:flex items-center justify-center gap-3 text-[10px] tracking-widest font-mono text-white/45 uppercase select-none tabular-nums">
               {prevPoster && (
                 <span className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/40">
+                  <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/15 text-white/55">
                     ←
                   </kbd>{" "}
                   PREV
@@ -425,7 +442,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               {nextPoster && (
                 <span className="flex items-center gap-1.5">
                   NEXT{" "}
-                  <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-white/40">
+                  <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/15 text-white/55">
                     →
                   </kbd>
                 </span>
@@ -436,7 +453,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
 
         <div
           className={`
-            fixed bottom-0 left-0 right-0 z-30 bg-[#161616] border-t border-white/10 rounded-t-3xl shadow-[0_-12px_40px_rgba(0,0,0,0.6)] 
+            fixed bottom-0 left-0 right-0 z-30 bg-[#1c1c1c] border-t border-white/15 rounded-t-3xl shadow-[0_-12px_40px_rgba(0,0,0,0.6)] 
             transition-transform duration-300 ease-[var(--ease-out)] flex flex-col max-h-[85vh]
             md:relative md:bottom-auto md:left-auto md:right-auto md:z-auto md:bg-transparent md:border-none md:rounded-none md:shadow-none md:max-h-none md:transition-none md:translate-y-0
             ${showDetails ? "translate-y-0" : "translate-y-[calc(100%-80px)]"}
@@ -463,9 +480,9 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               <div className="flex items-center justify-between w-full mt-3 animate-in fade-in duration-200">
                 <div className="truncate flex-1 pr-4">
                   <span className="text-sm font-semibold text-[#F5F5F5]">{poster.title}</span>
-                  <span className="text-xs text-white/40 ml-2">{poster.year}</span>
+                  <span className="text-xs text-white/55 ml-2">{poster.year}</span>
                 </div>
-                <span className="text-[10px] font-mono tracking-wider text-white/30 uppercase flex items-center gap-1.5">
+                <span className="text-[10px] font-mono tracking-wider text-white/45 uppercase flex items-center gap-1.5">
                   Swipe up
                   <span className="text-xs text-[#FF6B6B]">▲</span>
                 </span>
@@ -489,19 +506,19 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                     setShowDetails(false);
                     triggerHaptic();
                   }}
-                  className="md:hidden flex items-center gap-1.5 shrink-0 self-start mt-1.5 text-[9px] font-mono tracking-wider text-white/40 uppercase active:scale-95 transition-transform duration-150 ease-[var(--ease-out)] select-none"
+                  className="md:hidden flex items-center gap-1.5 shrink-0 self-start mt-1.5 text-[9px] font-mono tracking-wider text-white/55 uppercase active:scale-95 transition-transform duration-150 ease-[var(--ease-out)] select-none"
                 >
                   <span>Swipe down</span>
                   <span className="text-[10px] text-[#FF6B6B]">▼</span>
                 </button>
               </div>
-              <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-white/55">
+              <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-white/70">
                 <span className="font-medium text-white/80">{poster.year}</span>
                 {((poster.seasonNumber !== undefined && poster.seasonNumber !== null) ||
                   poster.collectionName ||
                   poster.mediaType) && (
                   <>
-                    <span className="text-white/20">•</span>
+                    <span className="text-white/30">•</span>
                     {poster.seasonNumber !== undefined && poster.seasonNumber !== null ? (
                       <span className="rounded bg-[#FF6B6B]/15 border border-[#FF6B6B]/25 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-[#FF6B6B] font-semibold">
                         Season {poster.seasonNumber}
@@ -511,18 +528,18 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                         {poster.collectionName}
                       </span>
                     ) : (
-                      <span className="text-xs text-white/50 capitalize font-medium">
+                      <span className="text-xs text-white/65 capitalize font-medium">
                         {poster.mediaType}
                       </span>
                     )}
                   </>
                 )}
-                <span className="text-white/20">•</span>
-                <div className="flex flex-wrap items-center text-xs text-white/50">
+                <span className="text-white/30">•</span>
+                <div className="flex flex-wrap items-center text-xs text-white/65">
                   <span>{poster.style}</span>
                   {poster.genre.map((g) => (
                     <span key={g}>
-                      <span className="mx-1 text-white/20">/</span>
+                      <span className="mx-1 text-white/30">/</span>
                       {g}
                     </span>
                   ))}
@@ -531,17 +548,17 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
             </div>
 
             {/* Structured Details Card */}
-            <div className="rounded-xl border border-white/5 bg-white/[0.02] px-4 py-1 flex flex-col divide-y divide-white/5">
+            <div className="rounded-xl border border-white/5 bg-white/[0.05] px-4 py-1 flex flex-col divide-y divide-white/5">
               {/* Artist Row */}
               <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-white/45">
                   Artist
                 </span>
                 <div className="text-sm text-white/85">
                   {poster.artists && poster.artists.length > 0 ? (
                     poster.artists.map((art, idx) => (
                       <span key={idx} className="inline-flex items-center flex-wrap">
-                        {idx > 0 && <span className="mx-1 text-white/40">&</span>}
+                        {idx > 0 && <span className="mx-1 text-white/55">&</span>}
                         <Link
                           to="/artist/$slug"
                           params={{ slug: slugifyArtist(art.name) }}
@@ -570,7 +587,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               {/* Artist Social Row */}
               {artistSocials.length > 0 && (
                 <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/45">
                     Artist Social
                   </span>
                   <div className="text-sm text-white/85 flex flex-wrap gap-x-3 gap-y-1">
@@ -602,7 +619,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
 
               {/* Source Row */}
               <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-white/45">
                   Source
                 </span>
                 <div className="text-sm text-white/85">
@@ -625,7 +642,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               {/* Databases Row */}
               {(poster.imdbId || poster.tmdbId) && (
                 <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/45">
                     View On
                   </span>
                   <div className="flex flex-wrap gap-2">
@@ -664,7 +681,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               {/* Libraries Row */}
               {poster.libraryNames && poster.libraryNames.length > 0 && (
                 <div className="grid grid-cols-[85px_1fr] items-center gap-4 py-3">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/30">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-white/45">
                     Libraries
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -682,7 +699,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
             </div>
 
             {poster.note && (
-              <p className="border-l-2 border-white/10 pl-3.5 italic text-sm text-white/50 leading-relaxed py-0.5">
+              <p className="border-l-2 border-white/15 pl-3.5 italic text-sm text-white/65 leading-relaxed py-0.5">
                 "{poster.note}"
               </p>
             )}
@@ -691,7 +708,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               poster.artist.toLowerCase() === "unknown" ||
               !poster.source ||
               poster.source.toLowerCase() === "unknown") && (
-              <p className="text-[11px] leading-relaxed text-white/35">
+              <p className="text-[11px] leading-relaxed text-white/50">
                 Know the artist or source of this poster? Reach out via socials on the{" "}
                 <Link
                   to="/about"
@@ -703,7 +720,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               </p>
             )}
 
-            <div className="mt-auto flex w-full gap-2 pt-4 md:w-auto md:flex-wrap">
+            <div className="mt-auto flex w-full flex-col gap-2 pt-4 sm:w-auto sm:flex-row sm:items-stretch">
               <button
                 onClick={() => {
                   const wasSaved = saved;
@@ -712,7 +729,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                     play("chime");
                   }
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-[transform,background-color,color,border-color] duration-150 ease-[var(--ease-out)] active:scale-95 flex-1 md:flex-initial"
+                className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-[transform,background-color,color,border-color] duration-150 ease-[var(--ease-out)] active:scale-95"
                 style={{
                   backgroundColor: saved ? "#FF6B6B" : "transparent",
                   color: saved ? "#121212" : "#F5F5F5",
@@ -722,26 +739,50 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                 <Heart size={16} fill={saved ? "#121212" : "none"} />
                 {saved ? "Pinned" : "Pin it"}
               </button>
+
+              <button
+                onClick={() => setCollectionOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color,border-color] duration-150 ease-[var(--ease-out)] hoverable:hover:border-white/30 hoverable:hover:bg-white/10 active:scale-95"
+              >
+                <FolderPlus size={16} />
+                Collection
+              </button>
               <button
                 onClick={() => setShareOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,border-color] duration-150 ease-[var(--ease-out)] hoverable:hover:border-white/30 active:scale-95 flex-1 md:flex-initial"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color,border-color] duration-150 ease-[var(--ease-out)] hoverable:hover:border-white/30 hoverable:hover:bg-white/10 active:scale-95"
               >
                 <Share2 size={16} />
                 Share
               </button>
-              <button
-                onClick={handlePlexDownload}
-                disabled={downloading}
-                title="For personal, non-commercial media server use only."
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-95 disabled:opacity-50 flex-1 md:flex-initial"
-              >
-                {downloading ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Download size={16} />
-                )}
-                Download
-              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    aria-label="More poster actions"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color,border-color] duration-150 ease-[var(--ease-out)] hoverable:hover:border-white/30 hoverable:hover:bg-white/10 active:scale-95"
+                  >
+                    <MoreHorizontal size={16} />
+                    More
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  sideOffset={8}
+                  className="border-white/15 bg-[#1c1c1c] text-[#F5F5F5]"
+                >
+                  <DropdownMenuItem
+                    onSelect={handlePlexDownload}
+                    disabled={downloading}
+                    className="focus:bg-white/10 focus:text-[#F5F5F5]"
+                  >
+                    {downloading ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <Download size={16} />
+                    )}
+                    Download
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
@@ -749,6 +790,14 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
 
       {/* ShareModal with exit animation */}
       {shareOpen && <ShareModal poster={poster} onClose={() => setShareOpen(false)} />}
+      {poster && (
+        <AddToCollectionModal
+          open={collectionOpen}
+          onOpenChange={setCollectionOpen}
+          posterId={poster.id}
+          posterTitle={poster.title}
+        />
+      )}
     </div>
   );
 }

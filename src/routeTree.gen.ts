@@ -18,6 +18,7 @@ import { Route as ConstellationRouteImport } from './routes/constellation'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PosterIdRouteImport } from './routes/poster/$id'
+import { Route as CIdRouteImport } from './routes/c/$id'
 import { Route as ArtistSlugRouteImport } from './routes/artist/$slug'
 
 const SubmitRoute = SubmitRouteImport.update({
@@ -65,6 +66,11 @@ const PosterIdRoute = PosterIdRouteImport.update({
   path: '/poster/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CIdRoute = CIdRouteImport.update({
+  id: '/c/$id',
+  path: '/c/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArtistSlugRoute = ArtistSlugRouteImport.update({
   id: '/artist/$slug',
   path: '/artist/$slug',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
+  '/c/$id': typeof CIdRoute
   '/poster/$id': typeof PosterIdRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
+  '/c/$id': typeof CIdRoute
   '/poster/$id': typeof PosterIdRoute
 }
 export interface FileRoutesById {
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
+  '/c/$id': typeof CIdRoute
   '/poster/$id': typeof PosterIdRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/submit'
     | '/artist/$slug'
+    | '/c/$id'
     | '/poster/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/submit'
     | '/artist/$slug'
+    | '/c/$id'
     | '/poster/$id'
   id:
     | '__root__'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/submit'
     | '/artist/$slug'
+    | '/c/$id'
     | '/poster/$id'
   fileRoutesById: FileRoutesById
 }
@@ -157,6 +169,7 @@ export interface RootRouteChildren {
   SavedRoute: typeof SavedRoute
   SubmitRoute: typeof SubmitRoute
   ArtistSlugRoute: typeof ArtistSlugRoute
+  CIdRoute: typeof CIdRoute
   PosterIdRoute: typeof PosterIdRoute
 }
 
@@ -225,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PosterIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/c/$id': {
+      id: '/c/$id'
+      path: '/c/$id'
+      fullPath: '/c/$id'
+      preLoaderRoute: typeof CIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/artist/$slug': {
       id: '/artist/$slug'
       path: '/artist/$slug'
@@ -245,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   SavedRoute: SavedRoute,
   SubmitRoute: SubmitRoute,
   ArtistSlugRoute: ArtistSlugRoute,
+  CIdRoute: CIdRoute,
   PosterIdRoute: PosterIdRoute,
 }
 export const routeTree = rootRouteImport

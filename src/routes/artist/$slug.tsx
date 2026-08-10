@@ -93,7 +93,7 @@ function ArtistPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} onFeelingLucky={handleFeelingLucky} />
 
       <main className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 flex-grow flex flex-col justify-center">
@@ -101,7 +101,7 @@ function ArtistPage() {
         <div className="mb-6">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest text-white/50 uppercase hover:text-[#FF6B6B] transition-colors"
+            className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-xs tracking-widest text-white/65 uppercase hover:text-[#FF6B6B] transition-colors"
           >
             <ArrowLeft size={12} />
             <span>Back to Gallery</span>
@@ -125,7 +125,7 @@ function ArtistPage() {
                 href={artistUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 self-start md:self-auto rounded-full bg-white/5 border border-white/10 px-4 py-2 text-xs font-medium text-white/70 hover:bg-[#FF6B6B] hover:text-[#121212] transition"
+                className="inline-flex items-center gap-1.5 self-start md:self-auto rounded-full bg-white/5 border border-white/15 px-4 py-2 text-xs font-medium text-white/70 hover:bg-[#FF6B6B] hover:text-[#121212] transition"
               >
                 <Globe size={14} />
                 <span>Visit Portfolio</span>
@@ -133,7 +133,7 @@ function ArtistPage() {
             )}
           </div>
 
-          <div className="mt-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/40 uppercase">
+          <div className="mt-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase">
             Showing {artistPosters.length} poster{artistPosters.length !== 1 && "s"}
           </div>
         </div>
@@ -142,7 +142,7 @@ function ArtistPage() {
         {artistPosters.length === 0 ? (
           <div className="flex w-full min-h-[40vh] flex-col items-center justify-center py-12 text-center">
             <h2 style={{ fontFamily: "Poppins, sans-serif" }} className="text-xl font-semibold mb-2">No Posters Found</h2>
-            <p className="text-white/50 text-sm">We couldn't find any posters for this artist.</p>
+            <p className="text-white/65 text-sm">We couldn't find any posters for this artist.</p>
           </div>
         ) : (
           <PosterGrid posters={artistPosters} onOpen={handleOpen} />

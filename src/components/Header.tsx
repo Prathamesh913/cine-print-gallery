@@ -45,7 +45,7 @@ export function Header({
     return (
       <header
         className="sticky top-0 z-40 backdrop-blur-md"
-        style={{ backgroundColor: "rgba(18,18,18,0.8)" }}
+        style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
       >
         <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
           <Link to="/" className="flex shrink-0 items-center gap-2" data-cuelume-hover="tick">
@@ -60,7 +60,7 @@ export function Header({
 
           <Link
             to="/"
-            className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-white/50 transition-colors duration-150 hoverable:hover:text-white/70 active:scale-95"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-white/65 transition-colors duration-150 hoverable:hover:text-white/70 active:scale-95"
           >
             <ArrowLeft size={14} />
             Back to gallery
@@ -73,7 +73,7 @@ export function Header({
   return (
     <header
       className="sticky top-0 z-40 backdrop-blur-md"
-      style={{ backgroundColor: "rgba(18,18,18,0.8)" }}
+      style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
     >
       <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
         <Link to="/" className="flex shrink-0 items-center gap-2" data-cuelume-hover="tick">
@@ -88,12 +88,12 @@ export function Header({
 
         {showSearch && (
           <div className="relative mx-auto hidden max-w-md flex-1 md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/55" size={16} />
             <input
               value={query}
               onChange={(e) => onQueryChange?.(e.target.value)}
               placeholder="Search posters, artists, tags…"
-              className="w-full rounded-full border border-white/10 bg-white/5 py-2 pl-9 pr-4 text-sm text-[#F5F5F5] placeholder:text-white/40 focus:border-[#FF6B6B] focus:outline-none"
+              className="w-full rounded-full border border-white/15 bg-white/5 py-2 pl-9 pr-4 text-sm text-[#F5F5F5] placeholder:text-white/55 focus:border-[#FF6B6B] focus:outline-none"
             />
           </div>
         )}
@@ -121,7 +121,7 @@ export function Header({
                       <img
                         src={user.photoURL}
                         alt={user.displayName || ""}
-                        className="h-7 w-7 rounded-full border border-white/10"
+                        className="h-7 w-7 rounded-full border border-white/15"
                       />
                     ) : (
                       <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FF6B6B] text-[10px] font-bold text-[#121212]">
@@ -178,12 +178,12 @@ export function Header({
       {showSearch && (
         <div className="px-4 pb-3 md:hidden">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/55" size={16} />
             <input
               value={query}
               onChange={(e) => onQueryChange?.(e.target.value)}
               placeholder="Search posters, artists, tags…"
-              className="w-full rounded-full border border-white/10 bg-white/5 py-2 pl-9 pr-4 text-sm text-[#F5F5F5] placeholder:text-white/40 focus:border-[#FF6B6B] focus:outline-none"
+              className="w-full rounded-full border border-white/15 bg-white/5 py-2 pl-9 pr-4 text-sm text-[#F5F5F5] placeholder:text-white/55 focus:border-[#FF6B6B] focus:outline-none"
             />
           </div>
         </div>

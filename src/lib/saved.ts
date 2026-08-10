@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { useAuth } from "./auth";
 import { getUserLikedIds, toggleUserLike, mergeLikedPosters } from "./user-likes";
@@ -15,64 +15,101 @@ function read(): string[] {
   }
 }
 
+// Shared in-memory store so every useSaved() sees the same list immediately
+// (avoids ContextMenu flashing "Pin" while its own effect loads state).
+let cachedSaved: string[] = typeof window !== "undefined" ? read() : [];
+let loadedForUid: string | null | undefined = undefined;
+const listeners = new Set<() => void>();
+
+function emit() {
+  listeners.forEach((l) => l());
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("cineprint:saved-changed"));
+  }
+}
+
+function setCached(next: string[]) {
+  cachedSaved = next;
+  emit();
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot() {
+  return cachedSaved;
+}
+
+function getServerSnapshot(): string[] {
+  return [];
+}
+
 export function useSaved() {
   const { user } = useAuth();
-  const [saved, setSaved] = useState<string[]>([]);
+  const saved = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (user) {
       const uid = user.uid;
+      if (loadedForUid === uid) return;
+
       const localIds = read();
 
       if (localIds.length > 0) {
         mergeLikedPosters({ data: { uid, posterIds: localIds } })
           .then(() => {
             localStorage.removeItem(KEY);
-            return getUserLikedIds({ data: uid }).then(setSaved);
+            return getUserLikedIds({ data: uid });
+          })
+          .then((ids) => {
+            loadedForUid = uid;
+            setCached(ids);
           })
           .catch((err) => {
             console.error("Failed to load liked posters:", err);
           });
       } else {
         getUserLikedIds({ data: uid })
-          .then(setSaved)
+          .then((ids) => {
+            loadedForUid = uid;
+            setCached(ids);
+          })
           .catch((err) => {
             console.error("Failed to load liked posters:", err);
           });
       }
     } else {
-      setSaved(read());
+      loadedForUid = null;
+      setCached(read());
       const onStorage = (e: StorageEvent) => {
-        if (e.key === KEY) setSaved(read());
+        if (e.key === KEY) setCached(read());
       };
-      const onCustom = () => setSaved(read());
       window.addEventListener("storage", onStorage);
-      window.addEventListener("cineprint:saved-changed", onCustom);
       return () => {
         window.removeEventListener("storage", onStorage);
-        window.removeEventListener("cineprint:saved-changed", onCustom);
       };
     }
   }, [user?.uid]);
 
   const toggle = useCallback(
     (id: string) => {
-      setSaved((prev) => {
-        const wasSaved = prev.includes(id);
-        const next = wasSaved ? prev.filter((x) => x !== id) : [...prev, id];
+      const wasSaved = cachedSaved.includes(id);
+      const next = wasSaved ? cachedSaved.filter((x) => x !== id) : [...cachedSaved, id];
 
-        if (user) {
-          toggleUserLike({ data: { uid: user.uid, posterId: id } }).catch((err) => {
-            console.error("Failed to sync like:", err);
-            toast.error("Failed to save. Please try again.");
-          });
-        } else {
-          localStorage.setItem(KEY, JSON.stringify(next));
-        }
+      if (user) {
+        toggleUserLike({ data: { uid: user.uid, posterId: id } }).catch((err) => {
+          console.error("Failed to sync like:", err);
+          toast.error("Failed to save. Please try again.");
+        });
+      } else {
+        localStorage.setItem(KEY, JSON.stringify(next));
+      }
 
-        return next;
-      });
-      window.dispatchEvent(new Event("cineprint:saved-changed"));
+      setCached(next);
     },
     [user],
   );
