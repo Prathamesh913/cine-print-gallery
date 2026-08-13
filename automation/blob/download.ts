@@ -3,6 +3,7 @@ import { SUPPORTED_CONTENT_TYPES } from "./types";
 export interface DownloadedImage {
   buffer: Buffer;
   contentType: string;
+  finalUrl: string;
 }
 
 export interface DownloadOptions {
@@ -79,5 +80,5 @@ export async function downloadImage(
     throw new ImageDownloadError("image response body does not match its content type");
   }
 
-  return { buffer, contentType };
+  return { buffer, contentType, finalUrl: response.url };
 }
