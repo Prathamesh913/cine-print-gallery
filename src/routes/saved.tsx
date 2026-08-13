@@ -30,8 +30,14 @@ function SavedPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const postersList = Route.useLoaderData();
-  const { saved } = useSaved();
-  const { collections, loading: colsLoading, create } = useCollections();
+  const { saved, error: savedError, retry: retrySaved } = useSaved();
+  const {
+    collections,
+    loading: colsLoading,
+    error: colsError,
+    retry: retryCollections,
+    create,
+  } = useCollections();
   const [tab, setTab] = useState<Tab>("pins");
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -86,25 +92,39 @@ function SavedPage() {
 
         {tab === "pins" ? (
           <>
-            {posters.length > 0 && (
-              <div className="mb-6 text-[10px] font-mono uppercase tracking-widest text-white/55 sm:text-xs">
-                Showing {posters.length} poster{posters.length !== 1 && "s"}
-              </div>
-            )}
-            {posters.length === 0 ? (
+            {savedError ? (
               <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
-                <p className="text-white/60">
-                  Nothing pinned yet. Start discovering posters you love.
-                </p>
-                <Link
-                  to="/"
+                <p className="text-white/70">{savedError}</p>
+                <button
+                  onClick={retrySaved}
                   className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
                 >
-                  Browse the gallery
-                </Link>
+                  Retry
+                </button>
               </div>
             ) : (
-              <PosterGrid posters={posters} onOpen={handleOpen} />
+              <>
+                {posters.length > 0 && (
+                  <div className="mb-6 text-[10px] font-mono uppercase tracking-widest text-white/55 sm:text-xs">
+                    Showing {posters.length} poster{posters.length !== 1 && "s"}
+                  </div>
+                )}
+                {posters.length === 0 ? (
+                  <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
+                    <p className="text-white/60">
+                      Nothing pinned yet. Start discovering posters you love.
+                    </p>
+                    <Link
+                      to="/"
+                      className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                    >
+                      Browse the gallery
+                    </Link>
+                  </div>
+                ) : (
+                  <PosterGrid posters={posters} onOpen={handleOpen} />
+                )}
+              </>
             )}
           </>
         ) : (
@@ -135,35 +155,57 @@ function SavedPage() {
                   </button>
                 </div>
 
-                {collections.length > 0 && (
-                  <div className="mb-6 text-[10px] font-mono uppercase tracking-widest text-white/55 sm:text-xs">
-                    Showing {collections.length} collection{collections.length !== 1 && "s"}
-                  </div>
-                )}
-
-                {colsLoading && collections.length === 0 ? (
-                  <p className="py-16 text-center text-sm text-white/55">Loading collections…</p>
-                ) : collections.length === 0 ? (
-                  <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
-                    <p className="text-white/70">No collections yet.</p>
-                    <p className="max-w-sm text-xs text-white/50">
-                      Examples: Posters I’d Hang · Horror · Korean Cinema · Color Inspiration
-                    </p>
+                {colsError ? (
+                  <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
+                    <p className="text-white/70">{colsError}</p>
+                    <button
+                      onClick={retryCollections}
+                      className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                    >
+                      Retry
+                    </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {collections.map((col) => {
-                      const coverIds = Array.from(
-                        new Set([col.coverPosterId, ...col.posterIds].filter(Boolean) as string[]),
-                      ).slice(0, 4);
-                      const coverPosters = coverIds
-                        .map((id) => posterMap.get(id))
-                        .filter((poster): poster is Poster => Boolean(poster));
-                      return (
-                        <CollectionCard key={col.id} collection={col} coverPosters={coverPosters} />
-                      );
-                    })}
-                  </div>
+                  <>
+                    {collections.length > 0 && (
+                      <div className="mb-6 text-[10px] font-mono uppercase tracking-widest text-white/55 sm:text-xs">
+                        Showing {collections.length} collection{collections.length !== 1 && "s"}
+                      </div>
+                    )}
+
+                    {colsLoading && collections.length === 0 ? (
+                      <p className="py-16 text-center text-sm text-white/55">
+                        Loading collections…
+                      </p>
+                    ) : collections.length === 0 ? (
+                      <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
+                        <p className="text-white/70">No collections yet.</p>
+                        <p className="max-w-sm text-xs text-white/50">
+                          Examples: Posters I’d Hang · Horror · Korean Cinema · Color Inspiration
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {collections.map((col) => {
+                          const coverIds = Array.from(
+                            new Set(
+                              [col.coverPosterId, ...col.posterIds].filter(Boolean) as string[],
+                            ),
+                          ).slice(0, 4);
+                          const coverPosters = coverIds
+                            .map((id) => posterMap.get(id))
+                            .filter((poster): poster is Poster => Boolean(poster));
+                          return (
+                            <CollectionCard
+                              key={col.id}
+                              collection={col}
+                              coverPosters={coverPosters}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}

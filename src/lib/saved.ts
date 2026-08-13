@@ -3,8 +3,18 @@ import { toast } from "sonner";
 import { useAuth } from "./auth";
 import { getAuthToken } from "./auth-token";
 import { getUserLikedIds, toggleUserLike, mergeLikedPosters } from "./user-likes";
+import {
+  type LoadResult,
+  type ReadState,
+  readStateIdle,
+  loadStart,
+  loadSuccess,
+  loadFailure,
+} from "./read-state";
 
 const KEY = "cineprint:saved";
+
+export const SAVED_LOAD_ERROR = "Couldn't load your saved posters.";
 
 function read(): string[] {
   if (typeof window === "undefined") return [];
@@ -16,9 +26,10 @@ function read(): string[] {
   }
 }
 
-// Shared in-memory store so every useSaved() sees the same list immediately
-// (avoids ContextMenu flashing "Pin" while its own effect loads state).
-let cachedSaved: string[] = typeof window !== "undefined" ? read() : [];
+// Shared in-memory store so every useSaved() sees the same state immediately.
+let snapshot: ReadState<string[]> = readStateIdle<string[]>(
+  typeof window !== "undefined" ? read() : [],
+);
 let loadedForUid: string | null | undefined = undefined;
 const listeners = new Set<() => void>();
 
@@ -29,8 +40,8 @@ function emit() {
   }
 }
 
-function setCached(next: string[]) {
-  cachedSaved = next;
+function setSnapshot(next: ReadState<string[]>) {
+  snapshot = next;
   emit();
 }
 
@@ -42,48 +53,77 @@ function subscribe(listener: () => void) {
 }
 
 function getSnapshot() {
-  return cachedSaved;
+  return snapshot;
 }
 
-function getServerSnapshot(): string[] {
-  return [];
+function getServerSnapshot(): ReadState<string[]> {
+  return readStateIdle<string[]>([]);
+}
+
+/**
+ * Pure-ish loader used by the authenticated branch of `useSaved`.
+ * Only clears anonymous localStorage after BOTH the merge and the read succeed,
+ * so a Firestore read failure never destroys local data.
+ */
+export async function loadSaved(
+  uid: string,
+  token: string,
+  localIds: string[],
+): Promise<LoadResult<string[]>> {
+  try {
+    if (localIds.length > 0) {
+      await mergeLikedPosters({ data: { token, uid, posterIds: localIds } });
+    }
+    const ids = await getUserLikedIds({ data: { token, uid } });
+    if (localIds.length > 0 && typeof window !== "undefined") {
+      localStorage.removeItem(KEY);
+    }
+    return { ok: true, data: ids };
+  } catch (err) {
+    console.error("Failed to load liked posters:", err);
+    return { ok: false, error: SAVED_LOAD_ERROR };
+  }
+}
+
+async function loadForUser(uid: string, token: string, localIds: string[]) {
+  if (snapshot.loading) return; // avoid concurrent loads / retries
+  setSnapshot(loadStart(snapshot));
+  const result = await loadSaved(uid, token, localIds);
+  if (result.ok) {
+    loadedForUid = uid;
+    setSnapshot(loadSuccess(snapshot, result.data));
+  } else {
+    // Preserve any previously valid state; surface the error for the UI.
+    setSnapshot(loadFailure(snapshot, result.error));
+  }
 }
 
 export function useSaved() {
   const { user } = useAuth();
-  const saved = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (user) {
       const uid = user.uid;
-      if (loadedForUid === uid) return;
-
-      const localIds = read();
+      if (loadedForUid === uid && snapshot.error === null) return;
 
       getAuthToken(user)
         .then((token) => {
-          if (!token) throw new Error("No auth token");
-          const load = () => getUserLikedIds({ data: { token, uid } });
-          if (localIds.length > 0) {
-            return mergeLikedPosters({ data: { token, uid, posterIds: localIds } }).then(() => {
-              localStorage.removeItem(KEY);
-              return load();
-            });
+          if (!token) {
+            setSnapshot(loadFailure(snapshot, SAVED_LOAD_ERROR));
+            return;
           }
-          return load();
-        })
-        .then((ids) => {
-          loadedForUid = uid;
-          setCached(ids);
+          return loadForUser(uid, token, read());
         })
         .catch((err) => {
           console.error("Failed to load liked posters:", err);
+          setSnapshot(loadFailure(snapshot, SAVED_LOAD_ERROR));
         });
     } else {
       loadedForUid = null;
-      setCached(read());
+      setSnapshot(readStateIdle<string[]>(read()));
       const onStorage = (e: StorageEvent) => {
-        if (e.key === KEY) setCached(read());
+        if (e.key === KEY) setSnapshot(readStateIdle<string[]>(read()));
       };
       window.addEventListener("storage", onStorage);
       return () => {
@@ -92,14 +132,24 @@ export function useSaved() {
     }
   }, [user?.uid]);
 
+  const retry = useCallback(() => {
+    if (!user) return;
+    getAuthToken(user)
+      .then((token) => {
+        if (!token) return;
+        return loadForUser(user.uid, token, read());
+      })
+      .catch(() => {});
+  }, [user]);
+
   const toggle = useCallback(
     (id: string) => {
-      const prev = cachedSaved;
+      const prev = snapshot.data ?? [];
       const wasSaved = prev.includes(id);
       const next = wasSaved ? prev.filter((x) => x !== id) : [...prev, id];
 
       // Optimistic update; roll back if the sync fails.
-      setCached(next);
+      setSnapshot(loadSuccess(snapshot, next));
 
       if (user) {
         getAuthToken(user)
@@ -109,7 +159,7 @@ export function useSaved() {
           })
           .catch((err) => {
             console.error("Failed to sync like:", err);
-            setCached(prev);
+            setSnapshot(loadSuccess(snapshot, prev));
             toast.error("Failed to save. Please try again.");
           });
       } else {
@@ -119,5 +169,12 @@ export function useSaved() {
     [user],
   );
 
-  return { saved, toggle, isSaved: (id: string) => saved.includes(id) };
+  return {
+    saved: state.data ?? [],
+    toggle,
+    isSaved: (id: string) => (state.data ?? []).includes(id),
+    error: state.error,
+    loading: state.loading,
+    retry,
+  };
 }

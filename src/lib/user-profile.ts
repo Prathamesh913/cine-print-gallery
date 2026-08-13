@@ -2,12 +2,22 @@ import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { useAuth } from "./auth";
 import { getAuthToken } from "./auth-token";
 import { getUserProfile, updateBio, type UserProfile } from "./user-likes";
+import {
+  type LoadResult,
+  type ReadState,
+  readStateIdle,
+  loadStart,
+  loadSuccess,
+  loadFailure,
+} from "./read-state";
 
 const CACHE_KEY = "cineprint:user-profile";
 
 type CacheEntry = UserProfile & { uid: string };
 
-let cached: CacheEntry | null = null;
+export const PROFILE_LOAD_ERROR = "Couldn't load your profile.";
+
+let snapshot: ReadState<CacheEntry | null> = readStateIdle<CacheEntry | null>(null);
 let inflightUid: string | null = null;
 let inflight: Promise<UserProfile | null> | null = null;
 const listeners = new Set<() => void>();
@@ -38,15 +48,13 @@ function writeSession(uid: string, profile: UserProfile) {
   }
 }
 
-function setCache(uid: string, profile: UserProfile) {
-  cached = { uid, ...profile };
-  writeSession(uid, profile);
+function setSnapshot(next: ReadState<CacheEntry | null>) {
+  snapshot = next;
   emit();
 }
 
-function clearCache() {
-  if (cached === null) return;
-  cached = null;
+function clearSnapshot() {
+  setSnapshot(readStateIdle<CacheEntry | null>(null));
   inflightUid = null;
   inflight = null;
   if (typeof window !== "undefined") {
@@ -56,7 +64,6 @@ function clearCache() {
       // ignore
     }
   }
-  emit();
 }
 
 function subscribe(listener: () => void) {
@@ -66,12 +73,28 @@ function subscribe(listener: () => void) {
   };
 }
 
-function getSnapshot(): CacheEntry | null {
-  return cached;
+function getSnapshot(): ReadState<CacheEntry | null> {
+  return snapshot;
 }
 
-function getServerSnapshot(): CacheEntry | null {
-  return null;
+function getServerSnapshot(): ReadState<CacheEntry | null> {
+  return readStateIdle<CacheEntry | null>(null);
+}
+
+/**
+ * Loads a user's profile and returns a typed result (never throws).
+ */
+export async function loadUserProfile(
+  uid: string,
+  token: string,
+): Promise<LoadResult<UserProfile>> {
+  try {
+    const profile = await getUserProfile({ data: { token, uid } });
+    return { ok: true, data: profile };
+  } catch (err) {
+    console.error("Failed to load user profile:", err);
+    return { ok: false, error: PROFILE_LOAD_ERROR };
+  }
 }
 
 export async function prefetchUserProfile(
@@ -81,27 +104,40 @@ export async function prefetchUserProfile(
 ) {
   if (inflight && inflightUid === uid) return inflight;
 
-  if (cached?.uid !== uid) {
+  const existing = snapshot.data;
+  if (existing?.uid !== uid) {
     const session = readSession(uid);
     if (session) {
-      cached = { uid, ...session };
-      emit();
+      setSnapshot(loadStart(readStateIdle<CacheEntry | null>({ uid, ...session })));
     } else if (fallbackCreatedAt) {
-      // Instant paint from Firebase auth metadata while network loads
-      cached = { uid, createdAt: fallbackCreatedAt, bio: "" };
-      emit();
+      // Instant paint from Firebase auth metadata while the network loads.
+      setSnapshot(
+        loadStart(readStateIdle<CacheEntry | null>({ uid, createdAt: fallbackCreatedAt, bio: "" })),
+      );
+    } else {
+      setSnapshot(loadStart(readStateIdle<CacheEntry | null>(null)));
     }
+  } else {
+    setSnapshot(loadStart(snapshot));
   }
 
   inflightUid = uid;
-  inflight = getUserProfile({ data: { token: token ?? "", uid } })
-    .then((profile) => {
-      setCache(uid, profile);
-      return profile;
+  inflight = loadUserProfile(uid, token ?? "")
+    .then((result) => {
+      if (result.ok) {
+        const entry: CacheEntry = { uid, ...result.data };
+        setSnapshot(loadSuccess(snapshot, entry));
+        writeSession(uid, result.data);
+        return result.data;
+      }
+      // Preserve valid cached/session data and expose the error.
+      setSnapshot(loadFailure(snapshot, result.error));
+      return snapshot.data?.uid === uid ? snapshot.data : null;
     })
     .catch((err) => {
       console.error("Failed to load user profile:", err);
-      return cached?.uid === uid ? cached : null;
+      setSnapshot(loadFailure(snapshot, PROFILE_LOAD_ERROR));
+      return snapshot.data?.uid === uid ? snapshot.data : null;
     })
     .finally(() => {
       if (inflightUid === uid) {
@@ -115,11 +151,11 @@ export async function prefetchUserProfile(
 
 export function useUserProfile() {
   const { user } = useAuth();
-  const entry = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (!user) {
-      clearCache();
+      clearSnapshot();
       return;
     }
 
@@ -131,7 +167,18 @@ export function useUserProfile() {
   }, [user?.uid, user?.metadata?.creationTime]);
 
   const profile: UserProfile | null =
-    user && entry?.uid === user.uid ? { createdAt: entry.createdAt, bio: entry.bio } : null;
+    state.data && state.data.uid === user?.uid
+      ? { createdAt: state.data.createdAt, bio: state.data.bio }
+      : null;
+
+  const retry = useCallback(() => {
+    if (!user) return;
+    getAuthToken(user).then((token) => {
+      if (token) {
+        void prefetchUserProfile(user.uid, token, user.metadata?.creationTime ?? null);
+      }
+    });
+  }, [user]);
 
   const saveBio = useCallback(
     async (bio: string) => {
@@ -139,13 +186,16 @@ export function useUserProfile() {
       const token = await getAuthToken(user);
       if (!token) throw new Error("No auth token");
       await updateBio({ data: { token, uid: user.uid, bio } });
-      setCache(user.uid, {
-        createdAt: cached?.uid === user.uid ? cached.createdAt : null,
+      const entry: CacheEntry = {
+        uid: user.uid,
+        createdAt: snapshot.data?.uid === user.uid ? snapshot.data.createdAt : null,
         bio,
-      });
+      };
+      setSnapshot(loadSuccess(snapshot, entry));
+      writeSession(user.uid, { createdAt: entry.createdAt, bio });
     },
     [user],
   );
 
-  return { profile, saveBio };
+  return { profile, saveBio, error: state.error, loading: state.loading, retry };
 }

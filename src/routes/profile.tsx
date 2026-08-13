@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useEffect, useState, useRef } from "react";
+import { useMemo, useEffect, useState, useRef, useReducer } from "react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import { Pencil, Award, Bookmark, Calendar, Image, FolderPlus, Heart } from "lucide-react";
+import { bioReducer } from "@/lib/bio-editor";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
 import { Footer } from "@/components/Footer";
@@ -31,12 +33,28 @@ function ProfilePage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const postersList = Route.useLoaderData();
-  const { saved } = useSaved();
-  const { collections, loading: colsLoading, create } = useCollections();
-  const { profile: profileData, saveBio: persistBio } = useUserProfile();
-  const [editingBio, setEditingBio] = useState(false);
-  const [bioValue, setBioValue] = useState("");
-  const [savingBio, setSavingBio] = useState(false);
+  const { saved, error: savedError, retry: retrySaved } = useSaved();
+  const {
+    collections,
+    loading: colsLoading,
+    error: colsError,
+    retry: retryCollections,
+    create,
+  } = useCollections();
+  const {
+    profile: profileData,
+    saveBio: persistBio,
+    error: profileError,
+    retry: retryProfile,
+  } = useUserProfile();
+  const [bio, dispatch] = useReducer(bioReducer, {
+    editing: false,
+    saving: false,
+    value: "",
+    persisted: "",
+    error: null,
+    skipBlur: false,
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const [tab, setTab] = useState<"pins" | "collections">("pins");
   const [createOpen, setCreateOpen] = useState(false);
@@ -59,29 +77,33 @@ function ProfilePage() {
   };
 
   const startEditing = () => {
-    setBioValue(profileData?.bio || "");
-    setEditingBio(true);
+    dispatch({ type: "START_EDIT", persisted: profileData?.bio || "" });
     requestAnimationFrame(() => inputRef.current?.focus());
   };
 
   const saveBio = async () => {
-    if (!user || savingBio) return;
-    setSavingBio(true);
+    if (!user || bio.saving) return;
+    dispatch({ type: "SAVE_START" });
     try {
-      await persistBio(bioValue);
-      setEditingBio(false);
+      await persistBio(bio.value);
+      dispatch({ type: "SAVE_SUCCESS", value: bio.value });
     } catch {
-      // revert on failure
-      setBioValue(profileData?.bio || "");
-      setEditingBio(false);
-    } finally {
-      setSavingBio(false);
+      dispatch({ type: "SAVE_FAIL", error: "Couldn't save your bio. Please try again." });
     }
   };
 
   const cancelBio = () => {
-    setEditingBio(false);
-    setBioValue(profileData?.bio || "");
+    dispatch({ type: "CANCEL" });
+  };
+
+  const handleBioBlur = () => {
+    if (bio.skipBlur) {
+      dispatch({ type: "CONSUME_SKIP" });
+      return;
+    }
+    if (bio.editing && !bio.saving) {
+      void saveBio();
+    }
   };
 
   if (loading || !user) {
@@ -184,22 +206,22 @@ function ProfilePage() {
 
           {/* Bio */}
           <div className="ml-[calc(6rem+1rem)] mb-8">
-            {editingBio ? (
+            {bio.editing ? (
               <div className="flex items-center gap-2">
                 <input
                   ref={inputRef}
-                  value={bioValue}
-                  onChange={(e) => setBioValue(e.target.value)}
+                  value={bio.value}
+                  onChange={(e) => dispatch({ type: "CHANGE", value: e.target.value })}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") saveBio();
                     if (e.key === "Escape") cancelBio();
                   }}
-                  onBlur={saveBio}
+                  onBlur={handleBioBlur}
                   placeholder="Write a short bio…"
                   maxLength={120}
                   className="min-w-0 flex-1 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-[#F5F5F5] placeholder:text-white/45 focus:border-[#FF6B6B] focus:outline-none"
                 />
-                {savingBio && <span className="text-xs text-white/45">Saving…</span>}
+                {bio.saving && <span className="text-xs text-white/45">Saving…</span>}
               </div>
             ) : (
               <button
@@ -218,6 +240,18 @@ function ProfilePage() {
               </button>
             )}
           </div>
+
+          {profileError && (
+            <div className="mb-8 flex items-center justify-between gap-3 rounded-2xl border border-white/12 bg-white/[0.06] px-4 py-3">
+              <p className="text-sm text-white/70">{profileError}</p>
+              <button
+                onClick={retryProfile}
+                className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+              >
+                Retry
+              </button>
+            </div>
+          )}
 
           {/* Stats */}
           <div className="mb-10 grid grid-cols-3 gap-3">
@@ -274,18 +308,32 @@ function ProfilePage() {
 
           {tab === "pins" ? (
             <>
-              {pinnedCount > 0 && (
-                <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase">
-                  Showing {pinnedCount} {pinnedCount === 1 ? "poster" : "posters"}
-                </div>
-              )}
-
-              {pinnedCount === 0 ? (
+              {savedError ? (
                 <div className="flex min-h-[30vh] flex-col items-center justify-center gap-4 text-center">
-                  <p className="text-white/60">You haven't pinned any posters yet.</p>
+                  <p className="text-white/70">{savedError}</p>
+                  <button
+                    onClick={retrySaved}
+                    className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                  >
+                    Retry
+                  </button>
                 </div>
               ) : (
-                <PosterGrid posters={posters} onOpen={handleOpen} />
+                <>
+                  {pinnedCount > 0 && (
+                    <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase">
+                      Showing {pinnedCount} {pinnedCount === 1 ? "poster" : "posters"}
+                    </div>
+                  )}
+
+                  {pinnedCount === 0 ? (
+                    <div className="flex min-h-[30vh] flex-col items-center justify-center gap-4 text-center">
+                      <p className="text-white/60">You haven't pinned any posters yet.</p>
+                    </div>
+                  ) : (
+                    <PosterGrid posters={posters} onOpen={handleOpen} />
+                  )}
+                </>
               )}
             </>
           ) : (
@@ -300,35 +348,55 @@ function ProfilePage() {
                 </button>
               </div>
 
-              {collections.length > 0 && (
-                <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase">
-                  Showing {collections.length} collection{collections.length !== 1 && "s"}
-                </div>
-              )}
-
-              {colsLoading && collections.length === 0 ? (
-                <p className="py-16 text-center text-sm text-white/55">Loading collections…</p>
-              ) : collections.length === 0 ? (
-                <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
-                  <p className="text-white/70">No collections yet.</p>
-                  <p className="max-w-sm text-xs text-white/50">
-                    Examples: Posters I'd Hang · Horror · Korean Cinema · Color Inspiration
-                  </p>
+              {colsError ? (
+                <div className="flex min-h-[30vh] flex-col items-center justify-center gap-4 text-center">
+                  <p className="text-white/70">{colsError}</p>
+                  <button
+                    onClick={retryCollections}
+                    className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                  >
+                    Retry
+                  </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {collections.map((col) => {
-                    const coverIds = Array.from(
-                      new Set([col.coverPosterId, ...col.posterIds].filter(Boolean) as string[]),
-                    ).slice(0, 4);
-                    const coverPosters = coverIds
-                      .map((id) => posterMap.get(id))
-                      .filter((poster): poster is Poster => Boolean(poster));
-                    return (
-                      <CollectionCard key={col.id} collection={col} coverPosters={coverPosters} />
-                    );
-                  })}
-                </div>
+                <>
+                  {collections.length > 0 && (
+                    <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase">
+                      Showing {collections.length} collection{collections.length !== 1 && "s"}
+                    </div>
+                  )}
+
+                  {colsLoading && collections.length === 0 ? (
+                    <p className="py-16 text-center text-sm text-white/55">Loading collections…</p>
+                  ) : collections.length === 0 ? (
+                    <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
+                      <p className="text-white/70">No collections yet.</p>
+                      <p className="max-w-sm text-xs text-white/50">
+                        Examples: Posters I'd Hang · Horror · Korean Cinema · Color Inspiration
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {collections.map((col) => {
+                        const coverIds = Array.from(
+                          new Set(
+                            [col.coverPosterId, ...col.posterIds].filter(Boolean) as string[],
+                          ),
+                        ).slice(0, 4);
+                        const coverPosters = coverIds
+                          .map((id) => posterMap.get(id))
+                          .filter((poster): poster is Poster => Boolean(poster));
+                        return (
+                          <CollectionCard
+                            key={col.id}
+                            collection={col}
+                            coverPosters={coverPosters}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

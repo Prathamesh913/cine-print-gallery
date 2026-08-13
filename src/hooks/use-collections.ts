@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { getAuthToken } from "@/lib/auth-token";
+import { readStateIdle } from "@/lib/read-state";
+import { COLLECTIONS_LOAD_ERROR, collectionsReducer } from "@/lib/collections-read-state";
 import {
   type UserCollection,
   type CollectionVisibility,
@@ -15,24 +17,30 @@ import {
 
 export function useCollections() {
   const { user } = useAuth();
-  const [collections, setCollections] = useState<UserCollection[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useReducer(collectionsReducer, readStateIdle<UserCollection[]>([]));
+
+  const collections = useMemo(() => state.data ?? [], [state.data]);
+  const loading = state.loading;
+  const error = state.error;
 
   const refresh = useCallback(async () => {
     if (!user) {
-      setCollections([]);
+      dispatch({ type: "SUCCESS", data: [] });
       return;
     }
-    setLoading(true);
+    dispatch({ type: "START" });
     try {
       const token = await getAuthToken(user);
-      if (!token) return;
+      if (!token) {
+        dispatch({ type: "FAIL", error: COLLECTIONS_LOAD_ERROR });
+        return;
+      }
       const list = await listMyCollections({ data: { token, uid: user.uid } });
-      setCollections(list);
+      dispatch({ type: "SUCCESS", data: list });
     } catch (err) {
       console.error("Failed to load collections:", err);
-    } finally {
-      setLoading(false);
+      // Preserve any existing collection list; surface the error.
+      dispatch({ type: "FAIL", error: COLLECTIONS_LOAD_ERROR });
     }
   }, [user]);
 
@@ -68,7 +76,10 @@ export function useCollections() {
             posterId: input.posterId,
           },
         });
-        setCollections((prev) => [col, ...prev.filter((c) => c.id !== col.id)]);
+        dispatch({
+          type: "SET",
+          data: [col, ...(state.data ?? []).filter((c) => c.id !== col.id)],
+        });
         toast.success(`Created “${col.name}”`);
         return col;
       } catch (err: unknown) {
@@ -76,7 +87,7 @@ export function useCollections() {
         return null;
       }
     },
-    [user],
+    [user, state.data],
   );
 
   const update = useCallback(
@@ -97,14 +108,17 @@ export function useCollections() {
         const col = await updateCollection({
           data: { token, uid: user.uid, id, ...patch },
         });
-        setCollections((prev) => prev.map((c) => (c.id === id ? col : c)));
+        dispatch({
+          type: "SET",
+          data: (state.data ?? []).map((c) => (c.id === id ? col : c)),
+        });
         return col;
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : "Failed to update collection");
         return null;
       }
     },
-    [user],
+    [user, state.data],
   );
 
   const remove = useCallback(
@@ -114,7 +128,10 @@ export function useCollections() {
         const token = await getAuthToken(user);
         if (!token) return false;
         await deleteCollection({ data: { token, uid: user.uid, id } });
-        setCollections((prev) => prev.filter((c) => c.id !== id));
+        dispatch({
+          type: "SET",
+          data: (state.data ?? []).filter((c) => c.id !== id),
+        });
         toast.success("Collection deleted");
         return true;
       } catch (err: unknown) {
@@ -122,7 +139,7 @@ export function useCollections() {
         return false;
       }
     },
-    [user],
+    [user, state.data],
   );
 
   const addPoster = useCallback(
@@ -140,14 +157,17 @@ export function useCollections() {
         const col = await addPosterToCollection({
           data: { token, uid: user.uid, collectionId, posterId },
         });
-        setCollections((prev) => prev.map((c) => (c.id === collectionId ? col : c)));
+        dispatch({
+          type: "SET",
+          data: (state.data ?? []).map((c) => (c.id === collectionId ? col : c)),
+        });
         return col;
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : "Failed to add poster");
         return null;
       }
     },
-    [user],
+    [user, state.data],
   );
 
   const removePoster = useCallback(
@@ -159,14 +179,17 @@ export function useCollections() {
         const col = await removePosterFromCollection({
           data: { token, uid: user.uid, collectionId, posterId },
         });
-        setCollections((prev) => prev.map((c) => (c.id === collectionId ? col : c)));
+        dispatch({
+          type: "SET",
+          data: (state.data ?? []).map((c) => (c.id === collectionId ? col : c)),
+        });
         return col;
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : "Failed to remove poster");
         return null;
       }
     },
-    [user],
+    [user, state.data],
   );
 
   const isInCollection = useCallback(
@@ -180,7 +203,9 @@ export function useCollections() {
   return {
     collections,
     loading,
+    error,
     refresh,
+    retry: refresh,
     create,
     update,
     remove,
