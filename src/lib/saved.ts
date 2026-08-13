@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { useAuth } from "./auth";
+import { getAuthToken } from "./auth-token";
 import { getUserLikedIds, toggleUserLike, mergeLikedPosters } from "./user-likes";
 
 const KEY = "cineprint:saved";
@@ -59,29 +60,25 @@ export function useSaved() {
 
       const localIds = read();
 
-      if (localIds.length > 0) {
-        mergeLikedPosters({ data: { uid, posterIds: localIds } })
-          .then(() => {
-            localStorage.removeItem(KEY);
-            return getUserLikedIds({ data: uid });
-          })
-          .then((ids) => {
-            loadedForUid = uid;
-            setCached(ids);
-          })
-          .catch((err) => {
-            console.error("Failed to load liked posters:", err);
-          });
-      } else {
-        getUserLikedIds({ data: uid })
-          .then((ids) => {
-            loadedForUid = uid;
-            setCached(ids);
-          })
-          .catch((err) => {
-            console.error("Failed to load liked posters:", err);
-          });
-      }
+      getAuthToken(user)
+        .then((token) => {
+          if (!token) throw new Error("No auth token");
+          const load = () => getUserLikedIds({ data: { token, uid } });
+          if (localIds.length > 0) {
+            return mergeLikedPosters({ data: { token, uid, posterIds: localIds } }).then(() => {
+              localStorage.removeItem(KEY);
+              return load();
+            });
+          }
+          return load();
+        })
+        .then((ids) => {
+          loadedForUid = uid;
+          setCached(ids);
+        })
+        .catch((err) => {
+          console.error("Failed to load liked posters:", err);
+        });
     } else {
       loadedForUid = null;
       setCached(read());
@@ -97,19 +94,27 @@ export function useSaved() {
 
   const toggle = useCallback(
     (id: string) => {
-      const wasSaved = cachedSaved.includes(id);
-      const next = wasSaved ? cachedSaved.filter((x) => x !== id) : [...cachedSaved, id];
+      const prev = cachedSaved;
+      const wasSaved = prev.includes(id);
+      const next = wasSaved ? prev.filter((x) => x !== id) : [...prev, id];
+
+      // Optimistic update; roll back if the sync fails.
+      setCached(next);
 
       if (user) {
-        toggleUserLike({ data: { uid: user.uid, posterId: id } }).catch((err) => {
-          console.error("Failed to sync like:", err);
-          toast.error("Failed to save. Please try again.");
-        });
+        getAuthToken(user)
+          .then((token) => {
+            if (!token) throw new Error("No auth token");
+            return toggleUserLike({ data: { token, uid: user.uid, posterId: id } });
+          })
+          .catch((err) => {
+            console.error("Failed to sync like:", err);
+            setCached(prev);
+            toast.error("Failed to save. Please try again.");
+          });
       } else {
         localStorage.setItem(KEY, JSON.stringify(next));
       }
-
-      setCached(next);
     },
     [user],
   );

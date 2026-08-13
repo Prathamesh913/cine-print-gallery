@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User-owned private data: only the authenticated owner may read/write.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Collections: owner has full control; public/unlisted are readable by
+    // anyone (including unauthenticated visitors) as intended by the app.
+    match /collections/{id} {
+      allow read: if resource.data.ownerId == request.auth.uid
+        || resource.data.visibility == 'public'
+        || resource.data.visibility == 'unlisted';
+
+      allow create: if request.auth != null
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.visibility in ['private', 'unlisted', 'public'];
+
+      allow update, delete: if request.auth != null
+        && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Poster catalog: read-only for clients. Written only by server-side
+    // automation via the Admin SDK, which bypasses these rules.
+    match /posters/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

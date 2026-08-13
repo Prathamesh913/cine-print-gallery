@@ -101,8 +101,11 @@ function CollectionPage() {
 
   const load = async () => {
     try {
+      const currentUser = user;
+      const token = currentUser ? await currentUser.getIdToken().catch(() => null) : null;
+      const requesterUid = currentUser && token ? currentUser.uid : null;
       const col = await getCollection({
-        data: { id, requesterUid: user?.uid ?? null },
+        data: { id, token: token ?? null, requesterUid },
       });
       setCollection(col);
       if (col) {

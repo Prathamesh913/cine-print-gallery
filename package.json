@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run automation",
+    "test": "vitest run automation tests",
     "test:blob": "tsx automation/blob/test-upload.ts",
     "test:blob:cleanup": "tsx automation/blob/test-cleanup.ts",
     "import:raindrop": "tsx automation/index.ts",

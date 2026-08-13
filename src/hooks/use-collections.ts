@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { getAuthToken } from "@/lib/auth-token";
 import {
   type UserCollection,
   type CollectionVisibility,
@@ -24,7 +25,9 @@ export function useCollections() {
     }
     setLoading(true);
     try {
-      const list = await listMyCollections({ data: user.uid });
+      const token = await getAuthToken(user);
+      if (!token) return;
+      const list = await listMyCollections({ data: { token, uid: user.uid } });
       setCollections(list);
     } catch (err) {
       console.error("Failed to load collections:", err);
@@ -49,8 +52,14 @@ export function useCollections() {
         return null;
       }
       try {
+        const token = await getAuthToken(user);
+        if (!token) {
+          toast.error("Authentication required. Please sign in again.");
+          return null;
+        }
         const col = await createCollection({
           data: {
+            token,
             uid: user.uid,
             ownerName: user.displayName,
             name: input.name,
@@ -83,7 +92,11 @@ export function useCollections() {
     ) => {
       if (!user) return null;
       try {
-        const col = await updateCollection({ data: { uid: user.uid, id, ...patch } });
+        const token = await getAuthToken(user);
+        if (!token) return null;
+        const col = await updateCollection({
+          data: { token, uid: user.uid, id, ...patch },
+        });
         setCollections((prev) => prev.map((c) => (c.id === id ? col : c)));
         return col;
       } catch (err: unknown) {
@@ -98,7 +111,9 @@ export function useCollections() {
     async (id: string) => {
       if (!user) return false;
       try {
-        await deleteCollection({ data: { uid: user.uid, id } });
+        const token = await getAuthToken(user);
+        if (!token) return false;
+        await deleteCollection({ data: { token, uid: user.uid, id } });
         setCollections((prev) => prev.filter((c) => c.id !== id));
         toast.success("Collection deleted");
         return true;
@@ -117,8 +132,13 @@ export function useCollections() {
         return null;
       }
       try {
+        const token = await getAuthToken(user);
+        if (!token) {
+          toast.error("Authentication required. Please sign in again.");
+          return null;
+        }
         const col = await addPosterToCollection({
-          data: { uid: user.uid, collectionId, posterId },
+          data: { token, uid: user.uid, collectionId, posterId },
         });
         setCollections((prev) => prev.map((c) => (c.id === collectionId ? col : c)));
         return col;
@@ -134,8 +154,10 @@ export function useCollections() {
     async (collectionId: string, posterId: string) => {
       if (!user) return null;
       try {
+        const token = await getAuthToken(user);
+        if (!token) return null;
         const col = await removePosterFromCollection({
-          data: { uid: user.uid, collectionId, posterId },
+          data: { token, uid: user.uid, collectionId, posterId },
         });
         setCollections((prev) => prev.map((c) => (c.id === collectionId ? col : c)));
         return col;

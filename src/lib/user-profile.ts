@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { useAuth } from "./auth";
+import { getAuthToken } from "./auth-token";
 import { getUserProfile, updateBio, type UserProfile } from "./user-likes";
 
 const CACHE_KEY = "cineprint:user-profile";
@@ -73,7 +74,11 @@ function getServerSnapshot(): CacheEntry | null {
   return null;
 }
 
-export async function prefetchUserProfile(uid: string, fallbackCreatedAt?: string | null) {
+export async function prefetchUserProfile(
+  uid: string,
+  token: string | null,
+  fallbackCreatedAt?: string | null,
+) {
   if (inflight && inflightUid === uid) return inflight;
 
   if (cached?.uid !== uid) {
@@ -89,7 +94,7 @@ export async function prefetchUserProfile(uid: string, fallbackCreatedAt?: strin
   }
 
   inflightUid = uid;
-  inflight = getUserProfile({ data: uid })
+  inflight = getUserProfile({ data: { token: token ?? "", uid } })
     .then((profile) => {
       setCache(uid, profile);
       return profile;
@@ -118,18 +123,22 @@ export function useUserProfile() {
       return;
     }
 
-    void prefetchUserProfile(user.uid, user.metadata?.creationTime ?? null);
+    getAuthToken(user).then((token) => {
+      if (token) {
+        void prefetchUserProfile(user.uid, token, user.metadata?.creationTime ?? null);
+      }
+    });
   }, [user?.uid, user?.metadata?.creationTime]);
 
   const profile: UserProfile | null =
-    user && entry?.uid === user.uid
-      ? { createdAt: entry.createdAt, bio: entry.bio }
-      : null;
+    user && entry?.uid === user.uid ? { createdAt: entry.createdAt, bio: entry.bio } : null;
 
   const saveBio = useCallback(
     async (bio: string) => {
       if (!user) return;
-      await updateBio({ data: { uid: user.uid, bio } });
+      const token = await getAuthToken(user);
+      if (!token) throw new Error("No auth token");
+      await updateBio({ data: { token, uid: user.uid, bio } });
       setCache(user.uid, {
         createdAt: cached?.uid === user.uid ? cached.createdAt : null,
         bio,

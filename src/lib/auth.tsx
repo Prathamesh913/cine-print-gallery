@@ -131,28 +131,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
 
           if (firebaseUser) {
+            let token: string | null = null;
             try {
-              const { ensureUserProfile } = await import("./user-likes");
-              await ensureUserProfile({
-                data: {
-                  uid: firebaseUser.uid,
-                  email: firebaseUser.email,
-                  displayName: firebaseUser.displayName,
-                  photoURL: firebaseUser.photoURL,
-                  creationTime: firebaseUser.metadata?.creationTime ?? null,
-                },
-              });
+              token = await firebaseUser.getIdToken();
             } catch {
-              // non-critical — user doc will be created on first like if this fails
+              // token unavailable — skip background seeding/prefetch below
             }
-            try {
-              const { prefetchUserProfile } = await import("./user-profile");
-              void prefetchUserProfile(
-                firebaseUser.uid,
-                firebaseUser.metadata?.creationTime ?? null,
-              );
-            } catch {
-              // non-critical — profile loads on the profile page if prefetch fails
+            if (token) {
+              try {
+                const { ensureUserProfile } = await import("./user-likes");
+                await ensureUserProfile({
+                  data: {
+                    token,
+                    uid: firebaseUser.uid,
+                    email: firebaseUser.email,
+                    displayName: firebaseUser.displayName,
+                    photoURL: firebaseUser.photoURL,
+                    creationTime: firebaseUser.metadata?.creationTime ?? null,
+                  },
+                });
+              } catch {
+                // non-critical — user doc will be created on first like if this fails
+              }
+              try {
+                const { prefetchUserProfile } = await import("./user-profile");
+                void prefetchUserProfile(
+                  firebaseUser.uid,
+                  token,
+                  firebaseUser.metadata?.creationTime ?? null,
+                );
+              } catch {
+                // non-critical — profile loads on the profile page if prefetch fails
+              }
             }
           }
         });
