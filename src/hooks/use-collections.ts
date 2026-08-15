@@ -15,7 +15,21 @@ import {
   removePosterFromCollection,
 } from "@/lib/collections";
 
-export function useCollections() {
+// Lightweight cross-instance dedup: concurrent fetches for the same UID share a
+// single in-flight request instead of each useCollections() instance firing one.
+const inflightByUid = new Map<string, Promise<UserCollection[]>>();
+
+function fetchMyCollections(uid: string, token: string): Promise<UserCollection[]> {
+  const existing = inflightByUid.get(uid);
+  if (existing) return existing;
+  const request = listMyCollections({ data: { token, uid } }).finally(() => {
+    if (inflightByUid.get(uid) === request) inflightByUid.delete(uid);
+  });
+  inflightByUid.set(uid, request);
+  return request;
+}
+
+export function useCollections({ enabled = true }: { enabled?: boolean } = {}) {
   const { user } = useAuth();
   const [state, dispatch] = useReducer(collectionsReducer, readStateIdle<UserCollection[]>([]));
 
@@ -28,6 +42,8 @@ export function useCollections() {
       dispatch({ type: "SUCCESS", data: [] });
       return;
     }
+    // Avoid fetching while the consuming surface is closed (e.g. a dialog).
+    if (!enabled) return;
     dispatch({ type: "START" });
     try {
       const token = await getAuthToken(user);
@@ -35,14 +51,14 @@ export function useCollections() {
         dispatch({ type: "FAIL", error: COLLECTIONS_LOAD_ERROR });
         return;
       }
-      const list = await listMyCollections({ data: { token, uid: user.uid } });
+      const list = await fetchMyCollections(user.uid, token);
       dispatch({ type: "SUCCESS", data: list });
     } catch (err) {
       console.error("Failed to load collections:", err);
       // Preserve any existing collection list; surface the error.
       dispatch({ type: "FAIL", error: COLLECTIONS_LOAD_ERROR });
     }
-  }, [user]);
+  }, [user, enabled]);
 
   useEffect(() => {
     refresh();
