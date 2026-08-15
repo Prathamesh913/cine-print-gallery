@@ -33,6 +33,12 @@ let snapshot: ReadState<string[]> = readStateIdle<string[]>(
 let loadedForUid: string | null | undefined = undefined;
 const listeners = new Set<() => void>();
 
+// Rapid-toggle coalescing state: the latest intended saved-state per poster,
+// plus the last server-confirmed state so we never send a contradictory toggle.
+const desiredStates = new Map<string, boolean>();
+const serverStates = new Map<string, boolean>();
+const inFlightSyncs = new Set<string>();
+
 function emit() {
   listeners.forEach((l) => l());
   if (typeof window !== "undefined") {
@@ -91,6 +97,8 @@ async function loadForUser(uid: string, token: string, localIds: string[]) {
   const result = await loadSaved(uid, token, localIds);
   if (result.ok) {
     loadedForUid = uid;
+    serverStates.clear();
+    for (const id of result.data) serverStates.set(id, true);
     setSnapshot(loadSuccess(snapshot, result.data));
   } else {
     // Preserve any previously valid state; surface the error for the UI.
@@ -98,14 +106,64 @@ async function loadForUser(uid: string, token: string, localIds: string[]) {
   }
 }
 
+/**
+ * Drains queued desired states for a single poster, serializing server requests
+ * so a burst of rapid toggles ends with the server matching the user's final
+ * intent without issuing contradictory requests.
+ */
+export async function drainSavedSync(uid: string, token: string, id: string) {
+  if (inFlightSyncs.has(id)) return;
+  inFlightSyncs.add(id);
+  try {
+    while (desiredStates.has(id)) {
+      const desired = desiredStates.get(id)!;
+      desiredStates.delete(id);
+
+      // If the server already reflects the desired state, no request is needed
+      // (e.g. rapid add → remove → add coalesces to the final intent).
+      const current = serverStates.get(id) ?? false;
+      if (current === desired) continue;
+
+      try {
+        await toggleUserLike({ data: { token, uid, posterId: id } });
+        serverStates.set(id, desired);
+        if (snapshot.error) {
+          setSnapshot(loadSuccess(snapshot, snapshot.data ?? []));
+        }
+      } catch (err) {
+        console.error("Failed to sync like:", err);
+        toast.error("Failed to save. Please try again.");
+        // Restore the true server state.
+        await loadForUser(uid, token, []);
+        return;
+      }
+    }
+  } finally {
+    inFlightSyncs.delete(id);
+  }
+}
+
+/**
+ * Records the user's final intended saved-state for a poster and drives the
+ * serialized sync. Used by `useSaved`; exported for tests.
+ */
+export function syncSavedForUser(uid: string, token: string, id: string, desired: boolean) {
+  desiredStates.set(id, desired);
+  void drainSavedSync(uid, token, id);
+}
+
 export function useSaved() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (user) {
       const uid = user.uid;
       if (loadedForUid === uid && snapshot.error === null) return;
+
+      // Show the loading state immediately so the anonymous/empty list is never
+      // flashed while the authenticated list is still being resolved.
+      setSnapshot(loadStart(snapshot));
 
       getAuthToken(user)
         .then((token) => {
@@ -121,6 +179,7 @@ export function useSaved() {
         });
     } else {
       loadedForUid = null;
+      serverStates.clear();
       setSnapshot(readStateIdle<string[]>(read()));
       const onStorage = (e: StorageEvent) => {
         if (e.key === KEY) setSnapshot(readStateIdle<string[]>(read()));
@@ -131,6 +190,12 @@ export function useSaved() {
       };
     }
   }, [user?.uid]);
+
+  // While auth is resolving, or after sign-in before the account list arrives,
+  // treat the state as loading rather than showing the anonymous/empty list.
+  const pendingAuthed =
+    !!user && loadedForUid !== user.uid && snapshot.error === null && !snapshot.loading;
+  const loading = snapshot.loading || authLoading || pendingAuthed;
 
   const retry = useCallback(() => {
     if (!user) return;
@@ -148,14 +213,14 @@ export function useSaved() {
       const wasSaved = prev.includes(id);
       const next = wasSaved ? prev.filter((x) => x !== id) : [...prev, id];
 
-      // Optimistic update; roll back if the sync fails.
+      // Optimistic update; server sync is serialized/coalesced below.
       setSnapshot(loadSuccess(snapshot, next));
 
       if (user) {
         getAuthToken(user)
           .then((token) => {
             if (!token) throw new Error("No auth token");
-            return toggleUserLike({ data: { token, uid: user.uid, posterId: id } });
+            syncSavedForUser(user.uid, token, id, next.includes(id));
           })
           .catch((err) => {
             console.error("Failed to sync like:", err);
@@ -174,7 +239,7 @@ export function useSaved() {
     toggle,
     isSaved: (id: string) => (state.data ?? []).includes(id),
     error: state.error,
-    loading: state.loading,
+    loading,
     retry,
   };
 }

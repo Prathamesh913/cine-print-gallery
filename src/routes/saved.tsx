@@ -30,7 +30,7 @@ function SavedPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const postersList = Route.useLoaderData();
-  const { saved, error: savedError, retry: retrySaved } = useSaved();
+  const { saved, error: savedError, loading: savedLoading, retry: retrySaved } = useSaved();
   const {
     collections,
     loading: colsLoading,
@@ -92,7 +92,11 @@ function SavedPage() {
 
         {tab === "pins" ? (
           <>
-            {savedError ? (
+            {savedLoading ? (
+              <div className="flex min-h-[50vh] items-center justify-center">
+                <p className="text-sm text-white/55">Loading your saved posters…</p>
+              </div>
+            ) : savedError ? (
               <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
                 <p className="text-white/70">{savedError}</p>
                 <button

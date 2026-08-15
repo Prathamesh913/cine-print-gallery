@@ -2,8 +2,32 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useEffect, useState, useRef, useReducer } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Pencil, Award, Bookmark, Calendar, Image, FolderPlus, Heart } from "lucide-react";
+import {
+  Pencil,
+  Award,
+  Bookmark,
+  Calendar,
+  Image,
+  FolderPlus,
+  Heart,
+  Download,
+  Trash2,
+  Loader2,
+} from "lucide-react";
 import { bioReducer } from "@/lib/bio-editor";
+import { getAuthToken } from "@/lib/auth-token";
+import { exportUserData, deleteAccount } from "@/lib/account";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
 import { Footer } from "@/components/Footer";
@@ -30,10 +54,10 @@ export const Route = createFileRoute("/profile")({
 });
 
 function ProfilePage() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const postersList = Route.useLoaderData();
-  const { saved, error: savedError, retry: retrySaved } = useSaved();
+  const { saved, error: savedError, loading: savedLoading, retry: retrySaved } = useSaved();
   const {
     collections,
     loading: colsLoading,
@@ -58,6 +82,7 @@ function ProfilePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [tab, setTab] = useState<"pins" | "collections">("pins");
   const [createOpen, setCreateOpen] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -103,6 +128,64 @@ function ProfilePage() {
     }
     if (bio.editing && !bio.saving) {
       void saveBio();
+    }
+  };
+
+  const handleExport = async () => {
+    if (!user) return;
+    const token = await getAuthToken(user);
+    if (!token) {
+      toast.error("Couldn't export your data. Please sign in again.");
+      return;
+    }
+    try {
+      const data = await exportUserData({ data: { token, uid: user.uid } });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cineprint-data.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success("Your data has been exported.");
+    } catch (err) {
+      console.error("Export failed:", err);
+      toast.error("Couldn't export your data. Please try again.");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user || deletingAccount) return;
+    setDeletingAccount(true);
+    try {
+      const token = await getAuthToken(user);
+      if (!token) {
+        toast.error("Couldn't delete your account. Please sign in again.");
+        return;
+      }
+      await deleteAccount({ data: { token, uid: user.uid } });
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.removeItem("cineprint:saved");
+        } catch {
+          // ignore
+        }
+        try {
+          sessionStorage.removeItem("cineprint:user-profile");
+        } catch {
+          // ignore
+        }
+      }
+      toast.success("Your account has been deleted.");
+      await signOut();
+      navigate({ to: "/" });
+    } catch (err) {
+      console.error("Account deletion failed:", err);
+      toast.error("Couldn't delete your account. Please try again.");
+    } finally {
+      setDeletingAccount(false);
     }
   };
 
@@ -308,7 +391,11 @@ function ProfilePage() {
 
           {tab === "pins" ? (
             <>
-              {savedError ? (
+              {savedLoading ? (
+                <div className="flex min-h-[30vh] items-center justify-center">
+                  <p className="text-sm text-white/55">Loading your saved posters…</p>
+                </div>
+              ) : savedError ? (
                 <div className="flex min-h-[30vh] flex-col items-center justify-center gap-4 text-center">
                   <p className="text-white/70">{savedError}</p>
                   <button
@@ -400,6 +487,66 @@ function ProfilePage() {
               )}
             </>
           )}
+        </div>
+
+        {/* Data & account */}
+        <div className="mt-10 border-t border-white/10 px-4 pt-8 sm:px-6">
+          <h2 style={{ fontFamily: "Poppins, sans-serif" }} className="mb-4 text-lg font-semibold">
+            Data & account
+          </h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-white/65">
+              Export your profile, saved posters, and collections.
+            </p>
+            <button
+              onClick={handleExport}
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm transition-colors hoverable:hover:border-white/30"
+            >
+              <Download size={14} />
+              Export my data
+            </button>
+          </div>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-white/65">
+              Permanently delete your account and all your data.
+            </p>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-red-400/30 px-4 py-2 text-sm text-red-400 transition-colors hoverable:hover:bg-red-400/10">
+                  <Trash2 size={14} />
+                  Delete account
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete account?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This permanently deletes your profile, saved posters, and collections. This
+                    action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="rounded-full border border-white/15 px-4 py-2 text-sm">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    disabled={deletingAccount}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-red-500 px-4 py-2 text-sm font-medium text-white disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    {deletingAccount ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        Deleting…
+                      </>
+                    ) : (
+                      "Delete account"
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </main>
       <Footer />
