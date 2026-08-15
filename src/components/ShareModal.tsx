@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Copy, Download, Share2, Printer, Loader2 } from "lucide-react";
 import { type Poster } from "@/lib/posters";
 import { generateTicketBlob } from "@/lib/ticket";
@@ -19,7 +19,54 @@ export function ShareModal({ poster, onClose }: Props) {
   const [sharing, setSharing] = useState(false);
   // Exit animation state
   const [visible, setVisible] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
   const ticketSmoothing = useCornerSmoothing<HTMLDivElement>(16, 60);
+
+  // Dialog accessibility: focus trap, Escape to close, focus restoration and
+  // body scroll lock while the modal is open.
+  useEffect(() => {
+    const previousFocus =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusables = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => !el.hasAttribute("disabled"));
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKey);
+    // Focus the panel so keyboard/screen-reader users start inside the dialog.
+    requestAnimationFrame(() => panelRef.current?.focus());
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({
     transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
@@ -106,7 +153,9 @@ export function ShareModal({ poster, onClose }: Props) {
     };
 
     const enableGyro = () => {
-      const reqPermission = (DeviceOrientationEvent as any).requestPermission;
+      const reqPermission = (
+        DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> }
+      ).requestPermission;
       if (typeof reqPermission === "function") {
         reqPermission()
           .then((state: string) => {
@@ -270,8 +319,14 @@ export function ShareModal({ poster, onClose }: Props) {
       style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none" }}
     >
       <div
+        ref={panelRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative flex w-full max-w-3xl flex-col rounded-2xl border border-white/15 bg-[#202020] p-6 shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="share-ticket-title"
+        aria-describedby="share-ticket-description"
+        tabIndex={-1}
+        className="relative flex w-full max-w-3xl flex-col rounded-2xl border border-white/15 bg-[#202020] p-6 shadow-2xl outline-none"
       >
         <button
           onClick={handleClose}
@@ -282,12 +337,15 @@ export function ShareModal({ poster, onClose }: Props) {
         </button>
 
         <h3
+          id="share-ticket-title"
           style={{ fontFamily: "Poppins, sans-serif" }}
           className="mb-1 text-lg font-semibold text-[#F5F5F5]"
         >
           Poster Ticket
         </h3>
-        <p className="mb-6 text-xs text-white/65">Save or share this ticket of {poster.title}</p>
+        <p id="share-ticket-description" className="mb-6 text-xs text-white/65">
+          Save or share this ticket of {poster.title}
+        </p>
 
         {/* Ticket Container */}
         <div className="flex min-h-[220px] items-center justify-center rounded-xl bg-black/40 p-4 border border-white/5">
