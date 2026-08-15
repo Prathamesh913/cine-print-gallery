@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   Copy,
@@ -457,56 +457,84 @@ function OwnerAwareGrid({
   onSetCover: (id: string) => void;
   onRemove: (id: string) => void;
 }) {
+  const pageSize = 24;
+  const [count, setCount] = useState(pageSize);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCount(pageSize);
+  }, [posters]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setCount((c) => Math.min(c + pageSize, posters.length));
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [posters.length]);
+
   if (!isOwner) {
     return <PosterGrid posters={posters} onOpen={onOpen} />;
   }
 
+  const visible = posters.slice(0, count);
+
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-      {posters.map((p) => (
-        <div key={p.id} className="group relative">
-          <button
-            type="button"
-            onClick={() => onOpen(p)}
-            className="block w-full overflow-hidden rounded-lg border border-white/5 bg-white/[0.05] text-left"
-          >
-            <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
-              <PosterImage
-                poster={p}
-                purpose="gallery"
-                alt={p.title}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div className="p-2">
-              <p className="truncate text-xs font-medium">{p.title}</p>
-              <p className="truncate text-[10px] text-white/55">{p.year}</p>
-            </div>
-          </button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white opacity-100 backdrop-blur-sm sm:opacity-0 sm:group-hover:opacity-100"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal size={14} />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onSetCover(p.id)}>
-                <ImageIcon size={14} /> Set as cover
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-red-400 focus:text-red-400"
-                onClick={() => onRemove(p.id)}
-              >
-                <Trash2 size={14} /> Remove from collection
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        {visible.map((p) => (
+          <div key={p.id} className="group relative">
+            <button
+              type="button"
+              onClick={() => onOpen(p)}
+              className="block w-full overflow-hidden rounded-lg border border-white/5 bg-white/[0.05] text-left"
+            >
+              <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
+                <PosterImage
+                  poster={p}
+                  purpose="gallery"
+                  alt={p.title}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="p-2">
+                <p className="truncate text-xs font-medium">{p.title}</p>
+                <p className="truncate text-[10px] text-white/55">{p.year}</p>
+              </div>
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white opacity-100 backdrop-blur-sm sm:opacity-0 sm:group-hover:opacity-100"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal size={14} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onSetCover(p.id)}>
+                  <ImageIcon size={14} /> Set as cover
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-red-400 focus:text-red-400"
+                  onClick={() => onRemove(p.id)}
+                >
+                  <Trash2 size={14} /> Remove from collection
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ))}
+      </div>
+      <div ref={sentinelRef} className="h-10" />
+    </>
   );
 }
