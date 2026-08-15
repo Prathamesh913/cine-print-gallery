@@ -191,9 +191,9 @@ export async function addPosterToCollectionCore(
     return current; // idempotent
   }
 
-  const posterIds = [...current.posterIds, data.posterId];
+  // Atomic append: arrayUnion avoids losing posters when multiple adds race.
   const patch: Record<string, unknown> = {
-    posterIds,
+    posterIds: api.arrayUnion(data.posterId),
     updatedAt: api.serverTimestamp(),
   };
   if (!current.coverPosterId) {
@@ -203,7 +203,8 @@ export async function addPosterToCollectionCore(
   await api.updateDoc(ref, patch);
   return plainCollection(data.collectionId, {
     ...current,
-    ...patch,
+    posterIds: [...current.posterIds, data.posterId],
+    coverPosterId: current.coverPosterId ?? data.posterId,
     updatedAt: new Date().toISOString(),
   });
 }
@@ -219,9 +220,14 @@ export async function removePosterFromCollectionCore(
   const current = plainCollection(data.collectionId, snap.data());
   assertOwner(current, data.uid);
 
+  if (!current.posterIds.includes(data.posterId)) {
+    return current; // idempotent
+  }
+
   const posterIds = current.posterIds.filter((id) => id !== data.posterId);
+  // Atomic removal: arrayRemove cannot be clobbered by a concurrent full-array write.
   const patch: Record<string, unknown> = {
-    posterIds,
+    posterIds: api.arrayRemove(data.posterId),
     updatedAt: api.serverTimestamp(),
   };
   if (current.coverPosterId === data.posterId) {
@@ -231,7 +237,9 @@ export async function removePosterFromCollectionCore(
   await api.updateDoc(ref, patch);
   return plainCollection(data.collectionId, {
     ...current,
-    ...patch,
+    posterIds,
+    coverPosterId:
+      current.coverPosterId === data.posterId ? posterIds[0] || null : current.coverPosterId,
     updatedAt: new Date().toISOString(),
   });
 }
