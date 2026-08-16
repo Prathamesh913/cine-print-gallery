@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { FolderPlus, Heart } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
+import { GalleryErrorBoundary } from "@/components/GalleryErrorBoundary";
 import { Footer } from "@/components/Footer";
 import { TabToggle } from "@/components/TabToggle";
 import { CollectionCard } from "@/components/CollectionCard";
@@ -126,7 +127,9 @@ function SavedPage() {
                     </Link>
                   </div>
                 ) : (
-                  <PosterGrid posters={posters} onOpen={handleOpen} />
+                  <GalleryErrorBoundary>
+                    <PosterGrid posters={posters} onOpen={handleOpen} />
+                  </GalleryErrorBoundary>
                 )}
               </>
             )}

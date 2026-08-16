@@ -4,6 +4,7 @@ import { Film, Search } from "lucide-react";
 import { Header } from "@/components/Header";
 import { FilterBar } from "@/components/FilterBar";
 import { PosterGrid } from "@/components/PosterGrid";
+import { GalleryErrorBoundary } from "@/components/GalleryErrorBoundary";
 import { Footer } from "@/components/Footer";
 import { type Poster, type PosterStyle, type PosterGenre } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
@@ -217,7 +218,9 @@ function Home() {
             </div>
           </div>
         ) : (
-          <PosterGrid posters={filtered} onOpen={handleOpen} />
+          <GalleryErrorBoundary>
+            <PosterGrid posters={filtered} onOpen={handleOpen} />
+          </GalleryErrorBoundary>
         )}
       </main>
       <Footer />

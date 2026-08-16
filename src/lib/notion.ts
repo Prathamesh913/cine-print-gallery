@@ -7,36 +7,54 @@ let lastFetchTime = 0;
 const CACHE_TTL = 2 * 60 * 1000; // 2 minutes in-memory cache
 
 function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
-  const artists = Array.isArray(raw.artists)
+  let artists = Array.isArray(raw.artists)
     ? raw.artists.map((a: any) => ({
-        name: String(a?.name || "Unknown"),
-        url: a?.url ? String(a.url) : undefined,
+        name: String(a?.name || "Unknown").trim(),
+        url: a?.url ? String(a.url).trim() : undefined,
       }))
     : undefined;
 
+  // Fall back to the legacy flat `artist` field when no `artists` array exists.
+  if (!artists && raw.artist) {
+    artists = [
+      {
+        name: String(raw.artist).trim(),
+        url: raw.artistUrl ? String(raw.artistUrl).trim() : undefined,
+      },
+    ];
+  }
+
+  const title = String(raw.title || "Untitled").trim();
+  const slug =
+    (raw.slug ? String(raw.slug).trim() : undefined) ||
+    title.toLowerCase().trim().replace(/\s+/g, "-") ||
+    "untitled";
+
   return {
     id,
-    title: String(raw.title || "Untitled"),
+    title,
     year: typeof raw.year === "number" ? raw.year : Number(raw.year) || 0,
     artists,
-    artist: String(raw.artist || artists?.[0]?.name || "Unknown"),
-    artistUrl: raw.artistUrl ? String(raw.artistUrl) : artists?.[0]?.url,
-    source: String(raw.source || "Unknown"),
-    sourceUrl: String(raw.sourceUrl || ""),
-    image: String(raw.image || raw.posterImageUrl || ""),
-    style: String(raw.style || "Minimalist"),
-    genre: Array.isArray(raw.genre) ? raw.genre.map(String) : [],
-    tags: Array.isArray(raw.tags) ? raw.tags.map(String) : [],
-    note: raw.note ? String(raw.note) : undefined,
-    mediaType: raw.mediaType ? String(raw.mediaType) : undefined,
-    tmdbId: raw.tmdbId ? String(raw.tmdbId) : undefined,
-    imdbId: raw.imdbId ? String(raw.imdbId) : undefined,
+    artist: String(raw.artist || artists?.[0]?.name || "Unknown").trim(),
+    artistUrl: raw.artistUrl ? String(raw.artistUrl).trim() : artists?.[0]?.url,
+    source: String(raw.source || "Unknown").trim(),
+    sourceUrl: String(raw.sourceUrl || "").trim(),
+    image: String(raw.image || raw.posterImageUrl || "").trim(),
+    style: String(raw.style || "Minimalist").trim(),
+    genre: Array.isArray(raw.genre) ? raw.genre.map((g) => String(g).trim()) : [],
+    tags: Array.isArray(raw.tags) ? raw.tags.map((t) => String(t).trim()) : [],
+    note: raw.note ? String(raw.note).trim() : undefined,
+    mediaType: raw.mediaType ? String(raw.mediaType).trim() : undefined,
+    tmdbId: raw.tmdbId ? String(raw.tmdbId).trim() : undefined,
+    imdbId: raw.imdbId ? String(raw.imdbId).trim() : undefined,
     seasonNumber: typeof raw.seasonNumber === "number" ? raw.seasonNumber : undefined,
-    collectionName: raw.collectionName ? String(raw.collectionName) : undefined,
-    posterImageUrl: raw.posterImageUrl ? String(raw.posterImageUrl) : undefined,
-    backgroundUrl: raw.backgroundUrl ? String(raw.backgroundUrl) : undefined,
-    libraryNames: Array.isArray(raw.libraryNames) ? raw.libraryNames.map(String) : undefined,
-    slug: raw.slug ? String(raw.slug) : undefined,
+    collectionName: raw.collectionName ? String(raw.collectionName).trim() : undefined,
+    posterImageUrl: raw.posterImageUrl ? String(raw.posterImageUrl).trim() : undefined,
+    backgroundUrl: raw.backgroundUrl ? String(raw.backgroundUrl).trim() : undefined,
+    libraryNames: Array.isArray(raw.libraryNames)
+      ? raw.libraryNames.map((l) => String(l).trim())
+      : undefined,
+    slug,
   };
 }
 
