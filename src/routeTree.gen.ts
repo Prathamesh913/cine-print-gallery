@@ -11,10 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as SavedRouteImport } from './routes/saved'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ConstellationRouteImport } from './routes/constellation'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PosterIdRouteImport } from './routes/poster/$id'
+import { Route as CIdRouteImport } from './routes/c/$id'
 import { Route as ArtistSlugRouteImport } from './routes/artist/$slug'
 
 const SubmitRoute = SubmitRouteImport.update({
@@ -25,6 +29,21 @@ const SubmitRoute = SubmitRouteImport.update({
 const SavedRoute = SavedRouteImport.update({
   id: '/saved',
   path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConstellationRoute = ConstellationRouteImport.update({
@@ -47,6 +66,11 @@ const PosterIdRoute = PosterIdRouteImport.update({
   path: '/poster/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CIdRoute = CIdRouteImport.update({
+  id: '/c/$id',
+  path: '/c/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArtistSlugRoute = ArtistSlugRouteImport.update({
   id: '/artist/$slug',
   path: '/artist/$slug',
@@ -57,18 +81,26 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/constellation': typeof ConstellationRoute
+  '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
+  '/c/$id': typeof CIdRoute
   '/poster/$id': typeof PosterIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/constellation': typeof ConstellationRoute
+  '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
+  '/c/$id': typeof CIdRoute
   '/poster/$id': typeof PosterIdRoute
 }
 export interface FileRoutesById {
@@ -76,9 +108,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/constellation': typeof ConstellationRoute
+  '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
+  '/c/$id': typeof CIdRoute
   '/poster/$id': typeof PosterIdRoute
 }
 export interface FileRouteTypes {
@@ -87,27 +123,39 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/constellation'
+    | '/login'
+    | '/privacy'
+    | '/profile'
     | '/saved'
     | '/submit'
     | '/artist/$slug'
+    | '/c/$id'
     | '/poster/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/constellation'
+    | '/login'
+    | '/privacy'
+    | '/profile'
     | '/saved'
     | '/submit'
     | '/artist/$slug'
+    | '/c/$id'
     | '/poster/$id'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/constellation'
+    | '/login'
+    | '/privacy'
+    | '/profile'
     | '/saved'
     | '/submit'
     | '/artist/$slug'
+    | '/c/$id'
     | '/poster/$id'
   fileRoutesById: FileRoutesById
 }
@@ -115,9 +163,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ConstellationRoute: typeof ConstellationRoute
+  LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
   SubmitRoute: typeof SubmitRoute
   ArtistSlugRoute: typeof ArtistSlugRoute
+  CIdRoute: typeof CIdRoute
   PosterIdRoute: typeof PosterIdRoute
 }
 
@@ -135,6 +187,27 @@ declare module '@tanstack/react-router' {
       path: '/saved'
       fullPath: '/saved'
       preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/constellation': {
@@ -165,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PosterIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/c/$id': {
+      id: '/c/$id'
+      path: '/c/$id'
+      fullPath: '/c/$id'
+      preLoaderRoute: typeof CIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/artist/$slug': {
       id: '/artist/$slug'
       path: '/artist/$slug'
@@ -179,9 +259,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ConstellationRoute: ConstellationRoute,
+  LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
   SubmitRoute: SubmitRoute,
   ArtistSlugRoute: ArtistSlugRoute,
+  CIdRoute: CIdRoute,
   PosterIdRoute: PosterIdRoute,
 }
 export const routeTree = rootRouteImport

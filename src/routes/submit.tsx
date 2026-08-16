@@ -78,7 +78,7 @@ function Submit() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} />
       <main className="mx-auto w-full max-w-xl px-6 py-16 flex-grow flex flex-col justify-center">
         <span style={{ fontFamily: "Bebas Neue, sans-serif", color: "#FF6B6B" }} className="text-sm tracking-[0.3em]">
@@ -94,7 +94,7 @@ function Submit() {
         </p>
 
         {/* Role Selector Toggle */}
-        <div className="mt-6 flex rounded-full bg-white/5 p-1 border border-white/10">
+        <div className="mt-6 flex rounded-full bg-white/5 p-1 border border-white/15">
           <button
             type="button"
             onClick={() => setRole("fan")}
@@ -129,7 +129,7 @@ function Submit() {
             <h3 style={{ fontFamily: "Poppins, sans-serif" }} className="text-lg font-semibold text-[#F5F5F5]">
               Submission Received!
             </h3>
-            <p className="mt-2 text-sm text-white/50 leading-relaxed">
+            <p className="mt-2 text-sm text-white/65 leading-relaxed">
               Thanks for sharing! Our team reviews every submission for styling, resolution, and credit details before publishing.
             </p>
             <button
@@ -207,16 +207,16 @@ function Submit() {
                 />
                 
                 {/* Copyright Confirmation Checkbox */}
-                <div className="flex items-start gap-3 rounded-xl border border-white/5 bg-white/2 px-4 py-3">
+                <div className="flex items-start gap-3 rounded-xl border border-white/5 bg-white/5 px-4 py-3">
                   <input
                     id="isCopyrightConfirmed"
                     type="checkbox"
                     checked={form.isCopyrightConfirmed}
                     onChange={handleCheckboxChange}
-                    className="mt-1 h-4 w-4 rounded border-white/10 bg-white/5 text-[#FF6B6B] focus:ring-[#FF6B6B]"
+                    className="mt-1 h-4 w-4 rounded border-white/15 bg-white/5 text-[#FF6B6B] focus:ring-[#FF6B6B]"
                     required
                   />
-                  <label htmlFor="isCopyrightConfirmed" className="text-xs text-white/50 leading-relaxed cursor-pointer select-none">
+                  <label htmlFor="isCopyrightConfirmed" className="text-xs text-white/65 leading-relaxed cursor-pointer select-none">
                     I confirm that <strong className="text-white/80">I am the original creator</strong> of this artwork, and grant CinePrint permission to display it in the gallery.
                   </label>
                 </div>
@@ -224,13 +224,13 @@ function Submit() {
             )}
 
             <div>
-              <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/40">Additional Notes</label>
+              <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/55">Additional Notes</label>
               <textarea
                 value={form.note}
                 onChange={update("note")}
                 placeholder="Any extra context, dimensions, or printing details..."
                 rows={3}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-[#F5F5F5] placeholder:text-white/30 focus:border-[#FF6B6B] focus:outline-none transition-colors"
+                className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-[#F5F5F5] placeholder:text-white/45 focus:border-[#FF6B6B] focus:outline-none transition-colors"
               />
             </div>
 
@@ -259,10 +259,10 @@ function Submit() {
 function Field({ label, ...rest }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/40">{label}</label>
+      <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/55">{label}</label>
       <input
         {...rest}
-        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-[#F5F5F5] placeholder:text-white/30 focus:border-[#FF6B6B] focus:outline-none transition-colors"
+        className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-[#F5F5F5] placeholder:text-white/45 focus:border-[#FF6B6B] focus:outline-none transition-colors"
       />
     </div>
   );

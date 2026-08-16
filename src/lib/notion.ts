@@ -1,72 +1,106 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type Poster } from "./posters";
-import { collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "./firebase";
+import { getAdminDb, db } from "./firebase";
 
 let cachedPosters: Poster[] | null = null;
 let lastFetchTime = 0;
 const CACHE_TTL = 2 * 60 * 1000; // 2 minutes in-memory cache
 
+function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
+  let artists = Array.isArray(raw.artists)
+    ? raw.artists.map((a: any) => ({
+        name: String(a?.name || "Unknown").trim(),
+        url: a?.url ? String(a.url).trim() : undefined,
+      }))
+    : undefined;
+
+  // Fall back to the legacy flat `artist` field when no `artists` array exists.
+  if (!artists && raw.artist) {
+    artists = [
+      {
+        name: String(raw.artist).trim(),
+        url: raw.artistUrl ? String(raw.artistUrl).trim() : undefined,
+      },
+    ];
+  }
+
+  const title = String(raw.title || "Untitled").trim();
+  const slug =
+    (raw.slug ? String(raw.slug).trim() : undefined) ||
+    title.toLowerCase().trim().replace(/\s+/g, "-") ||
+    "untitled";
+
+  return {
+    id,
+    title,
+    year: typeof raw.year === "number" ? raw.year : Number(raw.year) || 0,
+    artists,
+    artist: String(raw.artist || artists?.[0]?.name || "Unknown").trim(),
+    artistUrl: raw.artistUrl ? String(raw.artistUrl).trim() : artists?.[0]?.url,
+    source: String(raw.source || "Unknown").trim(),
+    sourceUrl: String(raw.sourceUrl || "").trim(),
+    image: String(raw.image || raw.posterImageUrl || "").trim(),
+    style: String(raw.style || "Minimalist").trim(),
+    genre: Array.isArray(raw.genre) ? raw.genre.map((g) => String(g).trim()) : [],
+    tags: Array.isArray(raw.tags) ? raw.tags.map((t) => String(t).trim()) : [],
+    note: raw.note ? String(raw.note).trim() : undefined,
+    mediaType: raw.mediaType ? String(raw.mediaType).trim() : undefined,
+    tmdbId: raw.tmdbId ? String(raw.tmdbId).trim() : undefined,
+    imdbId: raw.imdbId ? String(raw.imdbId).trim() : undefined,
+    seasonNumber: typeof raw.seasonNumber === "number" ? raw.seasonNumber : undefined,
+    collectionName: raw.collectionName ? String(raw.collectionName).trim() : undefined,
+    posterImageUrl: raw.posterImageUrl ? String(raw.posterImageUrl).trim() : undefined,
+    backgroundUrl: raw.backgroundUrl ? String(raw.backgroundUrl).trim() : undefined,
+    libraryNames: Array.isArray(raw.libraryNames)
+      ? raw.libraryNames.map((l) => String(l).trim())
+      : undefined,
+    slug,
+  };
+}
+
 export const fetchNotionPosters = createServerFn({ method: "POST" })
   .handler(async (): Promise<Poster[]> => {
-    if (!db) {
-      console.warn("Firebase Firestore db is not initialized. Make sure FIREBASE_PROJECT_ID, etc. are set in your .env file.");
-      return [];
-    }
-
     const now = Date.now();
-    if (cachedPosters && (now - lastFetchTime < CACHE_TTL)) {
+    if (cachedPosters && now - lastFetchTime < CACHE_TTL) {
       return cachedPosters;
     }
 
     try {
-      const postersRef = collection(db, "posters");
-      const q = query(postersRef, where("status", "==", "published"));
-      const querySnapshot = await getDocs(q);
+      const { db: adminDb, isAdmin } = await getAdminDb();
+      const firestore = adminDb || db;
 
-      const posters: Poster[] = [];
-      querySnapshot.forEach((doc) => {
-        const { createdAt, ...raw } = doc.data();
-        const data = raw || {};
+      if (!firestore) {
+        console.warn(
+          "Firebase Firestore db is not initialized. Make sure FIREBASE_PROJECT_ID (or firebase-admin-key.json) is configured.",
+        );
+        return [];
+      }
 
-        let artists = undefined;
-        if (Array.isArray(data.artists)) {
-          artists = data.artists.map((a: any) => ({
-            name: String(a?.name || "Unknown").trim(),
-            url: a?.url ? String(a.url).trim() : undefined
-          }));
-        } else if (data.artist) {
-          artists = [{ name: String(data.artist).trim(), url: data.artistUrl ? String(data.artistUrl).trim() : undefined }];
-        }
+      let rows: { id: string; data: Record<string, unknown> }[] = [];
 
-        const poster: Poster = {
+      if (isAdmin) {
+        const snap = await firestore
+          .collection("posters")
+          .where("status", "==", "published")
+          .get();
+        rows = snap.docs.map((doc: { id: string; data: () => Record<string, unknown> }) => ({
           id: doc.id,
-          title: String(data.title || "Untitled").trim(),
-          year: Number(data.year) || 0,
-          artist: String(data.artist || "Unknown").trim(),
-          artists,
-          artistUrl: data.artistUrl ? String(data.artistUrl).trim() : undefined,
-          source: String(data.source || "Unknown").trim(),
-          sourceUrl: data.sourceUrl ? String(data.sourceUrl).trim() : "",
-          image: String(data.image || "").trim(),
-          style: String(data.style || "Minimalist").trim(),
-          genre: Array.isArray(data.genre) ? data.genre.map(String) : [],
-          tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
-          note: data.note ? String(data.note).trim() : undefined,
-          mediaType: data.mediaType ? String(data.mediaType).trim() : undefined,
-          tmdbId: data.tmdbId ? String(data.tmdbId).trim() : undefined,
-          imdbId: data.imdbId ? String(data.imdbId).trim() : undefined,
-          seasonNumber: data.seasonNumber !== undefined && data.seasonNumber !== null ? Number(data.seasonNumber) : undefined,
-          collectionName: data.collectionName ? String(data.collectionName).trim() : undefined,
-          posterImageUrl: data.posterImageUrl ? String(data.posterImageUrl).trim() : undefined,
-          backgroundUrl: data.backgroundUrl ? String(data.backgroundUrl).trim() : undefined,
-          libraryNames: Array.isArray(data.libraryNames) ? data.libraryNames.map(String) : [],
-          slug: String(data.slug || "").trim() || String(data.title || "").toLowerCase().trim().replace(/\s+/g, "-") || "untitled"
-        };
-        posters.push(poster);
-      });
+          data: doc.data(),
+        }));
+      } else {
+        const { collection, getDocs, query, where } = await import("firebase/firestore");
+        const q = query(collection(firestore, "posters"), where("status", "==", "published"));
+        const snap = await getDocs(q);
+        rows = snap.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data() as Record<string, unknown>,
+        }));
+      }
 
-      // Sort by creation date if needed, or leave order as fetched
+      const posters = rows
+        .map(({ id, data }) => toPlainPoster(id, data))
+        .filter((p) => Boolean(p.image));
+
       cachedPosters = posters;
       lastFetchTime = now;
       return posters;
@@ -93,7 +127,7 @@ export const getBase64Image = createServerFn({ method: "POST" })
         host.startsWith("192.168.") ||
         host.startsWith("10.") ||
         host.startsWith("172.16.") ||
-        host.startsWith("169.254."); // Block cloud metadata addresses
+        host.startsWith("169.254.");
 
       if (isPrivateOrLoopback) {
         throw new Error("Invalid request host.");
@@ -114,54 +148,75 @@ export const getBase64Image = createServerFn({ method: "POST" })
   });
 
 export const submitPosterToNotion = createServerFn({ method: "POST" })
-  .validator((data: {
-    role: "fan" | "artist";
-    title: string;
-    artistName: string;
-    image: string;
-    source: string;
-    portfolio: string;
-    socials: string;
-    note: string;
-    isCopyrightConfirmed: boolean;
-  }) => data)
+  .validator(
+    (data: {
+      role: "fan" | "artist";
+      title: string;
+      artistName: string;
+      image: string;
+      source: string;
+      portfolio: string;
+      socials: string;
+      note: string;
+      isCopyrightConfirmed: boolean;
+    }) => data,
+  )
   .handler(async ({ data }): Promise<{ success: boolean; pageId: string }> => {
-    if (!db) {
-      throw new Error("Firebase Firestore db is not initialized. Make sure your environment variables are configured.");
-    }
-
     try {
+      const { db: adminDb, isAdmin } = await getAdminDb();
       const cleanSlug = data.title.toLowerCase().trim().replace(/\s+/g, "-");
-      const docRef = await addDoc(collection(db, "posters"), {
+      const payload = {
         title: data.title,
         artist: data.artistName || "Unknown",
-        artists: [{ name: data.artistName || "Unknown", url: data.role === "artist" ? data.portfolio || null : null }],
+        artists: [
+          {
+            name: data.artistName || "Unknown",
+            url: data.role === "artist" ? data.portfolio || null : null,
+          },
+        ],
         image: data.image,
         source: data.role === "fan" ? data.source : "Artist Submission",
         sourceUrl: data.role === "fan" ? data.source : data.portfolio,
         note: data.note,
         status: "review",
-        createdAt: serverTimestamp(),
         year: 0,
         artistUrl: data.role === "artist" ? data.portfolio || null : null,
         style: "Minimalist",
-        genre: [],
-        tags: [],
-        mediaType: null,
-        tmdbId: null,
-        imdbId: null,
-        seasonNumber: null,
-        collectionName: null,
+        genre: [] as string[],
+        tags: [] as string[],
+        mediaType: null as string | null,
+        tmdbId: null as string | null,
+        imdbId: null as string | null,
+        seasonNumber: null as number | null,
+        collectionName: null as string | null,
         posterImageUrl: data.image,
-        backgroundUrl: null,
-        libraryNames: [],
-        slug: cleanSlug
-      });
+        backgroundUrl: null as string | null,
+        libraryNames: [] as string[],
+        slug: cleanSlug,
+      };
 
+      if (isAdmin && adminDb) {
+        const ref = await adminDb.collection("posters").add({
+          ...payload,
+          createdAt: new Date(),
+        });
+        return { success: true, pageId: ref.id };
+      }
+
+      if (!db) {
+        throw new Error(
+          "Firebase Firestore db is not initialized. Make sure your environment variables are configured.",
+        );
+      }
+
+      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+      const docRef = await addDoc(collection(db, "posters"), {
+        ...payload,
+        createdAt: serverTimestamp(),
+      });
       return { success: true, pageId: docRef.id };
     } catch (err: any) {
       console.error("Failed inserting submission into Firestore:", err);
       throw new Error(`Failed all insertion attempts. Error: ${err.message}`);
     }
   });
-

@@ -115,10 +115,10 @@ function Home() {
 
   if (posters.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col justify-between" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
+      <div className="min-h-screen flex flex-col justify-between" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
         <Header query={query} onQueryChange={setQuery} showSearch={false} />
         <main className="mx-auto max-w-[1600px] px-4 py-20 sm:px-6 flex-grow flex items-center justify-center">
-          <div className="max-w-md w-full rounded-2xl border border-white/10 bg-white/5 p-8 text-center shadow-xl backdrop-blur-md">
+          <div className="max-w-md w-full rounded-2xl border border-white/15 bg-white/5 p-8 text-center shadow-xl backdrop-blur-md">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B] mb-4">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -128,7 +128,7 @@ function Home() {
             <p className="text-white/60 text-sm mb-6">
               We couldn't load any posters from your Notion database. Make sure you have:
             </p>
-            <ul className="text-left text-xs space-y-3 text-white/50 mb-2 max-w-xs mx-auto list-disc pl-5">
+            <ul className="text-left text-xs space-y-3 text-white/65 mb-2 max-w-xs mx-auto list-disc pl-5">
               <li>Configured <code className="bg-white/10 px-1 py-0.5 rounded text-white/80 font-mono">NOTION_KEY</code> and <code className="bg-white/10 px-1 py-0.5 rounded text-white/80 font-mono">NOTION_DATABASE_ID</code> in your <code className="bg-white/10 px-1 py-0.5 rounded">.env</code>.</li>
               <li>Shared your Notion database page with your Integration.</li>
               <li>Set at least one poster's Status select to <span className="text-[#FF6B6B] font-semibold">"Published"</span>.</li>
@@ -147,7 +147,7 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header query={query} onQueryChange={setQuery} showSearch={false} onFeelingLucky={handleFeelingLucky} />
       <FilterBar
         query={query}
@@ -168,13 +168,13 @@ function Home() {
       <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 flex-grow flex flex-col justify-center">
         <h1 className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</h1>
         {filtered.length > 0 && (
-          <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/40 uppercase tabular-nums">
+          <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase tabular-nums">
             Showing {filtered.length} poster{filtered.length !== 1 && "s"}
           </div>
         )}
         {filtered.length === 0 ? (
           <div className="flex w-full min-h-[50vh] flex-col items-center justify-center py-12 text-center">
-            <div className="relative mb-6 text-white/20 animate-pulse">
+            <div className="relative mb-6 text-white/30 animate-pulse">
               <Film size={64} strokeWidth={1} />
               <div className="absolute -bottom-2 -right-2 text-[#FF6B6B]">
                 <Search size={24} strokeWidth={2.5} />
@@ -186,7 +186,7 @@ function Home() {
             >
               Plot Twist: No Matches Found!
             </h2>
-            <p className="max-w-md text-white/50 text-sm mb-8 leading-relaxed">
+            <p className="max-w-md text-white/65 text-sm mb-8 leading-relaxed">
               We searched the entire archive but couldn't find any posters matching{" "}
               <span className="text-[#FF6B6B] font-semibold">
                 {query ? `"${query}"` : "the selected filters"}
@@ -197,7 +197,7 @@ function Home() {
               {query && (
                 <button
                   onClick={() => setQuery("")}
-                  className="rounded-full bg-white/5 border border-white/10 px-5 py-2 text-sm font-medium text-[#F5F5F5] hover:bg-white/10 active:scale-95 transition-all duration-150"
+                  className="rounded-full bg-white/5 border border-white/15 px-5 py-2 text-sm font-medium text-[#F5F5F5] hover:bg-white/10 active:scale-95 transition-all duration-150"
                 >
                   Clear Search
                 </button>

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/about")({
 
 function About() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} />
       <main className="mx-auto w-full max-w-2xl px-6 py-16 flex-grow flex flex-col justify-center">
         {/* About CinePrint Section */}
@@ -39,7 +39,7 @@ function About() {
         </div>
 
         {/* Creator Cinema Ticket Pass */}
-        <div className="mt-8 rounded-2xl border border-white/10 bg-[#161616] relative overflow-hidden flex flex-col sm:flex-row shadow-2xl">
+        <div className="mt-8 rounded-2xl border border-white/15 bg-[#1c1c1c] relative overflow-hidden flex flex-col sm:flex-row shadow-2xl">
           {/* Left Pane: Main Curator Pass (70% on desktop) */}
           <div className="w-full sm:w-[70%] p-6 sm:p-8 flex flex-col justify-between relative">
             {/* Red Curator Stamp */}
@@ -65,7 +65,7 @@ function About() {
                 href="https://github.com/Prathamesh913"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+                className="group inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
               >
                 <Github size={13} />
                 <span>GITHUB</span>
@@ -74,14 +74,14 @@ function About() {
                 href="https://x.com/Prathamesh913"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+                className="group inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
               >
                 <Twitter size={13} />
                 <span>TWITTER</span>
               </a>
               <a
                 href="mailto:prathameshjadhav913@gmail.com"
-                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+                className="group inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
               >
                 <Mail size={13} />
                 <span>EMAIL</span>
@@ -90,7 +90,7 @@ function About() {
                 href="https://prathameshdesigns.framer.website/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded border border-white/10 bg-white/2 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
+                className="group inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 hover:bg-[#FF6B6B]/10 hover:border-[#FF6B6B]/40 px-3.5 py-1.5 text-xs text-white/60 hover:text-[#FF6B6B] transition-all duration-300 font-mono"
               >
                 <Globe size={13} />
                 <span>PORTFOLIO</span>
@@ -102,19 +102,19 @@ function About() {
           <div className="border-t border-dotted border-white/20 w-full h-0 sm:w-0 sm:h-auto sm:border-t-0 sm:border-l sm:border-dotted sm:my-4 sm:mx-1 sm:opacity-100"></div>
 
           {/* Right Pane: Stub / Details (30% on desktop) */}
-          <div className="w-full sm:w-[30%] bg-white/[0.02] p-6 sm:p-8 flex flex-row sm:flex-col justify-between items-center sm:items-stretch sm:text-left text-center">
+          <div className="w-full sm:w-[30%] bg-white/[0.05] p-6 sm:p-8 flex flex-row sm:flex-col justify-between items-center sm:items-stretch sm:text-left text-center">
             {/* Ticket Info Stack */}
             <div className="space-y-3 text-left">
               <div>
-                <p className="text-[9px] font-mono tracking-widest text-white/30 uppercase">SECTION</p>
+                <p className="text-[9px] font-mono tracking-widest text-white/45 uppercase">SECTION</p>
                 <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-white">ARCHIVE</p>
               </div>
               <div>
-                <p className="text-[9px] font-mono tracking-widest text-white/30 uppercase">TICKET NO.</p>
+                <p className="text-[9px] font-mono tracking-widest text-white/45 uppercase">TICKET NO.</p>
                 <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-[#FF6B6B]">#0001</p>
               </div>
               <div className="sm:block hidden">
-                <p className="text-[9px] font-mono tracking-widest text-white/30 uppercase">ADMIT</p>
+                <p className="text-[9px] font-mono tracking-widest text-white/45 uppercase">ADMIT</p>
                 <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-white">ONE CURATOR</p>
               </div>
             </div>
@@ -158,18 +158,18 @@ function About() {
                 <div className="h-full w-[1px] bg-white"></div>
                 <div className="h-full w-[5px] bg-white"></div>
               </div>
-              <span className="text-[8px] font-mono tracking-[0.25em] text-white/30">C1N3-PR1NT</span>
+              <span className="text-[8px] font-mono tracking-[0.25em] text-white/45">C1N3-PR1NT</span>
             </div>
           </div>
         </div>
 
         {/* Suggestion Callout */}
-        <div className="mt-8 text-center bg-white/2 border border-white/5 rounded-2xl p-6">
+        <div className="mt-8 text-center bg-white/5 border border-white/5 rounded-2xl p-6">
           <div className="flex justify-center text-[#FF6B6B] mb-2">
             <MessageSquare size={20} />
           </div>
           <h3 className="text-sm font-semibold text-white">Got a Suggestion?</h3>
-          <p className="mt-2 text-xs text-white/50 max-w-md mx-auto leading-relaxed">
+          <p className="mt-2 text-xs text-white/65 max-w-md mx-auto leading-relaxed">
             Have feature ideas, spotted bugs, or want to suggest posters? Feel free to reach out through social channels listed above.
           </p>
           <div className="mt-4">

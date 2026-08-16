@@ -81,8 +81,8 @@ export async function generateTicketBlob(poster: Poster): Promise<Blob> {
   ctx.strokeRect(18, 18, width - 36, height - 36);
 
   // 3. Draw Ticket Stub Cutouts (to look like holes punched at the ends of the tear line)
-  // We use dark page background color #121212 to simulate transparency cutout
-  ctx.fillStyle = "#121212";
+  // We use dark page background color #000000 to simulate transparency cutout
+  ctx.fillStyle = "#000000";
   
   // Top cutout at stub line (x = 340)
   ctx.beginPath();

@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fetchNotionPosters } from "@/lib/notion";
 import { type Poster } from "@/lib/posters";
+import { getPosterImageUrl } from "@/lib/poster-images";
 import { Lightbox } from "@/components/Lightbox";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -21,10 +22,13 @@ export const Route = createFileRoute("/poster/$id")({
     return {
       meta: [
         { title: `${poster.title} by ${poster.artist} — CinePrint Gallery` },
-        { name: "description", content: `Minimalist alternative movie poster for ${poster.title} (${poster.year}) by ${poster.artist}.` },
+        {
+          name: "description",
+          content: `Minimalist alternative movie poster for ${poster.title} (${poster.year}) by ${poster.artist}.`,
+        },
         { property: "og:title", content: `${poster.title} by ${poster.artist} — CinePrint` },
         { property: "og:description", content: `Alternative movie poster for ${poster.title}.` },
-        { property: "og:image", content: poster.image },
+        { property: "og:image", content: getPosterImageUrl(poster, "detail") },
         { property: "og:type", content: "website" },
       ],
     };
@@ -45,10 +49,13 @@ function PosterDetailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#121212", color: "#F5F5F5" }}>
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: "#000000", color: "#F5F5F5" }}
+    >
       <Header showSearch={false} />
       <main className="flex-grow flex items-center justify-center">
-        <div className="text-center text-white/40 font-mono text-xs">
+        <div className="text-center text-white/55 font-mono text-xs">
           Loading poster detail view...
         </div>
       </main>
