@@ -108,6 +108,24 @@ function LoginPage() {
     };
   }, [displayPosters.length]);
 
+  if (loading) {
+    return (
+      <div
+        className="relative flex min-h-screen flex-col"
+        style={{ backgroundColor: "#000000", color: "#F5F5F5" }}
+      >
+        <Header showSearch={false} variant="auth" />
+        <main className="flex flex-1 items-center justify-center px-6 py-12">
+          <div className="flex items-center gap-3 text-sm text-white/60" aria-live="polite">
+            <Loader2 size={18} className="animate-spin" aria-hidden />
+            Checking your session…
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div
       className="relative flex min-h-screen flex-col"

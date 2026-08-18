@@ -161,10 +161,6 @@ export function useSaved() {
       const uid = user.uid;
       if (loadedForUid === uid && snapshot.error === null) return;
 
-      // Show the loading state immediately so the anonymous/empty list is never
-      // flashed while the authenticated list is still being resolved.
-      setSnapshot(loadStart(snapshot));
-
       getAuthToken(user)
         .then((token) => {
           if (!token) {

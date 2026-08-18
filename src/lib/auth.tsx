@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { User, Auth } from "firebase/auth";
 import { toast } from "sonner";
+import { initializeAuthSession } from "./auth-initialization";
 
 export type SignInResult =
   | { ok: true }
@@ -114,18 +115,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await ensureActions();
         const mod = await import("firebase/auth");
 
-        try {
-          const result = await mod.getRedirectResult(auth);
-          if (result?.user) {
-            setUser(result.user);
-          }
-        } catch {
-          // redirect result not available — expected on normal loads
-        }
-
-        const unsubscribe = mod.onAuthStateChanged(auth, async (firebaseUser) => {
+        const handleAuthState = async (firebaseUser: User | null) => {
           setUser(firebaseUser);
-          setLoading(false);
           if (firebaseUser) {
             setSigningIn(false);
           }
@@ -165,7 +156,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
             }
           }
-        });
+        };
+
+        const unsubscribe = initializeAuthSession(
+          auth,
+          {
+            onAuthStateChanged: (currentAuth, callback) =>
+              mod.onAuthStateChanged(currentAuth, callback),
+            getRedirectResult: (currentAuth) => mod.getRedirectResult(currentAuth),
+          },
+          handleAuthState,
+          () => setLoading(false),
+        );
 
         return unsubscribe;
       })
