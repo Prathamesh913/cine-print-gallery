@@ -59,7 +59,9 @@ export function CollectionCard({
         )}
       </div>
       <div className="min-w-0 flex-1 self-center">
-        <h3 className="truncate font-medium">{collection.name}</h3>
+        <h3 className="line-clamp-2 break-words font-medium" title={collection.name}>
+          {collection.name}
+        </h3>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 text-xs font-medium text-white/75">
             <Images size={12} className="text-white/50" />

@@ -315,7 +315,7 @@ export function ShareModal({ poster, onClose }: Props) {
   return (
     <div
       onClick={handleClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm transition-opacity duration-200 ease-[var(--ease-out)]"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black/80 px-4 py-4 backdrop-blur-sm transition-opacity duration-200 ease-[var(--ease-out)] sm:py-8"
       style={{ opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none" }}
     >
       <div
@@ -326,12 +326,12 @@ export function ShareModal({ poster, onClose }: Props) {
         aria-labelledby="share-ticket-title"
         aria-describedby="share-ticket-description"
         tabIndex={-1}
-        className="relative flex w-full max-w-3xl flex-col rounded-2xl border border-white/15 bg-[#202020] p-6 shadow-2xl outline-none"
+        className="relative my-auto flex max-h-[calc(100vh-2rem)] max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-[#202020] p-6 shadow-2xl outline-none sm:max-h-[calc(100vh-4rem)] sm:max-h-[calc(100dvh-4rem)]"
       >
         <button
           onClick={handleClose}
           aria-label="Close"
-          className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/5 text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-90"
+          className="absolute right-2 top-2 grid h-11 w-11 place-items-center rounded-full bg-white/5 text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-90"
         >
           <X size={16} />
         </button>

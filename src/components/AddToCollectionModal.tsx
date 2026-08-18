@@ -137,7 +137,7 @@ export function AddToCollectionModal({ open, onOpenChange, posterId, posterTitle
             />
             <button
               onClick={() => setView("list")}
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-sm text-white/70 transition-colors hoverable:hover:bg-white/5"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-full border border-white/15 px-4 text-sm text-white/70 transition-colors hoverable:hover:bg-white/5"
             >
               <ArrowLeft size={14} />
               Back to collections
@@ -145,7 +145,7 @@ export function AddToCollectionModal({ open, onOpenChange, posterId, posterTitle
           </>
         ) : (
           <>
-            <div className="mt-2 max-h-[50vh] space-y-1 overflow-y-auto pr-1">
+            <div className="mt-2 space-y-1 pr-1">
               {loading && collections.length === 0 ? (
                 <div className="flex items-center justify-center gap-2 py-8 text-sm text-white/55">
                   <Loader2 size={14} className="animate-spin" />
@@ -165,7 +165,7 @@ export function AddToCollectionModal({ open, onOpenChange, posterId, posterTitle
                       key={col.id}
                       disabled={!!busyId}
                       onClick={() => handleToggle(col.id, has)}
-                      className="flex w-full items-center gap-3 rounded-xl border border-white/12 bg-white/[0.06] px-3 py-2.5 text-left transition-[transform,background-color,border-color] duration-150 hoverable:hover:border-white/15 hoverable:hover:bg-white/[0.06] active:scale-[0.99] disabled:opacity-60"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-xl border border-white/12 bg-white/[0.06] px-3 py-2.5 text-left transition-[transform,background-color,border-color] duration-150 hoverable:hover:border-white/15 hoverable:hover:bg-white/[0.06] active:scale-[0.99] disabled:opacity-60"
                     >
                       <span
                         className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border"
@@ -184,7 +184,9 @@ export function AddToCollectionModal({ open, onOpenChange, posterId, posterTitle
                         )}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium">{col.name}</span>
+                        <span className="block break-words text-sm font-medium" title={col.name}>
+                          {col.name}
+                        </span>
                         <span className="mt-0.5 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/50">
                           <VisIcon size={10} />
                           {visibilityMeta[col.visibility].label}
@@ -200,7 +202,7 @@ export function AddToCollectionModal({ open, onOpenChange, posterId, posterTitle
 
             <button
               onClick={() => setView("create")}
-              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-white/20 px-4 py-2.5 text-sm text-white/70 transition-colors hoverable:hover:border-[#FF6B6B]/50 hoverable:hover:text-[#FF6B6B]"
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-dashed border-white/20 px-4 text-sm text-white/70 transition-colors hoverable:hover:border-[#FF6B6B]/50 hoverable:hover:text-[#FF6B6B]"
             >
               <FolderPlus size={15} />
               New collection
