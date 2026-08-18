@@ -117,23 +117,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Explore CinePrint, a curated digital archive of custom alternative movie posters, minimalist film art, and television key designs created by talented designers globally.",
+          "Explore a curated gallery of custom alternative movie posters, minimalist film art, and television key designs created by talented designers globally.",
       },
       { property: "og:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
       {
         property: "og:description",
         content:
-          "Explore a curated digital archive of custom alternative movie posters and minimalist film art designs.",
+          "Curated gallery of custom alternative movie posters and minimalist film art.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       {
         rel: "icon",
-        type: "image/svg+xml",
-        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF6B6B' stroke-width='2' stroke-linecap='square'%3E%3Cpath d='M3 3h6M3 3v6M21 21h-6M21 21v-6'/%3E%3C/svg%3E",
+        type: "image/x-icon",
+        href: "/favicon.ico",
       },
+      { rel: "icon", type: "image/png", sizes: "48x48", href: "/favicon-48x48.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
