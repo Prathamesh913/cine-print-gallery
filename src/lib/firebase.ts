@@ -2,9 +2,36 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import type { App } from "firebase-admin/app";
 import type { Auth } from "firebase-admin/auth";
+import {
+  type ServiceAccount,
+  parseServiceAccount,
+  missingServiceAccountFields,
+} from "./service-account";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let db: any = null;
+
+function readEnv(key: string): string | undefined {
+  if (typeof process !== "undefined" && process.env) {
+    const direct = process.env[key];
+    if (direct) return direct;
+    const vite = process.env[`VITE_${key}`];
+    if (vite) return vite;
+  }
+  if (typeof import.meta !== "undefined") {
+    const meta = import.meta as ImportMeta & { env?: Record<string, string> };
+    return meta.env?.[key] || meta.env?.[`VITE_${key}`];
+  }
+  return undefined;
+}
+
+/**
+ * The Firebase project id used by the client SDK. Server-side Admin operations
+ * must target the same project for ID-token verification to succeed.
+ */
+export function getProjectId(): string | undefined {
+  return readEnv("FIREBASE_PROJECT_ID");
+}
 
 if (typeof window === "undefined") {
   const env = (key: string) =>
@@ -38,10 +65,22 @@ let _adminApp: { app: App } | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _adminRes: { db: any; isAdmin: boolean } | null = null;
 
-async function resolveServiceAccount(): Promise<unknown> {
+async function resolveServiceAccount(): Promise<ServiceAccount | null> {
   const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (serviceAccountRaw) {
-    return JSON.parse(serviceAccountRaw);
+    const parsed = parseServiceAccount(serviceAccountRaw);
+    if (!parsed.ok) {
+      console.error("[firebase-admin] " + parsed.error);
+      return null;
+    }
+    const missing = missingServiceAccountFields(parsed.account);
+    if (missing.length > 0) {
+      console.error(
+        "[firebase-admin] FIREBASE_SERVICE_ACCOUNT_JSON is missing required fields: " +
+          missing.join(", "),
+      );
+    }
+    return parsed.account;
   }
   if (typeof window === "undefined") {
     try {
@@ -49,10 +88,21 @@ async function resolveServiceAccount(): Promise<unknown> {
       const path = await import("node:path");
       const keyPath = path.join(process.cwd(), "firebase-admin-key.json");
       if (fs.existsSync(keyPath)) {
-        return JSON.parse(fs.readFileSync(keyPath, "utf8"));
+        const fileParsed = parseServiceAccount(fs.readFileSync(keyPath, "utf8"));
+        if (!fileParsed.ok) {
+          console.error(
+            "[firebase-admin] " +
+              fileParsed.error.replace("FIREBASE_SERVICE_ACCOUNT_JSON", "firebase-admin-key.json"),
+          );
+          return null;
+        }
+        return fileParsed.account;
       }
-    } catch {
-      // fall through to unauthenticated app init
+    } catch (err) {
+      console.error(
+        "[firebase-admin] Failed to read firebase-admin-key.json:",
+        err instanceof Error ? err.message : err,
+      );
     }
   }
   return null;
@@ -67,9 +117,39 @@ async function getAdminApp(): Promise<App> {
     cert,
   } = await import("firebase-admin/app");
   const serviceAccount = await resolveServiceAccount();
+
+  if (!serviceAccount) {
+    console.warn(
+      "[firebase-admin] No service account resolved (FIREBASE_SERVICE_ACCOUNT_JSON and firebase-admin-key.json are both absent). " +
+        "Admin Auth token verification and Admin Firestore access will fail at runtime unless Application Default Credentials are available.",
+    );
+  } else if (serviceAccount.project_id) {
+    const clientProjectId = getProjectId();
+    if (clientProjectId && serviceAccount.project_id !== clientProjectId) {
+      console.error(
+        `[firebase-admin] Service account project_id "${serviceAccount.project_id}" does not match the client FIREBASE_PROJECT_ID "${clientProjectId}". ` +
+          "Firebase ID token verification (verifyIdToken) will fail for signed-in users.",
+      );
+    }
+  }
+
+  let credential: ReturnType<typeof cert> | undefined;
+  if (serviceAccount) {
+    try {
+      credential = cert(serviceAccount as never);
+    } catch (err) {
+      console.error(
+        "[firebase-admin] Failed to build a credential from the service account " +
+          "(check private_key formatting and newline escaping):",
+        err instanceof Error ? err.message : err,
+      );
+      throw err;
+    }
+  }
+
   const app =
     getAdminApps().length === 0
-      ? initAdmin(serviceAccount ? { credential: cert(serviceAccount as never) } : undefined)
+      ? initAdmin(credential ? { credential } : undefined)
       : getAdminApps()[0];
   _adminApp = { app };
   return app;

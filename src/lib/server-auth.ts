@@ -1,4 +1,4 @@
-import { getAdminAuth } from "./firebase";
+import { getAdminAuth, getProjectId } from "./firebase";
 
 export class AuthRequiredError extends Error {
   constructor(message = "Authentication required") {
@@ -42,7 +42,15 @@ export async function requireAuth(
   let uid: string;
   try {
     uid = await verifyTokenUid(token);
-  } catch {
+  } catch (err) {
+    // Preserve the underlying cause in server logs so authentication/config
+    // failures are observable, while returning only a safe public error.
+    const name = err instanceof Error ? err.name : "UnknownError";
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(
+      "[requireAuth] Firebase ID token verification failed: " +
+        JSON.stringify({ name, message, projectId: getProjectId() ?? null }),
+    );
     throw new UnauthorizedError("Invalid or expired session");
   }
 

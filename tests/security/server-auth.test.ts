@@ -10,6 +10,7 @@ import {
 const verifyIdToken = vi.fn();
 vi.mock("../../src/lib/firebase", () => ({
   getAdminAuth: () => Promise.resolve({ verifyIdToken }),
+  getProjectId: () => "test-project",
 }));
 
 describe("server-auth requireAuth", () => {
@@ -43,6 +44,33 @@ describe("server-auth requireAuth", () => {
   it("rejects an invalid or expired token", async () => {
     verifyIdToken.mockRejectedValue(new Error("Firebase ID token has expired."));
     await expect(requireAuth("expired-token")).rejects.toBeInstanceOf(UnauthorizedError);
+  });
+
+  it("logs the underlying verification error while returning a safe public error", async () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      verifyIdToken.mockRejectedValue(new Error("Could not load the default credentials"));
+      await expect(requireAuth("valid-looking-token")).rejects.toBeInstanceOf(UnauthorizedError);
+      expect(consoleError).toHaveBeenCalled();
+      const logged = consoleError.mock.calls.map((c) => c.join(" ")).join(" ");
+      expect(logged).toContain("Could not load the default credentials");
+      expect(logged).toContain("test-project");
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it("never logs the token value", async () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const token = "SENSITIVE_ID_TOKEN_VALUE";
+      verifyIdToken.mockRejectedValue(new Error("token expired"));
+      await expect(requireAuth(token)).rejects.toBeInstanceOf(UnauthorizedError);
+      const logged = consoleError.mock.calls.map((c) => c.join(" ")).join(" ");
+      expect(logged).not.toContain(token);
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("never returns the claimed UID when it differs from the verified UID", async () => {
