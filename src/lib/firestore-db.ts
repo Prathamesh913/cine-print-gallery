@@ -1,4 +1,5 @@
 import { getAdminDb } from "./firebase";
+import { adminRequire } from "./firebase";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FsRef = any;
@@ -36,7 +37,14 @@ export async function getDb(): Promise<FirestoreApi> {
   if (!db) throw new Error("Firestore not initialized");
 
   if (isAdmin) {
-    const { FieldValue, Timestamp } = await import("firebase-admin/firestore");
+    const { FieldValue, Timestamp } = await adminRequire<{
+      FieldValue: {
+        serverTimestamp: () => unknown;
+        arrayUnion: (...args: unknown[]) => unknown;
+        arrayRemove: (...args: unknown[]) => unknown;
+      };
+      Timestamp: { fromDate: (date: Date) => unknown };
+    }>("firebase-admin/firestore");
     return {
       doc: (path: string, ...segments: string[]) => db.doc([path, ...segments].join("/")),
       getDoc: async (ref: FsRef) => {
