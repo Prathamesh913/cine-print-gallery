@@ -13,11 +13,17 @@ export const Route = createFileRoute("/")({
   loader: () => fetchNotionPosters(),
   head: () => ({
     meta: [
-      { title: "CinePrint — Curated Alternative Movie & TV Posters Gallery" },
-      { name: "description", content: "Explore a curated gallery of custom alternative movie posters, minimalist film art, and television key designs created by talented designers globally." },
-      { property: "og:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
-      { property: "og:description", content: "Curated gallery of custom alternative movie posters and minimalist film art." },
+      { property: "og:url", content: "https://cineprint.click/" },
+      { property: "og:image", content: "https://cineprint.click/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "CinePrint curated alternative movie and TV poster gallery" },
+      { name: "twitter:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
+      { name: "twitter:description", content: "Curated gallery of custom alternative movie posters and minimalist film art." },
+      { name: "twitter:image", content: "https://cineprint.click/og-image.png" },
+      { name: "twitter:image:alt", content: "CinePrint curated alternative movie and TV poster gallery" },
     ],
+    links: [{ rel: "canonical", href: "https://cineprint.click/" }],
   }),
   component: Home,
 });
