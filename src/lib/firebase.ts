@@ -65,6 +65,19 @@ let _adminApp: { app: App } | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _adminRes: { db: any; isAdmin: boolean } | null = null;
 
+/**
+ * Load a firebase-admin module through Node's native require instead of a
+ * bundler-resolved import. firebase-admin ships a CJS build whose internal
+ * ESM/CJS interop is corrupted when it is bundled and converted to ESM
+ * ("Cannot read properties of undefined (reading 'SDK_VERSION')"). Requiring it
+ * at runtime keeps the original CJS require graph intact.
+ */
+export async function adminRequire<T>(id: string): Promise<T> {
+  const { createRequire } = await import("node:module");
+  const require = createRequire(import.meta.url);
+  return require(id) as T;
+}
+
 async function resolveServiceAccount(): Promise<ServiceAccount | null> {
   const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (serviceAccountRaw) {
@@ -115,7 +128,11 @@ async function getAdminApp(): Promise<App> {
     initializeApp: initAdmin,
     getApps: getAdminApps,
     cert,
-  } = await import("firebase-admin/app");
+  } = await adminRequire<{
+    initializeApp: (options?: object) => App;
+    getApps: () => App[];
+    cert: (serviceAccount: object) => unknown;
+  }>("firebase-admin/app");
   const serviceAccount = await resolveServiceAccount();
 
   if (!serviceAccount) {
@@ -167,7 +184,9 @@ export async function getAdminDb(): Promise<{ db: any; isAdmin: boolean }> {
   if (_adminRes) return _adminRes;
   try {
     const app = await getAdminApp();
-    const { getFirestore: getAdminFirestore } = await import("firebase-admin/firestore");
+    const { getFirestore: getAdminFirestore } = await adminRequire<{
+      getFirestore: (app: App) => unknown;
+    }>("firebase-admin/firestore");
     _adminRes = { db: getAdminFirestore(app), isAdmin: true };
     return _adminRes;
   } catch (e) {
@@ -185,7 +204,7 @@ export async function getAdminDb(): Promise<{ db: any; isAdmin: boolean }> {
  */
 export async function getAdminAuth(): Promise<Auth> {
   const app = await getAdminApp();
-  const { getAuth } = await import("firebase-admin/auth");
+  const { getAuth } = await adminRequire<{ getAuth: (app: App) => Auth }>("firebase-admin/auth");
   return getAuth(app);
 }
 
