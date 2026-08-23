@@ -253,7 +253,7 @@ function ProfilePage() {
         {/* Profile content */}
         <div className="px-4 pb-10 sm:px-6">
           {/* Avatar + name row */}
-          <div className="relative z-10 flex items-end gap-4 -mt-12 mb-6">
+          <div className="relative z-10 -mt-12 mb-6 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:gap-4">
             <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white/15 shadow-lg">
               {user.photoURL ? (
                 <img
@@ -267,11 +267,11 @@ function ProfilePage() {
                 </div>
               )}
             </div>
-            <div className="min-w-0 flex-1 pb-1">
+            <div className="min-w-0 w-full flex-1 pb-1 sm:w-auto">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1
                   style={{ fontFamily: "Poppins, sans-serif" }}
-                  className="text-xl font-semibold sm:text-2xl"
+                  className="min-w-0 break-words text-xl font-semibold sm:text-2xl"
                 >
                   {user.displayName || "User"}
                 </h1>
@@ -288,9 +288,9 @@ function ProfilePage() {
           </div>
 
           {/* Bio */}
-          <div className="ml-[calc(6rem+1rem)] mb-8">
+          <div className="mb-8 w-full sm:ml-[calc(6rem+1rem)]">
             {bio.editing ? (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                 <input
                   ref={inputRef}
                   value={bio.value}
@@ -302,17 +302,17 @@ function ProfilePage() {
                   onBlur={handleBioBlur}
                   placeholder="Write a short bio…"
                   maxLength={120}
-                  className="min-w-0 flex-1 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-[#F5F5F5] placeholder:text-white/45 focus:border-[#FF6B6B] focus:outline-none"
+                  className="min-h-11 min-w-0 w-full flex-1 rounded-lg border border-white/15 bg-white/5 px-3 text-sm text-[#F5F5F5] placeholder:text-white/45 focus:border-[#FF6B6B] focus:outline-none"
                 />
                 {bio.saving && <span className="text-xs text-white/45">Saving…</span>}
               </div>
             ) : (
               <button
                 onClick={startEditing}
-                className="group flex items-center gap-1.5 text-left text-sm text-white/65 transition-colors hover:text-white/70"
+                className="group flex min-h-11 min-w-0 w-full items-center gap-1.5 text-left text-sm text-white/65 transition-colors hover:text-white/70"
               >
                 {profileData?.bio ? (
-                  <span>{profileData.bio}</span>
+                  <span className="min-w-0 break-words">{profileData.bio}</span>
                 ) : (
                   <span className="text-white/45">Add a short bio…</span>
                 )}
@@ -337,7 +337,7 @@ function ProfilePage() {
           )}
 
           {/* Stats */}
-          <div className="mb-10 grid grid-cols-3 gap-3">
+          <div className="mb-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="rounded-xl border border-white/5 bg-white/[0.06] px-4 py-3">
               <div className="flex items-center gap-2 text-lg font-semibold">
                 <Bookmark size={14} className="text-[#FF6B6B]" />
@@ -366,7 +366,7 @@ function ProfilePage() {
           </div>
 
           {/* Pins / Collections */}
-          <div className="mb-8 flex items-center justify-between gap-4">
+          <div className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <h2
               style={{ fontFamily: "Poppins, sans-serif" }}
               className="shrink-0 text-xl font-semibold"
@@ -376,7 +376,7 @@ function ProfilePage() {
             <TabToggle
               value={tab}
               onChange={setTab}
-              className="shrink-0"
+              className="w-full sm:w-auto"
               tabs={[
                 { id: "pins", label: "Pins", icon: Heart, count: pinnedCount },
                 {
@@ -500,7 +500,7 @@ function ProfilePage() {
             </p>
             <button
               onClick={handleExport}
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm transition-colors hoverable:hover:border-white/30"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 px-4 text-sm transition-colors hoverable:hover:border-white/30"
             >
               <Download size={14} />
               Export my data
@@ -512,7 +512,7 @@ function ProfilePage() {
             </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-red-400/30 px-4 py-2 text-sm text-red-400 transition-colors hoverable:hover:bg-red-400/10">
+                <button className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-red-400/30 px-4 text-sm text-red-400 transition-colors hoverable:hover:bg-red-400/10">
                   <Trash2 size={14} />
                   Delete account
                 </button>

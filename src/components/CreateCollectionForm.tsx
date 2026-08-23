@@ -87,7 +87,7 @@ export function CreateCollectionForm({ onSubmit, submitLabel = "Create collectio
                 key={key}
                 type="button"
                 onClick={() => setVisibility(key)}
-                className="flex min-w-0 flex-col items-center gap-1 rounded-lg border px-2 py-2.5 text-center transition-colors"
+                className="flex min-h-11 min-w-0 flex-col items-center gap-1 rounded-lg border px-2 py-2.5 text-center transition-colors"
                 style={{
                   borderColor: active ? "rgba(255,107,107,0.6)" : "rgba(255,255,255,0.15)",
                   backgroundColor: active ? "rgba(255,107,107,0.12)" : "transparent",
@@ -108,7 +108,7 @@ export function CreateCollectionForm({ onSubmit, submitLabel = "Create collectio
       <button
         type="submit"
         disabled={!name.trim() || creating}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-4 py-2.5 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 hoverable:hover:bg-[#FF8585] active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-4 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 hoverable:hover:bg-[#FF8585] active:scale-95 disabled:pointer-events-none disabled:opacity-50"
       >
         {creating ? <Loader2 size={15} className="animate-spin" /> : <FolderPlus size={15} />}
         {creating ? "Creating…" : submitLabel}

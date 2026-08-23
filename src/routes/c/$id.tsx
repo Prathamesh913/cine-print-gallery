@@ -311,7 +311,8 @@ function CollectionPage() {
                 <>
                   <h1
                     style={{ fontFamily: "Poppins, sans-serif" }}
-                    className="truncate text-2xl font-semibold sm:text-3xl"
+                    className="break-words text-2xl font-semibold sm:text-3xl"
+                    title={collection.name}
                   >
                     {collection.name}
                   </h1>
@@ -330,7 +331,7 @@ function CollectionPage() {
                     {collection.ownerName ? (
                       <>
                         <span>·</span>
-                        <span>by {collection.ownerName}</span>
+                        <span className="min-w-0 break-words">by {collection.ownerName}</span>
                       </>
                     ) : null}
                   </div>
@@ -345,7 +346,7 @@ function CollectionPage() {
               isOwner) && (
               <button
                 onClick={copyShareLink}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-2 text-sm transition-colors hoverable:hover:border-white/30"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/15 px-3 text-sm transition-colors hoverable:hover:border-white/30"
               >
                 <Copy size={14} />
                 Copy link
@@ -356,7 +357,7 @@ function CollectionPage() {
               <AlertDialog>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-2 text-sm hoverable:hover:border-white/30">
+                    <button className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/15 px-3 text-sm hoverable:hover:border-white/30">
                       <MoreHorizontal size={14} />
                       Manage
                     </button>
@@ -513,7 +514,8 @@ function OwnerAwareGrid({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white opacity-100 backdrop-blur-sm sm:opacity-0 sm:group-hover:opacity-100"
+                  aria-label={`Manage ${p.title}`}
+                  className="absolute right-1 top-1 grid min-h-11 min-w-11 place-items-center rounded-full bg-black/60 text-white opacity-100 backdrop-blur-sm sm:right-0 sm:top-0 sm:opacity-0 sm:group-hover:opacity-100"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MoreHorizontal size={14} />

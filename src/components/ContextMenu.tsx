@@ -91,9 +91,12 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
   let posX = x;
   let posY = y;
   const menuWidth = 180;
-  const menuHeight = 148;
+  let menuHeight = 148;
 
   if (typeof window !== "undefined") {
+    if (window.innerWidth < 640) {
+      menuHeight = 184;
+    }
     if (x + menuWidth > window.innerWidth) {
       posX = window.innerWidth - menuWidth - 10;
     }
@@ -126,7 +129,7 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
               }
               onClose();
             }}
-            className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 rounded transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)]"
+            className="flex min-h-11 w-full items-center gap-2 rounded px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 sm:min-h-0"
           >
             {saved ? (
               <>
@@ -146,7 +149,7 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
             }}
             role="menuitem"
             onClick={() => setCollectionOpen(true)}
-            className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 rounded transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)]"
+            className="flex min-h-11 w-full items-center gap-2 rounded px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 sm:min-h-0"
           >
             <FolderPlus size={12} className="shrink-0" />
             <span>Add to collection</span>
@@ -164,7 +167,7 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
               navigate({ to: "/artist/$slug", params: { slug: slugifyArtist(artistName) } });
               onClose();
             }}
-            className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 rounded transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)]"
+            className="flex min-h-11 w-full items-center gap-2 rounded px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 sm:min-h-0"
           >
             <User size={12} className="shrink-0" />
             <span>View Artist</span>
@@ -178,7 +181,7 @@ export function ContextMenu({ x, y, poster, onClose }: ContextMenuProps) {
               window.open(poster.image, "_blank");
               onClose();
             }}
-            className="flex w-full items-center gap-2 px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 rounded transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)]"
+            className="flex min-h-11 w-full items-center gap-2 rounded px-3 py-2.5 text-left font-mono text-[10px] tracking-wider uppercase text-white/80 transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF6B6B] hoverable:hover:text-[#121212] active:scale-95 sm:min-h-0"
           >
             <ExternalLink size={12} className="shrink-0" />
             <span>Open in new tab</span>

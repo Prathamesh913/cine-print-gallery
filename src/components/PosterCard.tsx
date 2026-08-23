@@ -77,7 +77,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
     onContextMenu(e.clientX, e.clientY, poster);
   };
 
-  const handleCardClick = (e: React.MouseEvent) => {
+  const handleCardClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (longPressActive) {
       e.preventDefault();
       e.stopPropagation();
@@ -88,56 +88,59 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
   };
 
   return (
-    <button
-      ref={cardSmoothing.ref}
-      onClick={handleCardClick}
-      onContextMenu={handleRightClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchMove={handleTouchMove}
-      className="group relative block w-full overflow-hidden text-left transition-transform duration-200 ease-[var(--ease-out)] hoverable:hover:scale-[1.02] active:scale-[0.97] hoverable:hover:shadow-2xl"
-      style={{ backgroundColor: "#1E1E1E", ...cardSmoothing.style }}
-    >
-      <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
-        {!loaded && <div className="absolute inset-0 bg-white/5 animate-pulse" />}
-        <PosterImage
-          poster={poster}
-          purpose="gallery"
-          ref={imgRef}
-          alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
-          loading="lazy"
-          onLoad={handleLoad}
-          className={`h-full w-full object-cover transition-opacity duration-200 ease-[var(--ease-out)] ${loaded ? "opacity-100" : "opacity-0"}`}
-        />
+    <div className="group relative w-full">
+      <button
+        ref={cardSmoothing.ref}
+        onClick={handleCardClick}
+        onContextMenu={handleRightClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
+        className="relative block w-full overflow-hidden text-left transition-transform duration-200 ease-[var(--ease-out)] hoverable:hover:scale-[1.02] active:scale-[0.97] hoverable:hover:shadow-2xl"
+        style={{ backgroundColor: "#1E1E1E", ...cardSmoothing.style }}
+      >
+        <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
+          {!loaded && <div className="absolute inset-0 bg-white/5 animate-pulse" />}
+          <PosterImage
+            poster={poster}
+            purpose="gallery"
+            ref={imgRef}
+            alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
+            loading="lazy"
+            onLoad={handleLoad}
+            className={`h-full w-full object-cover transition-opacity duration-200 ease-[var(--ease-out)] ${loaded ? "opacity-100" : "opacity-0"}`}
+          />
 
-        <span
-          onClick={(e) => {
-            e.stopPropagation();
-            const wasSaved = saved;
-            toggle(poster.id);
-            if (!wasSaved) {
-              play("chime");
-            }
-          }}
-          role="button"
-          aria-label={saved ? "Unpin poster" : "Pin poster"}
-          className="absolute right-2 top-2 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-black/50 opacity-0 backdrop-blur-sm transition-opacity duration-200 ease-[var(--ease-out)] hoverable:group-hover:opacity-100 sm:opacity-0"
-          style={saved ? { opacity: 1 } : undefined}
-        >
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/5 bg-black/70 p-3 opacity-100 backdrop-blur-md transition-opacity duration-200 ease-[var(--ease-out)] sm:opacity-0 hoverable:sm:group-hover:opacity-100">
+            <p className="truncate text-sm font-medium text-[#F5F5F5]">
+              {poster.title} <span className="text-white/60">· {poster.year}</span>
+            </p>
+            <p className="truncate text-xs text-white/60">by {poster.artist}</p>
+          </div>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          const wasSaved = saved;
+          toggle(poster.id);
+          if (!wasSaved) {
+            play("chime");
+          }
+        }}
+        aria-label={saved ? "Unpin poster" : "Pin poster"}
+        className="absolute right-0 top-0 grid h-11 w-11 cursor-pointer place-items-center opacity-0 backdrop-blur-sm transition-opacity duration-200 ease-[var(--ease-out)] hoverable:group-hover:opacity-100 sm:opacity-0"
+        style={saved ? { opacity: 1 } : undefined}
+      >
+        <span className="grid h-8 w-8 place-items-center rounded-full bg-black/50">
           <Heart
             size={16}
             fill={saved ? "#FF6B6B" : "none"}
             stroke={saved ? "#FF6B6B" : "#F5F5F5"}
           />
         </span>
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/5 bg-black/70 p-3 opacity-100 backdrop-blur-md transition-opacity duration-200 ease-[var(--ease-out)] sm:opacity-0 hoverable:sm:group-hover:opacity-100">
-          <p className="truncate text-sm font-medium text-[#F5F5F5]">
-            {poster.title} <span className="text-white/60">· {poster.year}</span>
-          </p>
-          <p className="truncate text-xs text-white/60">by {poster.artist}</p>
-        </div>
-      </div>
-    </button>
+      </button>
+    </div>
   );
 }

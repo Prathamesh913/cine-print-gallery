@@ -31,7 +31,7 @@ export function TabToggle<T extends string>({
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
-            className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm transition-colors"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 text-sm transition-colors sm:min-h-0"
             style={{
               backgroundColor: active ? "#FF6B6B" : "transparent",
               color: active ? "#121212" : "rgba(255,255,255,0.55)",

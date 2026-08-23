@@ -1,5 +1,6 @@
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { Search, Sparkles, User, LogOut, ArrowLeft } from "lucide-react";
+import { Search, Sparkles, User, LogOut, ArrowLeft, Menu, X } from "lucide-react";
+import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import {
   DropdownMenu,
@@ -38,6 +39,7 @@ export function Header({
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
   const currentPath = router.state.location.pathname;
   const loginSearch = currentPath !== "/login" ? { redirect: currentPath } : undefined;
 
@@ -72,15 +74,15 @@ export function Header({
 
   return (
     <header
-      className="sticky top-0 z-40 backdrop-blur-md"
+      className="relative sticky top-0 z-40 backdrop-blur-md"
       style={{ backgroundColor: "rgba(0,0,0,0.8)" }}
     >
-      <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
-        <Link to="/" className="flex shrink-0 items-center gap-2" data-cuelume-hover="tick">
+      <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-1.5 sm:gap-6 sm:px-6 sm:py-4">
+        <Link to="/" className="flex min-w-0 shrink items-center gap-2" data-cuelume-hover="tick">
           <FrameIcon />
           <span
             style={{ fontFamily: "Bebas Neue, sans-serif" }}
-            className="text-2xl tracking-[0.12em] sm:text-3xl"
+            className="truncate text-2xl tracking-[0.12em] sm:text-3xl"
           >
             CINEPRINT
           </span>
@@ -98,15 +100,15 @@ export function Header({
           </div>
         )}
 
-        <nav className="ml-auto flex items-center gap-1 text-sm sm:gap-2">
+        <nav className="ml-auto hidden items-center gap-1 text-sm sm:flex sm:gap-2">
           {onFeelingLucky && (
             <button
               onClick={onFeelingLucky}
               title="Feeling Lucky? Show a random poster."
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-white/70 transition-[transform,color] duration-150 ease-[var(--ease-out)] hoverable:hover:text-[#FF6B6B] active:scale-95"
+              className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-white/70 transition-[transform,color] duration-150 ease-[var(--ease-out)] hoverable:hover:text-[#FF6B6B] sm:inline-flex"
             >
               <Sparkles size={16} />
-              <span className="hidden sm:inline">Lucky</span>
+              <span>Lucky</span>
             </button>
           )}
           <NavLink to="/about">About</NavLink>
@@ -116,18 +118,11 @@ export function Header({
             <AlertDialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="ml-2 transition-opacity duration-150 hoverable:hover:opacity-80 active:scale-95">
-                    {user.photoURL ? (
-                      <img
-                        src={user.photoURL}
-                        alt={user.displayName || ""}
-                        className="h-7 w-7 rounded-full border border-white/15"
-                      />
-                    ) : (
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FF6B6B] text-[10px] font-bold text-[#121212]">
-                        {user.displayName?.charAt(0) || user.email?.charAt(0) || "?"}
-                      </div>
-                    )}
+                  <button
+                    aria-label={`Open account menu${user.displayName ? ` for ${user.displayName}` : ""}`}
+                    className="ml-2 inline-flex min-h-11 min-w-11 items-center justify-center transition-opacity duration-150 hoverable:hover:opacity-80 active:scale-95 sm:min-h-0 sm:min-w-0"
+                  >
+                    <Avatar user={user} />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" sideOffset={8}>
@@ -145,35 +140,80 @@ export function Header({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Log out</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to log out? You'll need to sign in again to access your
-                    saved posters.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-95">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF8585] active:scale-95"
-                    onClick={signOut}
-                  >
-                    Log out
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
+              <LogoutDialogContent signOut={signOut} />
             </AlertDialog>
           ) : (
             <NavLink to="/login" search={loginSearch}>
               Login
             </NavLink>
           )}
-          {/* <NavLink to="/constellation">Galaxy</NavLink> */}
         </nav>
+
+        <div className="ml-auto flex shrink-0 items-center sm:hidden">
+          <button
+            type="button"
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setMobileOpen((open) => !open)}
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-white/75 transition-colors hoverable:hover:bg-white/10 hoverable:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+          >
+            {mobileOpen ? <X size={20} /> : user ? <Avatar user={user} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
+
+      {mobileOpen && (
+        <div
+          id="mobile-navigation"
+          className="absolute inset-x-0 top-full border-t border-white/10 bg-[#111111]/95 px-4 py-3 shadow-2xl backdrop-blur-md sm:hidden"
+        >
+          <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
+            {onFeelingLucky && (
+              <MobileAction
+                onClick={() => {
+                  onFeelingLucky();
+                  setMobileOpen(false);
+                }}
+              >
+                <Sparkles size={16} />
+                Lucky
+              </MobileAction>
+            )}
+            <MobileNavLink to="/about" onClick={() => setMobileOpen(false)}>
+              About
+            </MobileNavLink>
+            <MobileNavLink to="/submit" onClick={() => setMobileOpen(false)}>
+              Submit
+            </MobileNavLink>
+            <MobileNavLink to="/saved" onClick={() => setMobileOpen(false)}>
+              Saved
+            </MobileNavLink>
+            {user ? (
+              <AlertDialog>
+                <MobileNavLink to="/profile" onClick={() => setMobileOpen(false)}>
+                  <User size={16} />
+                  View Profile
+                </MobileNavLink>
+                <AlertDialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-left text-sm text-red-300 transition-colors hoverable:hover:bg-red-400/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+                  >
+                    <LogOut size={16} />
+                    Log out
+                  </button>
+                </AlertDialogTrigger>
+                <LogoutDialogContent signOut={signOut} />
+              </AlertDialog>
+            ) : (
+              <MobileNavLink to="/login" search={loginSearch} onClick={() => setMobileOpen(false)}>
+                Login
+              </MobileNavLink>
+            )}
+          </nav>
+        </div>
+      )}
 
       {showSearch && (
         <div className="px-4 pb-3 md:hidden">
@@ -189,6 +229,76 @@ export function Header({
         </div>
       )}
     </header>
+  );
+}
+
+function Avatar({ user }: { user: import("firebase/auth").User }) {
+  return user.photoURL ? (
+    <img src={user.photoURL} alt="" className="h-7 w-7 rounded-full border border-white/15" />
+  ) : (
+    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#FF6B6B] text-[10px] font-bold text-[#121212]">
+      {user.displayName?.charAt(0) || user.email?.charAt(0) || "?"}
+    </span>
+  );
+}
+
+function LogoutDialogContent({ signOut }: { signOut: () => Promise<void> }) {
+  return (
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Log out</AlertDialogTitle>
+        <AlertDialogDescription>
+          Are you sure you want to log out? You'll need to sign in again to access your saved
+          posters.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 text-sm font-medium text-[#F5F5F5] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-white/10 active:scale-95">
+          Cancel
+        </AlertDialogCancel>
+        <AlertDialogAction
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-5 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 ease-[var(--ease-out)] hoverable:hover:bg-[#FF8585] active:scale-95"
+          onClick={signOut}
+        >
+          Log out
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  );
+}
+
+function MobileNavLink({
+  to,
+  search,
+  onClick,
+  children,
+}: {
+  to: string;
+  search?: Record<string, unknown>;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      to={to}
+      search={search}
+      onClick={onClick}
+      className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm text-white/75 transition-colors hoverable:hover:bg-white/10 hoverable:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+    >
+      {children}
+    </Link>
+  );
+}
+
+function MobileAction({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-left text-sm text-white/75 transition-colors hoverable:hover:bg-white/10 hoverable:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+    >
+      {children}
+    </button>
   );
 }
 
