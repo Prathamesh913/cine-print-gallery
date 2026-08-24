@@ -61,9 +61,46 @@ if (typeof window === "undefined") {
 
 // --- Firebase Admin SDK (server-side only) ---
 
+/**
+ * Stages where Admin initialization can fail. Surfaced on every thrown error so
+ * Vercel logs pinpoint exactly which step broke:
+ * - "service-account":     FIREBASE_SERVICE_ACCOUNT_JSON / key file exists but
+ *                          is malformed JSON or an unexpected shape.
+ * - "credentials-missing": neither the env var nor firebase-admin-key.json was
+ *                          found (ADC may still be attempted explicitly).
+ * - "module-load":         the firebase-admin package itself could not be
+ *                          resolved at runtime (e.g. missing from the deployed
+ *                          function bundle).
+ * - "credential-build":    cert() rejected the service account (usually private
+ *                          key formatting/newline escaping).
+ * - "init":                initializeApp() itself threw.
+ */
+export type FirebaseAdminErrorStage =
+  | "service-account"
+  | "credentials-missing"
+  | "module-load"
+  | "credential-build"
+  | "init";
+
+/** Never carries secret values — only stage names and safe error messages. */
+export class FirebaseAdminError extends Error {
+  readonly stage: FirebaseAdminErrorStage;
+  constructor(stage: FirebaseAdminErrorStage, message: string, options?: { cause?: unknown }) {
+    super(`[firebase-admin/${stage}] ${message}`, options !== undefined ? options : undefined);
+    this.name = "FirebaseAdminError";
+    this.stage = stage;
+  }
+}
+
 let _adminApp: { app: App } | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _adminRes: { db: any; isAdmin: boolean } | null = null;
+let _adminRes: { db: any; isAdmin: true } | null = null;
+
+/** Test-only: clear memoized Admin state between tests. Not part of the API. */
+export function _resetFirebaseAdminForTests(): void {
+  _adminApp = null;
+  _adminRes = null;
+}
 
 /**
  * Load a firebase-admin module through Node's native require instead of a
@@ -71,6 +108,10 @@ let _adminRes: { db: any; isAdmin: boolean } | null = null;
  * ESM/CJS interop is corrupted when it is bundled and converted to ESM
  * ("Cannot read properties of undefined (reading 'SDK_VERSION')"). Requiring it
  * at runtime keeps the original CJS require graph intact.
+ *
+ * NOTE: because the module id is a runtime value, deploy targets must ship
+ * firebase-admin from node_modules (it is a regular "dependency" in
+ * package.json for exactly this reason).
  */
 export async function adminRequire<T>(id: string): Promise<T> {
   const { createRequire } = await import("node:module");
@@ -78,13 +119,23 @@ export async function adminRequire<T>(id: string): Promise<T> {
   return require(id) as T;
 }
 
-async function resolveServiceAccount(): Promise<ServiceAccount | null> {
+type ResolvedCredential =
+  | { source: "FIREBASE_SERVICE_ACCOUNT_JSON"; account: ServiceAccount }
+  | { source: "firebase-admin-key.json"; account: ServiceAccount }
+  | { source: "ADC"; account: null };
+
+/**
+ * Resolve the Admin credential. Throws FirebaseAdminError("service-account")
+ * for present-but-invalid configuration instead of quietly continuing without
+ * a credential. Only safe metadata (sources, field names) is ever logged.
+ */
+async function resolveServiceAccount(): Promise<ResolvedCredential> {
   const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
-  if (serviceAccountRaw) {
+  if (serviceAccountRaw && serviceAccountRaw.trim()) {
     const parsed = parseServiceAccount(serviceAccountRaw);
     if (!parsed.ok) {
-      console.error("[firebase-admin] " + parsed.error);
-      return null;
+      // parsed.error intentionally excludes the raw value.
+      throw new FirebaseAdminError("service-account", parsed.error);
     }
     const missing = missingServiceAccountFields(parsed.account);
     if (missing.length > 0) {
@@ -93,7 +144,7 @@ async function resolveServiceAccount(): Promise<ServiceAccount | null> {
           missing.join(", "),
       );
     }
-    return parsed.account;
+    return { source: "FIREBASE_SERVICE_ACCOUNT_JSON", account: parsed.account };
   }
   if (typeof window === "undefined") {
     try {
@@ -103,100 +154,147 @@ async function resolveServiceAccount(): Promise<ServiceAccount | null> {
       if (fs.existsSync(keyPath)) {
         const fileParsed = parseServiceAccount(fs.readFileSync(keyPath, "utf8"));
         if (!fileParsed.ok) {
-          console.error(
-            "[firebase-admin] " +
-              fileParsed.error.replace("FIREBASE_SERVICE_ACCOUNT_JSON", "firebase-admin-key.json"),
+          throw new FirebaseAdminError(
+            "service-account",
+            fileParsed.error.replace("FIREBASE_SERVICE_ACCOUNT_JSON", "firebase-admin-key.json"),
           );
-          return null;
         }
-        return fileParsed.account;
+        return { source: "firebase-admin-key.json", account: fileParsed.account };
       }
     } catch (err) {
-      console.error(
-        "[firebase-admin] Failed to read firebase-admin-key.json:",
-        err instanceof Error ? err.message : err,
+      if (err instanceof FirebaseAdminError) throw err;
+      throw new FirebaseAdminError(
+        "service-account",
+        "Failed to read firebase-admin-key.json: " +
+          (err instanceof Error ? err.message : String(err)),
+        { cause: err },
       );
     }
   }
-  return null;
+  return { source: "ADC", account: null };
+}
+
+function warnOnProjectMismatch(account: ServiceAccount): void {
+  if (!account.project_id) return;
+  const clientProjectId = getProjectId();
+  if (clientProjectId && account.project_id !== clientProjectId) {
+    console.error(
+      `[firebase-admin] Service account project_id "${account.project_id}" does not match the client FIREBASE_PROJECT_ID "${clientProjectId}". ` +
+        "Firebase ID token verification (verifyIdToken) will fail for signed-in users.",
+    );
+  }
 }
 
 async function getAdminApp(): Promise<App> {
   if (_adminApp) return _adminApp.app;
 
-  const {
-    initializeApp: initAdmin,
-    getApps: getAdminApps,
-    cert,
-  } = await adminRequire<{
+  let adminAppModules: {
     initializeApp: (options?: object) => App;
     getApps: () => App[];
     cert: (serviceAccount: object) => unknown;
-  }>("firebase-admin/app");
-  const serviceAccount = await resolveServiceAccount();
+  };
+  try {
+    adminAppModules = await adminRequire<{
+      initializeApp: (options?: object) => App;
+      getApps: () => App[];
+      cert: (serviceAccount: object) => unknown;
+    }>("firebase-admin/app");
+  } catch (err) {
+    // Typical causes: firebase-admin absent from the deployed bundle, or a
+    // corrupted install. The underlying message is preserved for diagnosis.
+    throw new FirebaseAdminError(
+      "module-load",
+      "Failed to load firebase-admin/app at runtime. Verify firebase-admin is listed under \"dependencies\" (not devDependencies) and included in the deployed server bundle. Original error: " +
+        (err instanceof Error ? err.message : String(err)),
+      { cause: err },
+    );
+  }
 
-  if (!serviceAccount) {
+  const resolved = await resolveServiceAccount();
+  const { initializeApp: initAdmin, getApps: getAdminApps, cert } = adminAppModules;
+
+  if (resolved.source === "ADC") {
+    // Explicit (and logged) use of Application Default Credentials — e.g. GCP
+    // runtimes. On platforms without ADC (like Vercel) downstream calls will
+    // fail loudly instead of silently degrading.
     console.warn(
       "[firebase-admin] No service account resolved (FIREBASE_SERVICE_ACCOUNT_JSON and firebase-admin-key.json are both absent). " +
-        "Admin Auth token verification and Admin Firestore access will fail at runtime unless Application Default Credentials are available.",
+        "Attempting Application Default Credentials; Admin Auth/Firestore will fail at request time if none are available.",
     );
-  } else if (serviceAccount.project_id) {
-    const clientProjectId = getProjectId();
-    if (clientProjectId && serviceAccount.project_id !== clientProjectId) {
-      console.error(
-        `[firebase-admin] Service account project_id "${serviceAccount.project_id}" does not match the client FIREBASE_PROJECT_ID "${clientProjectId}". ` +
-          "Firebase ID token verification (verifyIdToken) will fail for signed-in users.",
-      );
-    }
+  } else {
+    warnOnProjectMismatch(resolved.account);
   }
 
   let credential: ReturnType<typeof cert> | undefined;
-  if (serviceAccount) {
+  if (resolved.account) {
     try {
-      credential = cert(serviceAccount as never);
+      credential = cert(resolved.account as never) as ReturnType<typeof cert>;
     } catch (err) {
-      console.error(
-        "[firebase-admin] Failed to build a credential from the service account " +
-          "(check private_key formatting and newline escaping):",
-        err instanceof Error ? err.message : err,
+      throw new FirebaseAdminError(
+        "credential-build",
+        "Failed to build a credential from the service account (check private_key formatting and newline escaping): " +
+          (err instanceof Error ? err.message : String(err)),
+        { cause: err },
       );
-      throw err;
     }
   }
 
-  const app =
-    getAdminApps().length === 0
-      ? initAdmin(credential ? { credential } : undefined)
-      : getAdminApps()[0];
+  let app: App;
+  try {
+    app =
+      getAdminApps().length === 0
+        ? initAdmin(credential ? { credential } : undefined)
+        : getAdminApps()[0];
+  } catch (err) {
+    throw new FirebaseAdminError(
+      "init",
+      "firebase-admin initializeApp threw: " + (err instanceof Error ? err.message : String(err)),
+      { cause: err },
+    );
+  }
   _adminApp = { app };
+
+  const projectId = resolved.account?.project_id ?? getProjectId() ?? "unknown";
+  console.log(
+    `[firebase-admin] initialized source=${resolved.source} projectId=${projectId}`,
+  );
   return app;
 }
 
 /**
- * Admin SDK Firestore for server-side writes.
+ * Admin SDK Firestore for server-side access.
  *
  * NOTE: When a service account is configured this bypasses Firestore security
  * rules entirely, so every caller must enforce authorization itself (see
  * src/lib/server-auth.ts). Do not use this with client-supplied UIDs.
+ *
+ * There is deliberately NO fallback to the browser Firestore SDK here: an
+ * unauthenticated client SDK running on the server cannot satisfy the
+ * security rules for user-owned data, so every request would fail with an
+ * opaque permission-denied while hiding the real initialization problem.
+ * Failures throw FirebaseAdminError with the exact failing stage instead.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getAdminDb(): Promise<{ db: any; isAdmin: boolean }> {
+export async function getAdminDb(): Promise<{ db: any; isAdmin: true }> {
   if (_adminRes) return _adminRes;
+  const app = await getAdminApp();
+  let adminFirestore: unknown;
   try {
-    const app = await getAdminApp();
     const { getFirestore: getAdminFirestore } = await adminRequire<{
       getFirestore: (app: App) => unknown;
     }>("firebase-admin/firestore");
-    _adminRes = { db: getAdminFirestore(app), isAdmin: true };
-    return _adminRes;
-  } catch (e) {
-    console.warn(
-      "Firebase Admin SDK not initialized. Set FIREBASE_SERVICE_ACCOUNT_JSON (or add firebase-admin-key.json) to enable server-side Firestore writes that bypass security rules. Falling back to the client SDK, which will be subject to Firestore security rules.",
-      e,
+    adminFirestore = getAdminFirestore(app);
+  } catch (err) {
+    if (err instanceof FirebaseAdminError) throw err;
+    throw new FirebaseAdminError(
+      "module-load",
+      "Failed to load firebase-admin/firestore at runtime. Original error: " +
+        (err instanceof Error ? err.message : String(err)),
+      { cause: err },
     );
-    _adminRes = { db, isAdmin: false };
-    return _adminRes;
   }
+  _adminRes = { db: adminFirestore, isAdmin: true };
+  return _adminRes;
 }
 
 /**
@@ -204,8 +302,20 @@ export async function getAdminDb(): Promise<{ db: any; isAdmin: boolean }> {
  */
 export async function getAdminAuth(): Promise<Auth> {
   const app = await getAdminApp();
-  const { getAuth } = await adminRequire<{ getAuth: (app: App) => Auth }>("firebase-admin/auth");
-  return getAuth(app);
+  let auth: Auth;
+  try {
+    const { getAuth } = await adminRequire<{ getAuth: (app: App) => Auth }>("firebase-admin/auth");
+    auth = getAuth(app);
+  } catch (err) {
+    if (err instanceof FirebaseAdminError) throw err;
+    throw new FirebaseAdminError(
+      "module-load",
+      "Failed to load firebase-admin/auth at runtime. Original error: " +
+        (err instanceof Error ? err.message : String(err)),
+      { cause: err },
+    );
+  }
+  return auth;
 }
 
 export { db };
