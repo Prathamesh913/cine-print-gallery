@@ -1,4 +1,4 @@
-import { getAdminAuth, getProjectId } from "./firebase";
+import { FirebaseAdminError, getAdminAuth, getProjectId } from "./firebase";
 
 export class AuthRequiredError extends Error {
   constructor(message = "Authentication required") {
@@ -47,10 +47,28 @@ export async function requireAuth(
     // failures are observable, while returning only a safe public error.
     const name = err instanceof Error ? err.name : "UnknownError";
     const message = err instanceof Error ? err.message : String(err);
+    const code =
+      typeof err === "object" && err !== null && "code" in err
+        ? String((err as { code?: unknown }).code)
+        : null;
+    const wrongProject = /aud|audience/i.test(message);
     console.error(
       "[requireAuth] Firebase ID token verification failed: " +
-        JSON.stringify({ name, message, projectId: getProjectId() ?? null }),
+        JSON.stringify({
+          name,
+          code,
+          stage: err instanceof FirebaseAdminError ? err.stage : "verifyIdToken",
+          message,
+          projectId: getProjectId() ?? null,
+          hint: wrongProject
+            ? 'token may have been issued for a different Firebase project (invalid "aud" claim)'
+            : null,
+        }),
     );
+    // Server-side misconfiguration (missing module/credentials) is NOT a user
+    // authentication failure: propagate it so it is observable as a 500-class
+    // server error instead of masquerading as an expired session.
+    if (err instanceof FirebaseAdminError) throw err;
     throw new UnauthorizedError("Invalid or expired session");
   }
 

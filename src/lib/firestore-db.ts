@@ -35,6 +35,15 @@ export function tsToIso(ts: unknown): string | null {
 export async function getDb(): Promise<FirestoreApi> {
   const { db, isAdmin } = await getAdminDb();
   if (!db) throw new Error("Firestore not initialized");
+  // Defense-in-depth: authenticated server-side access must never run through
+  // an unauthenticated client SDK (it would fail Firestore rules with an
+  // opaque permission-denied). getAdminDb() no longer produces this state; if
+  // a future refactor reintroduces it, fail loudly here.
+  if (!isAdmin) {
+    throw new Error(
+      "Firestore Admin unavailable — refusing to fall back to unauthenticated client SDK",
+    );
+  }
 
   if (isAdmin) {
     const { FieldValue, Timestamp } = await adminRequire<{
