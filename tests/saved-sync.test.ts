@@ -22,12 +22,12 @@ describe("rapid save/unsave coalescing (syncSavedForUser)", () => {
     toggleMock.mockReset();
     getMock.mockReset();
     mergeMock.mockReset();
-    getMock.mockResolvedValue([]);
-    mergeMock.mockResolvedValue(undefined);
+    getMock.mockResolvedValue({ ok: true, data: [] });
+    mergeMock.mockResolvedValue({ ok: true, data: null });
   });
 
   it("a burst of same-intent toggles issues a single request", async () => {
-    toggleMock.mockResolvedValue({ added: true });
+    toggleMock.mockResolvedValue({ ok: true, data: { added: true } });
 
     syncSavedForUser("u", "t", "p-burst", true);
     syncSavedForUser("u", "t", "p-burst", true);
@@ -36,23 +36,23 @@ describe("rapid save/unsave coalescing (syncSavedForUser)", () => {
 
     expect(toggleMock).toHaveBeenCalledTimes(1);
     expect(toggleMock).toHaveBeenCalledWith({
-      data: { token: "t", uid: "u", posterId: "p-burst" },
+      data: { token: "t", posterId: "p-burst" },
     });
   });
 
   it("add → remove while a request is in flight is serialized (no out-of-order contradiction)", async () => {
-    let resolveFirst!: (v: { added: boolean }) => void;
+    let resolveFirst!: (v: { ok: true; data: { added: boolean } }) => void;
     toggleMock.mockImplementationOnce(
-      () => new Promise<{ added: boolean }>((res) => (resolveFirst = res)),
+      () => new Promise<{ ok: true; data: { added: boolean } }>((res) => (resolveFirst = res)),
     );
-    toggleMock.mockResolvedValueOnce({ added: false });
+    toggleMock.mockResolvedValueOnce({ ok: true, data: { added: false } });
 
     syncSavedForUser("u", "t", "p-serial", true); // add
     await flush();
     expect(toggleMock).toHaveBeenCalledTimes(1);
 
     syncSavedForUser("u", "t", "p-serial", false); // remove while first is in flight
-    resolveFirst({ added: true });
+    resolveFirst({ ok: true, data: { added: true } });
     await flush();
 
     // Second request only fires after the first resolves, so the final server
@@ -61,7 +61,7 @@ describe("rapid save/unsave coalescing (syncSavedForUser)", () => {
   });
 
   it("add → remove → add coalesces to the final saved intent", async () => {
-    toggleMock.mockResolvedValue({ added: true });
+    toggleMock.mockResolvedValue({ ok: true, data: { added: true } });
 
     syncSavedForUser("u", "t", "p-coalesce", true);
     syncSavedForUser("u", "t", "p-coalesce", false);
@@ -73,13 +73,27 @@ describe("rapid save/unsave coalescing (syncSavedForUser)", () => {
     expect(toggleMock).toHaveBeenCalledTimes(1);
   });
 
-  it("on server failure, restores the server state via a reload", async () => {
+  it("on rejected RPC, restores the server state via a reload", async () => {
     toggleMock.mockRejectedValueOnce(new Error("network"));
-    getMock.mockResolvedValue(["p-fail"]);
+    getMock.mockResolvedValue({ ok: true, data: ["p-fail"] });
 
     syncSavedForUser("u", "t", "p-fail", true);
     await flush();
 
+    expect(getMock).toHaveBeenCalled();
+  });
+
+  it("on resolved { ok:false } envelope, restores the server state via the same reload path", async () => {
+    toggleMock.mockResolvedValueOnce({
+      ok: false,
+      error: { code: "INTERNAL", message: "Something went wrong. Please try again." },
+    });
+    getMock.mockResolvedValue({ ok: true, data: ["p-fail-env"] });
+
+    syncSavedForUser("u", "t", "p-fail-env", true);
+    await flush();
+
+    // The reload fired — proving { ok:false } took the failure path.
     expect(getMock).toHaveBeenCalled();
   });
 });

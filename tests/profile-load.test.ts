@@ -21,12 +21,24 @@ describe("loadUserProfile", () => {
   });
 
   it("successful load returns the profile", async () => {
-    profileMock.mockResolvedValue(baseProfile);
+    profileMock.mockResolvedValue({ ok: true, data: baseProfile });
     await expect(loadUserProfile("uid", "token")).resolves.toEqual({ ok: true, data: baseProfile });
   });
 
-  it("failed load exposes an error", async () => {
+  it("failed load exposes an error (rejection)", async () => {
     profileMock.mockRejectedValue(new Error("boom"));
+    const result = await loadUserProfile("uid", "token");
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe(PROFILE_LOAD_ERROR);
+    }
+  });
+
+  it("failed load exposes an error (resolved { ok:false } envelope)", async () => {
+    profileMock.mockResolvedValue({
+      ok: false,
+      error: { code: "INTERNAL", message: "Something went wrong. Please try again." },
+    });
     const result = await loadUserProfile("uid", "token");
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -41,12 +53,12 @@ describe("prefetchUserProfile", () => {
   });
 
   it("successful prefetch returns the profile", async () => {
-    profileMock.mockResolvedValue(baseProfile);
+    profileMock.mockResolvedValue({ ok: true, data: baseProfile });
     await expect(prefetchUserProfile("uid", "token")).resolves.toEqual(baseProfile);
   });
 
   it("failed prefetch returns the previously cached profile (data preserved)", async () => {
-    profileMock.mockResolvedValueOnce(baseProfile);
+    profileMock.mockResolvedValueOnce({ ok: true, data: baseProfile });
     await prefetchUserProfile("uid", "token");
 
     profileMock.mockRejectedValueOnce(new Error("boom"));
@@ -65,7 +77,7 @@ describe("prefetchUserProfile", () => {
     await prefetchUserProfile("uid", "token");
 
     const retried = { ...baseProfile, bio: "updated" };
-    profileMock.mockResolvedValueOnce(retried);
+    profileMock.mockResolvedValueOnce({ ok: true, data: retried });
     await expect(prefetchUserProfile("uid", "token")).resolves.toEqual(retried);
   });
 });

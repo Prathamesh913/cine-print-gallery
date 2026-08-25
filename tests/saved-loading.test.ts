@@ -43,7 +43,7 @@ describe("useSaved authenticated loading", () => {
 
   it("starts the saved request after auth resolves instead of deadlocking in loading", async () => {
     getAuthTokenMock.mockResolvedValue("token");
-    getUserLikedIdsMock.mockResolvedValue(["poster-1"]);
+    getUserLikedIdsMock.mockResolvedValue({ ok: true, data: ["poster-1"] });
 
     const { useSaved } = await import("../src/lib/saved");
     const state = useSaved();
@@ -58,6 +58,7 @@ describe("useSaved authenticated loading", () => {
     await Promise.resolve();
 
     expect(getAuthTokenMock).toHaveBeenCalledOnce();
-    expect(getUserLikedIdsMock).toHaveBeenCalledWith({ data: { token: "token", uid: "uid" } });
+    // Identity is derived server-side from the token — no uid is sent.
+    expect(getUserLikedIdsMock).toHaveBeenCalledWith({ data: { token: "token" } });
   });
 });

@@ -131,16 +131,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (token) {
               try {
                 const { ensureUserProfile } = await import("./user-likes");
-                await ensureUserProfile({
+                const res = await ensureUserProfile({
                   data: {
                     token,
-                    uid: firebaseUser.uid,
                     email: firebaseUser.email,
                     displayName: firebaseUser.displayName,
                     photoURL: firebaseUser.photoURL,
                     creationTime: firebaseUser.metadata?.creationTime ?? null,
                   },
                 });
+                if (!res.ok) {
+                  // non-critical — user doc will be created on first like if this fails
+                }
               } catch {
                 // non-critical — user doc will be created on first like if this fails
               }

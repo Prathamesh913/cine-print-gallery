@@ -78,9 +78,20 @@ export async function loadSaved(
 ): Promise<LoadResult<string[]>> {
   try {
     if (localIds.length > 0) {
-      await mergeLikedPosters({ data: { token, uid, posterIds: localIds } });
+      const mergeRes = await mergeLikedPosters({ data: { token, posterIds: localIds } });
+      // Migrated server fns resolve { ok:false } instead of rejecting; treat
+      // that exactly like the RPC failures this function always handled.
+      if (!mergeRes.ok) {
+        console.error("Failed to merge liked posters:", mergeRes.error.message);
+        return { ok: false, error: SAVED_LOAD_ERROR };
+      }
     }
-    const ids = await getUserLikedIds({ data: { token, uid } });
+    const res = await getUserLikedIds({ data: { token } });
+    if (!res.ok) {
+      console.error("Failed to load liked posters:", res.error.message);
+      return { ok: false, error: SAVED_LOAD_ERROR };
+    }
+    const ids = res.data;
     if (localIds.length > 0 && typeof window !== "undefined") {
       localStorage.removeItem(KEY);
     }
@@ -125,7 +136,10 @@ export async function drainSavedSync(uid: string, token: string, id: string) {
       if (current === desired) continue;
 
       try {
-        await toggleUserLike({ data: { token, uid, posterId: id } });
+        const res = await toggleUserLike({ data: { token, posterId: id } });
+        // A resolved { ok:false } follows the same failure path as a
+        // rejected RPC call did before the envelope migration.
+        if (!res.ok) throw new Error(res.error.message);
         serverStates.set(id, desired);
         if (snapshot.error) {
           setSnapshot(loadSuccess(snapshot, snapshot.data ?? []));
