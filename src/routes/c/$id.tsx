@@ -45,8 +45,10 @@ export const Route = createFileRoute("/c/$id")({
   loader: async ({ params }) => {
     const [posters, preview] = await Promise.all([
       fetchNotionPosters(),
-      // Public/unlisted preview only (no requester) for OG tags
-      getCollection({ data: { id: params.id, requesterUid: null } }).catch(() => null),
+      // Public/unlisted preview only (no token) for OG tags
+      getCollection({ data: { id: params.id } })
+        .then((res) => (res.ok ? res.data : null))
+        .catch(() => null),
     ]);
     return { posters, id: params.id, preview };
   },
@@ -103,10 +105,12 @@ function CollectionPage() {
     try {
       const currentUser = user;
       const token = currentUser ? await currentUser.getIdToken().catch(() => null) : null;
-      const requesterUid = currentUser && token ? currentUser.uid : null;
-      const col = await getCollection({
-        data: { id, token: token ?? null, requesterUid },
+      const res = await getCollection({
+        data: { id, token: token ?? null },
       });
+      // Migrated server fns resolve { ok:false } instead of rejecting; treat
+      // that exactly like the RPC failures the catch below always handled.
+      const col = res.ok ? res.data : null;
       setCollection(col);
       if (col) {
         setName(col.name);

@@ -1,4 +1,5 @@
 import { FirebaseAdminError, getAdminAuth } from "../server/firebase/admin";
+import { unauthorized } from "../server/errors/app-error";
 import { getProjectId } from "./firebase";
 
 // Re-exported so auth-middleware (and future isomorphic wiring) can reference
@@ -110,4 +111,23 @@ export async function resolveCollectionViewer(
     return null;
   }
   return requireAuth(token, claimedUid);
+}
+
+/**
+ * Optional-auth viewer resolution for publicly readable resources (Phase 4):
+ * null when no token is provided; otherwise the VERIFIED token UID. Identity
+ * always comes from the token — there is no claimed-UID parameter.
+ *
+ * Failure semantics mirror authMiddleware: invalid/expired tokens reject with
+ * an AppError UNAUTHORIZED, while FirebaseAdminError (config/module failures)
+ * propagates so misconfiguration stays visible as a 5xx-class error.
+ */
+export async function optionalViewerUid(token?: string | null): Promise<string | null> {
+  if (!token) return null;
+  try {
+    return await verifyTokenUid(token);
+  } catch (err) {
+    if (err instanceof FirebaseAdminError) throw err;
+    throw unauthorized("Invalid or expired session.", { cause: err });
+  }
 }

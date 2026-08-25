@@ -22,9 +22,16 @@ const inflightByUid = new Map<string, Promise<UserCollection[]>>();
 function fetchMyCollections(uid: string, token: string): Promise<UserCollection[]> {
   const existing = inflightByUid.get(uid);
   if (existing) return existing;
-  const request = listMyCollections({ data: { token, uid } }).finally(() => {
-    if (inflightByUid.get(uid) === request) inflightByUid.delete(uid);
-  });
+  const request = listMyCollections({ data: { token } })
+    .then((res) => {
+      // Migrated server fns resolve { ok:false } instead of rejecting; treat
+      // that exactly like the RPC failures this function always handled.
+      if (!res.ok) throw new Error(res.error.message);
+      return res.data;
+    })
+    .finally(() => {
+      if (inflightByUid.get(uid) === request) inflightByUid.delete(uid);
+    });
   inflightByUid.set(uid, request);
   return request;
 }
@@ -81,10 +88,9 @@ export function useCollections({ enabled = true }: { enabled?: boolean } = {}) {
           toast.error("Authentication required. Please sign in again.");
           return null;
         }
-        const col = await createCollection({
+        const res = await createCollection({
           data: {
             token,
-            uid: user.uid,
             ownerName: user.displayName,
             name: input.name,
             description: input.description,
@@ -92,6 +98,11 @@ export function useCollections({ enabled = true }: { enabled?: boolean } = {}) {
             posterId: input.posterId,
           },
         });
+        if (!res.ok) {
+          toast.error(res.error.message);
+          return null;
+        }
+        const col = res.data;
         dispatch({
           type: "SET",
           data: [col, ...(state.data ?? []).filter((c) => c.id !== col.id)],
@@ -121,14 +132,18 @@ export function useCollections({ enabled = true }: { enabled?: boolean } = {}) {
       try {
         const token = await getAuthToken(user);
         if (!token) return null;
-        const col = await updateCollection({
-          data: { token, uid: user.uid, id, ...patch },
+        const res = await updateCollection({
+          data: { token, id, ...patch },
         });
+        if (!res.ok) {
+          toast.error(res.error.message);
+          return null;
+        }
         dispatch({
           type: "SET",
-          data: (state.data ?? []).map((c) => (c.id === id ? col : c)),
+          data: (state.data ?? []).map((c) => (c.id === id ? res.data : c)),
         });
-        return col;
+        return res.data;
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : "Failed to update collection");
         return null;
@@ -143,7 +158,11 @@ export function useCollections({ enabled = true }: { enabled?: boolean } = {}) {
       try {
         const token = await getAuthToken(user);
         if (!token) return false;
-        await deleteCollection({ data: { token, uid: user.uid, id } });
+        const res = await deleteCollection({ data: { token, id } });
+        if (!res.ok) {
+          toast.error(res.error.message);
+          return false;
+        }
         dispatch({
           type: "SET",
           data: (state.data ?? []).filter((c) => c.id !== id),
@@ -170,14 +189,18 @@ export function useCollections({ enabled = true }: { enabled?: boolean } = {}) {
           toast.error("Authentication required. Please sign in again.");
           return null;
         }
-        const col = await addPosterToCollection({
-          data: { token, uid: user.uid, collectionId, posterId },
+        const res = await addPosterToCollection({
+          data: { token, collectionId, posterId },
         });
+        if (!res.ok) {
+          toast.error(res.error.message);
+          return null;
+        }
         dispatch({
           type: "SET",
-          data: (state.data ?? []).map((c) => (c.id === collectionId ? col : c)),
+          data: (state.data ?? []).map((c) => (c.id === collectionId ? res.data : c)),
         });
-        return col;
+        return res.data;
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : "Failed to add poster");
         return null;
@@ -192,14 +215,18 @@ export function useCollections({ enabled = true }: { enabled?: boolean } = {}) {
       try {
         const token = await getAuthToken(user);
         if (!token) return null;
-        const col = await removePosterFromCollection({
-          data: { token, uid: user.uid, collectionId, posterId },
+        const res = await removePosterFromCollection({
+          data: { token, collectionId, posterId },
         });
+        if (!res.ok) {
+          toast.error(res.error.message);
+          return null;
+        }
         dispatch({
           type: "SET",
-          data: (state.data ?? []).map((c) => (c.id === collectionId ? col : c)),
+          data: (state.data ?? []).map((c) => (c.id === collectionId ? res.data : c)),
         });
-        return col;
+        return res.data;
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : "Failed to remove poster");
         return null;
