@@ -113,4 +113,35 @@ describe("firebase-admin Vercel packaging (build output)", () => {
       ).toBe(true);
     },
   );
+
+  it.skipIf(!serverFunc)(
+    "C1 regression: all admin submodules load in a require(esm)-less Node runtime",
+    () => {
+      // firebase-admin@14 → jwks-rsa@4 → jose@6 (ESM-only) crashed Vercel's
+      // CJS runtime with ERR_REQUIRE_ESM before any handler ran. The pin to
+      // firebase-admin@13.x (jwks-rsa@3 → jose@4 with a real CJS entry) must
+      // keep app/auth/firestore loadable when require(esm) is unavailable.
+      // This spawns the closest local equivalent of the Vercel runtime.
+      const { execFileSync } = require("node:child_process") as typeof import("node:child_process");
+      const probe = `
+        const { createRequire } = require("node:module");
+        const { pathToFileURL } = require("node:url");
+        const req = createRequire(pathToFileURL(process.argv[1] + "/").href);
+        const out = [];
+        for (const id of ["firebase-admin/app", "firebase-admin/auth", "firebase-admin/firestore"]) {
+          try { const m = req(id); out.push(id + "=OK"); }
+          catch (e) { out.push(id + "=" + (e.code || "ERROR")); }
+        }
+        console.log(out.join("\\n"));
+      `;
+      const stdout = execFileSync(
+        process.execPath,
+        ["--no-experimental-require-module", "-e", probe, serverFunc!],
+        { encoding: "utf8" },
+      );
+      for (const id of ["app", "auth", "firestore"]) {
+        expect(stdout).toContain(`firebase-admin/${id}=OK`);
+      }
+    },
+  );
 });
