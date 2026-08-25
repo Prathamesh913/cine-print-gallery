@@ -35,7 +35,7 @@ function findVercelServerFunc(): string | null {
 describe("firebase-admin module resolution (app path)", () => {
   it("adminRequire resolves firebase-admin/app, auth, and firestore", async () => {
     // Import the real helper (no mocks) so we exercise the production require path.
-    const { adminRequire } = await import("../../src/lib/firebase");
+    const { adminRequire } = await import("../../src/server/firebase/admin");
 
     const app = await adminRequire<{
       SDK_VERSION?: string;
@@ -111,6 +111,37 @@ describe("firebase-admin Vercel packaging (build output)", () => {
         ),
         `function package.json dependencies should include firebase-admin; got: ${JSON.stringify(pkg.dependencies)}`,
       ).toBe(true);
+    },
+  );
+
+  it.skipIf(!serverFunc)(
+    "C1 regression: all admin submodules load in a require(esm)-less Node runtime",
+    () => {
+      // firebase-admin@14 → jwks-rsa@4 → jose@6 (ESM-only) crashed Vercel's
+      // CJS runtime with ERR_REQUIRE_ESM before any handler ran. The pin to
+      // firebase-admin@13.x (jwks-rsa@3 → jose@4 with a real CJS entry) must
+      // keep app/auth/firestore loadable when require(esm) is unavailable.
+      // This spawns the closest local equivalent of the Vercel runtime.
+      const { execFileSync } = require("node:child_process") as typeof import("node:child_process");
+      const probe = `
+        const { createRequire } = require("node:module");
+        const { pathToFileURL } = require("node:url");
+        const req = createRequire(pathToFileURL(process.argv[1] + "/").href);
+        const out = [];
+        for (const id of ["firebase-admin/app", "firebase-admin/auth", "firebase-admin/firestore"]) {
+          try { const m = req(id); out.push(id + "=OK"); }
+          catch (e) { out.push(id + "=" + (e.code || "ERROR")); }
+        }
+        console.log(out.join("\\n"));
+      `;
+      const stdout = execFileSync(
+        process.execPath,
+        ["--no-experimental-require-module", "-e", probe, serverFunc!],
+        { encoding: "utf8" },
+      );
+      for (const id of ["app", "auth", "firestore"]) {
+        expect(stdout).toContain(`firebase-admin/${id}=OK`);
+      }
     },
   );
 });

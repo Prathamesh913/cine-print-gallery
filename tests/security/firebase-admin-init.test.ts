@@ -94,7 +94,7 @@ function makeAdminRequireImpl(opts?: {
 }
 
 async function importFirebase() {
-  return await import("../../src/lib/firebase");
+  return await import("../../src/server/firebase/admin");
 }
 
 let savedEnv: Record<string, string | undefined>;
