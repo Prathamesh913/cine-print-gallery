@@ -119,6 +119,8 @@ function Home() {
     });
   }, [shuffledPosters, dq, style, genre, decade, artist]);
 
+  // Genuine empty catalog only — infrastructure failures throw PosterFetchError
+  // from the loader and surface via the route error boundary instead.
   if (posters.length === 0) {
     return (
       <div className="min-h-screen flex flex-col justify-between" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
@@ -132,12 +134,11 @@ function Home() {
             </div>
             <h2 style={{ fontFamily: "Poppins, sans-serif" }} className="text-xl font-semibold mb-2">No posters found</h2>
             <p className="text-white/60 text-sm mb-6">
-              We couldn't load any posters from your Notion database. Make sure you have:
+              The gallery loaded successfully, but there are no published posters yet.
             </p>
             <ul className="text-left text-xs space-y-3 text-white/65 mb-2 max-w-xs mx-auto list-disc pl-5">
-              <li>Configured <code className="bg-white/10 px-1 py-0.5 rounded text-white/80 font-mono">NOTION_KEY</code> and <code className="bg-white/10 px-1 py-0.5 rounded text-white/80 font-mono">NOTION_DATABASE_ID</code> in your <code className="bg-white/10 px-1 py-0.5 rounded">.env</code>.</li>
-              <li>Shared your Notion database page with your Integration.</li>
-              <li>Set at least one poster's Status select to <span className="text-[#FF6B6B] font-semibold">"Published"</span>.</li>
+              <li>Set at least one poster's Status to <span className="text-[#FF6B6B] font-semibold">"Published"</span>.</li>
+              <li>Confirm the poster has an image URL.</li>
             </ul>
           </div>
         </main>

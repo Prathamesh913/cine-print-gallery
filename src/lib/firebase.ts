@@ -2,6 +2,16 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import type { App } from "firebase-admin/app";
 import type { Auth } from "firebase-admin/auth";
+// Side-effect imports: Nitro's dependency tracer only packages modules it can
+// see as static import/require edges. Runtime loading still uses createRequire
+// (below) so firebase-admin's CJS graph is not rewritten into broken ESM
+// ("Cannot read properties of undefined (reading 'SDK_VERSION')").
+// vite.config.ts sets nitro.traceDeps: ["firebase-admin*"] so these imports are
+// externalized (not bundled) and the full package is copied into the function
+// node_modules — fixing production "Cannot find module 'firebase-admin/app'".
+import "firebase-admin/app";
+import "firebase-admin/auth";
+import "firebase-admin/firestore";
 import {
   type ServiceAccount,
   parseServiceAccount,
@@ -104,19 +114,35 @@ export function _resetFirebaseAdminForTests(): void {
 
 /**
  * Load a firebase-admin module through Node's native require instead of a
- * bundler-resolved import. firebase-admin ships a CJS build whose internal
- * ESM/CJS interop is corrupted when it is bundled and converted to ESM
- * ("Cannot read properties of undefined (reading 'SDK_VERSION')"). Requiring it
- * at runtime keeps the original CJS require graph intact.
+ * bundler-resolved import binding. Paired with the side-effect static imports
+ * above + nitro.traceDeps so the package is present in the deployed function
+ * node_modules while the runtime require graph stays pure CJS.
  *
- * NOTE: because the module id is a runtime value, deploy targets must ship
- * firebase-admin from node_modules (it is a regular "dependency" in
- * package.json for exactly this reason).
+ * Resolution order:
+ *  1. Relative to this module (Vercel colocates node_modules next to chunks).
+ *  2. Relative to process.cwd() (function root).
  */
 export async function adminRequire<T>(id: string): Promise<T> {
   const { createRequire } = await import("node:module");
-  const require = createRequire(import.meta.url);
-  return require(id) as T;
+  const { pathToFileURL } = await import("node:url");
+  const errors: unknown[] = [];
+
+  try {
+    return createRequire(import.meta.url)(id) as T;
+  } catch (err) {
+    errors.push(err);
+  }
+
+  try {
+    return createRequire(pathToFileURL(`${process.cwd()}/`).href)(id) as T;
+  } catch (err) {
+    errors.push(err);
+  }
+
+  const first = errors[0];
+  throw first instanceof Error
+    ? first
+    : new Error(`Cannot find module '${id}'`);
 }
 
 type ResolvedCredential =

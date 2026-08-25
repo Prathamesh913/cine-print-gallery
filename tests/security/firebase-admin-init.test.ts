@@ -27,6 +27,8 @@ vi.mock("node:module", async (importOriginal) => {
   const actual = await importOriginal<typeof import("node:module")>();
   return {
     ...actual,
+    // Both resolution roots (import.meta.url and process.cwd()) share the same
+    // mock so module-load failure tests still cover the full adminRequire path.
     createRequire: () => {
       return (id: string) => {
         if (!adminRequireState.impl) {
