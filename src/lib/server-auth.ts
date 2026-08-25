@@ -1,6 +1,10 @@
 import { FirebaseAdminError, getAdminAuth } from "../server/firebase/admin";
 import { getProjectId } from "./firebase";
 
+// Re-exported so auth-middleware (and future isomorphic wiring) can reference
+// the error class without adding a second edge into src/server/firebase.
+export { FirebaseAdminError };
+
 export class AuthRequiredError extends Error {
   constructor(message = "Authentication required") {
     super(message);

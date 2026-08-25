@@ -1,59 +1,87 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getDb } from "./firestore-db";
 import { getAdminAuth } from "../server/firebase/admin";
-import { requireAuth } from "./server-auth";
-import { getUserProfileCore, getUserLikedIdsCore, type UserProfile } from "./user-likes-core";
-import {
-  listMyCollectionsCore,
-  deleteCollectionCore,
-  type UserCollection,
-} from "./collections-core";
+import { buildAccountExport, performAccountDeletion, type UserDataExport } from "./account-core";
+import { authMiddleware, requireUid } from "./auth-middleware";
+import { toPublicError, type SuccessBody, type ErrorResponseBody } from "../server/errors/error-response";
+import { createLogger } from "../server/request/logging";
+import { createRequestId } from "../server/request/context";
 
-export interface UserDataExport {
-  profile: UserProfile;
-  savedPosterIds: string[];
-  collections: UserCollection[];
+export type { UserDataExport } from "./account-core";
+
+/**
+ * Account feature: server-fn wiring. Business logic lives in account-core.ts
+ * (pure, FakeDb-testable). Identity comes exclusively from the verified token
+ * (authMiddleware → context.uid) — never a client-supplied field.
+ *
+ * Client-bundle note: profile.tsx imports this module for the RPC stubs, so
+ * everything touching ../server/* must stay referenced ONLY from .handler()
+ * closures (which the TanStack compiler extracts server-side). Do not export
+ * module-level helpers from here — an export pins its server imports into the
+ * client graph and trips import-protection.
+ */
+
+/**
+ * Feature envelope runner: success/failure bodies with one structured log line
+ * per operation. Promote to src/server when the next feature adopts the same
+ * convention (kept here until a second consumer proves the shape).
+ */
+// ponytail: duplicate this helper per feature ONLY until two exist; then lift
+// to src/server/errors/error-response.ts unchanged.
+async function withEnvelope<T>(
+  operation: string,
+  uid: string | undefined,
+  fn: () => Promise<T>,
+): Promise<SuccessBody<T> | ErrorResponseBody> {
+  const logger = createLogger({
+    requestId: createRequestId(),
+    operation,
+    ...(uid !== undefined ? { uid } : {}),
+  });
+  const start = Date.now();
+  try {
+    const data = await fn();
+    logger.info("request completed", { durationMs: Date.now() - start });
+    return { ok: true, data };
+  } catch (err) {
+    logger.error("request failed", { durationMs: Date.now() - start });
+    // Unknown errors collapse to a safe INTERNAL body; causes stay server-side.
+    return toPublicError(err);
+  }
 }
 
 /**
- * Returns the authenticated user's profile, saved posters and collections in a
- * JSON-friendly shape. The UID is derived from the verified ID token.
+ * Returns the authenticated user's data export.
  */
 export const exportUserData = createServerFn({ method: "POST" })
-  .validator((data: { token: string; uid: string }) => data)
-  .handler(async ({ data }): Promise<UserDataExport> => {
-    const uid = await requireAuth(data.token, data.uid);
-    const api = await getDb();
-    const [profile, savedPosterIds, collections] = await Promise.all([
-      getUserProfileCore(api, uid),
-      getUserLikedIdsCore(api, uid),
-      listMyCollectionsCore(api, uid),
-    ]);
-    return { profile, savedPosterIds, collections };
-  });
+  .validator((data: { token: string }) => data)
+  .middleware([authMiddleware])
+  .handler(
+    async ({ context }): Promise<SuccessBody<UserDataExport> | ErrorResponseBody> => {
+      const uid = requireUid(context);
+      return withEnvelope("account.export", uid, async () => {
+        const api = await getDb();
+        return buildAccountExport(api, uid);
+      });
+    },
+  );
 
 /**
- * Permanently deletes the authenticated account: the Firebase Auth user, all
- * user-owned collections, and the user document. Only the verified owner may
- * trigger this.
+ * Permanently deletes the authenticated account. Only the verified owner can
+ * trigger it — there is no client-declared identity in this path at all.
  */
 export const deleteAccount = createServerFn({ method: "POST" })
-  .validator((data: { token: string; uid: string }) => data)
-  .handler(async ({ data }): Promise<{ ok: true }> => {
-    const uid = await requireAuth(data.token, data.uid);
-
-    // 1) Remove the Auth account first: if this fails, nothing else is deleted.
-    const auth = await getAdminAuth();
-    await auth.deleteUser(uid);
-
-    // 2) Delete user-owned collections.
-    const api = await getDb();
-    const collections = await listMyCollectionsCore(api, uid);
-    for (const col of collections) {
-      await deleteCollectionCore(api, { uid, id: col.id });
-    }
-
-    // 3) Delete the user document.
-    await api.deleteDoc(api.doc("users", uid));
-    return { ok: true };
-  });
+  .validator((data: { token: string }) => data)
+  .middleware([authMiddleware])
+  .handler(
+    async ({ context }): Promise<SuccessBody<{ deleted: true }> | ErrorResponseBody> => {
+      const uid = requireUid(context);
+      return withEnvelope("account.delete", uid, async () => {
+        // Auth deletion first inside performAccountDeletion; both handles are
+        // needed so fetch them together.
+        const [auth, api] = await Promise.all([getAdminAuth(), getDb()]);
+        await performAccountDeletion(auth, api, uid);
+        return { deleted: true } as const;
+      });
+    },
+  );

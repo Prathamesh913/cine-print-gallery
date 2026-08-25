@@ -139,7 +139,9 @@ function ProfilePage() {
       return;
     }
     try {
-      const data = await exportUserData({ data: { token, uid: user.uid } });
+      const res = await exportUserData({ data: { token } });
+      if (!res.ok) throw new Error(res.error.message);
+      const data = res.data;
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -165,7 +167,8 @@ function ProfilePage() {
         toast.error("Couldn't delete your account. Please sign in again.");
         return;
       }
-      await deleteAccount({ data: { token, uid: user.uid } });
+      const res = await deleteAccount({ data: { token } });
+      if (!res.ok) throw new Error(res.error.message);
       if (typeof window !== "undefined") {
         try {
           localStorage.removeItem("cineprint:saved");
