@@ -248,15 +248,15 @@ describe("firebase-admin initialization diagnostics", () => {
   });
 });
 
-describe("requireAuth vs server misconfiguration", () => {
+describe("token verification vs server misconfiguration", () => {
   it("propagates FirebaseAdminError instead of masking it as an auth failure", async () => {
     captureConsole();
     process.env.FIREBASE_SERVICE_ACCOUNT_JSON = JSON.stringify(VALID_SA);
     adminRequireState.impl = null; // admin module unavailable -> configuration failure
 
-    const { requireAuth } = await import("../../src/lib/server-auth");
+    const { optionalViewerUid } = await import("../../src/lib/server-auth");
 
-    const err = await requireAuth("some-token", "some-uid").then(
+    const err = await optionalViewerUid("some-token").then(
       () => null,
       (e: unknown) => e as Error & { stage?: string; name: string },
     );
@@ -265,7 +265,7 @@ describe("requireAuth vs server misconfiguration", () => {
     expect(err?.stage).toBe("module-load");
   });
 
-  it("still returns UnauthorizedError (not FirebaseAdminError) for genuinely invalid tokens", async () => {
+  it("still yields a safe UNAUTHORIZED (not FirebaseAdminError) for genuinely invalid tokens", async () => {
     captureConsole();
     process.env.FIREBASE_SERVICE_ACCOUNT_JSON = JSON.stringify(VALID_SA);
 
@@ -290,13 +290,14 @@ describe("requireAuth vs server misconfiguration", () => {
       throw new Error(`Cannot find module '${id}'`);
     };
 
-    const { requireAuth, UnauthorizedError } = await import("../../src/lib/server-auth");
+    const { optionalViewerUid } = await import("../../src/lib/server-auth");
+    const { AppError } = await import("../../src/server/errors/app-error");
 
-    const err = await requireAuth("user-token").then(
+    const err = await optionalViewerUid("user-token").then(
       () => null,
-      (e: unknown) => e as Error,
+      (e: unknown) => e,
     );
-    expect(err).toBeInstanceOf(UnauthorizedError);
-    expect((err as Error & { name?: string }).name).toBe("UnauthorizedError");
+    expect(err).toBeInstanceOf(AppError);
+    expect((err as AppError).code).toBe("UNAUTHORIZED");
   });
 });
