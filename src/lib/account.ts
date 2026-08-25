@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getDb } from "./firestore-db";
-import { getAdminAuth } from "./firebase";
+import { getAdminAuth } from "../server/firebase/admin";
 import { requireAuth } from "./server-auth";
 import { getUserProfileCore, getUserLikedIdsCore, type UserProfile } from "./user-likes-core";
 import {

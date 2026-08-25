@@ -8,7 +8,7 @@ import {
 } from "../../src/lib/server-auth";
 
 const verifyIdToken = vi.fn();
-vi.mock("../../src/lib/firebase", () => {
+vi.mock("../../src/server/firebase/admin", () => {
   // Minimal stand-in matching the real class shape used for instanceof checks.
   class FirebaseAdminError extends Error {
     stage: string;
@@ -20,10 +20,16 @@ vi.mock("../../src/lib/firebase", () => {
   }
   return {
     getAdminAuth: () => Promise.resolve({ verifyIdToken }),
-    getProjectId: () => "test-project",
     FirebaseAdminError,
   };
 });
+
+// getProjectId moved to the public client module; mock it so logs assert
+// against a known value regardless of the developer's local .env.
+vi.mock("../../src/lib/firebase", () => ({
+  getProjectId: () => "test-project",
+  db: null,
+}));
 
 describe("server-auth requireAuth", () => {
   beforeEach(() => {

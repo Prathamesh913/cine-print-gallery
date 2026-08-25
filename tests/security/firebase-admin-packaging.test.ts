@@ -35,7 +35,7 @@ function findVercelServerFunc(): string | null {
 describe("firebase-admin module resolution (app path)", () => {
   it("adminRequire resolves firebase-admin/app, auth, and firestore", async () => {
     // Import the real helper (no mocks) so we exercise the production require path.
-    const { adminRequire } = await import("../../src/lib/firebase");
+    const { adminRequire } = await import("../../src/server/firebase/admin");
 
     const app = await adminRequire<{
       SDK_VERSION?: string;

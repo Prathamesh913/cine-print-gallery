@@ -1,4 +1,5 @@
-import { FirebaseAdminError, getAdminAuth, getProjectId } from "./firebase";
+import { FirebaseAdminError, getAdminAuth } from "../server/firebase/admin";
+import { getProjectId } from "./firebase";
 
 export class AuthRequiredError extends Error {
   constructor(message = "Authentication required") {

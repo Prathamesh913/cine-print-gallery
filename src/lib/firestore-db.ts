@@ -1,5 +1,5 @@
-import { getAdminDb } from "./firebase";
-import { adminRequire } from "./firebase";
+import { getAdminDb } from "../server/firebase/admin";
+import { adminRequire } from "../server/firebase/admin";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FsRef = any;

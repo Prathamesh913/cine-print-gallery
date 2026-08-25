@@ -17,7 +17,7 @@ import {
 // The FakeDb stands in for Firestore; verification is mocked to the token holder.
 
 const verifyIdToken = vi.fn();
-vi.mock("../../src/lib/firebase", () => ({
+vi.mock("../../src/server/firebase/admin", () => ({
   getAdminAuth: () => Promise.resolve({ verifyIdToken }),
 }));
 
