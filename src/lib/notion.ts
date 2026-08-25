@@ -1,10 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type Poster } from "./posters";
-import { getAdminDb, db } from "./firebase";
+import { FirebaseAdminError, getAdminDb, db } from "./firebase";
 
 let cachedPosters: Poster[] | null = null;
 let lastFetchTime = 0;
 const CACHE_TTL = 2 * 60 * 1000; // 2 minutes in-memory cache
+
+/**
+ * Safe public error for poster-fetch failures. Never includes stack traces,
+ * credentials, or internal stage names — those stay in server logs only.
+ */
+export class PosterFetchError extends Error {
+  constructor(message = "Couldn't load posters right now. Please try again.") {
+    super(message);
+    this.name = "PosterFetchError";
+  }
+}
 
 function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
   let artists = Array.isArray(raw.artists)
@@ -58,57 +69,82 @@ function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
   };
 }
 
-export const fetchNotionPosters = createServerFn({ method: "POST" })
-  .handler(async (): Promise<Poster[]> => {
-    const now = Date.now();
-    if (cachedPosters && now - lastFetchTime < CACHE_TTL) {
-      return cachedPosters;
+/**
+ * Core poster load used by the server function. Exported for focused unit tests
+ * so infrastructure-vs-empty regressions do not depend on createServerFn wiring.
+ *
+ * - Success with zero published rows → `[]` (genuine empty catalog).
+ * - Any Admin / Firestore / unexpected failure → `PosterFetchError` (never `[]`).
+ */
+export async function loadPublishedPosters(): Promise<Poster[]> {
+  const now = Date.now();
+  if (cachedPosters && now - lastFetchTime < CACHE_TTL) {
+    return cachedPosters;
+  }
+
+  try {
+    const { db: adminDb, isAdmin } = await getAdminDb();
+    const firestore = adminDb || db;
+
+    if (!firestore) {
+      // Misconfiguration is an infrastructure failure, not an empty catalog.
+      console.error(
+        "Firebase Firestore db is not initialized. Make sure FIREBASE_PROJECT_ID (or firebase-admin-key.json) is configured.",
+      );
+      throw new PosterFetchError();
     }
 
-    try {
-      const { db: adminDb, isAdmin } = await getAdminDb();
-      const firestore = adminDb || db;
+    let rows: { id: string; data: Record<string, unknown> }[] = [];
 
-      if (!firestore) {
-        console.warn(
-          "Firebase Firestore db is not initialized. Make sure FIREBASE_PROJECT_ID (or firebase-admin-key.json) is configured.",
-        );
-        return [];
-      }
-
-      let rows: { id: string; data: Record<string, unknown> }[] = [];
-
-      if (isAdmin) {
-        const snap = await firestore
-          .collection("posters")
-          .where("status", "==", "published")
-          .get();
-        rows = snap.docs.map((doc: { id: string; data: () => Record<string, unknown> }) => ({
-          id: doc.id,
-          data: doc.data(),
-        }));
-      } else {
-        const { collection, getDocs, query, where } = await import("firebase/firestore");
-        const q = query(collection(firestore, "posters"), where("status", "==", "published"));
-        const snap = await getDocs(q);
-        rows = snap.docs.map((doc) => ({
-          id: doc.id,
-          data: doc.data() as Record<string, unknown>,
-        }));
-      }
-
-      const posters = rows
-        .map(({ id, data }) => toPlainPoster(id, data))
-        .filter((p) => Boolean(p.image));
-
-      cachedPosters = posters;
-      lastFetchTime = now;
-      return posters;
-    } catch (error) {
-      console.error("Failed fetching from Firestore:", error);
-      return [];
+    if (isAdmin) {
+      const snap = await firestore
+        .collection("posters")
+        .where("status", "==", "published")
+        .get();
+      rows = snap.docs.map((doc: { id: string; data: () => Record<string, unknown> }) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+    } else {
+      // Defense-in-depth: getAdminDb() is fail-fast and always returns isAdmin.
+      // Keep the client path for local tooling, but never treat its absence as [].
+      const { collection, getDocs, query, where } = await import("firebase/firestore");
+      const q = query(collection(firestore, "posters"), where("status", "==", "published"));
+      const snap = await getDocs(q);
+      rows = snap.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data() as Record<string, unknown>,
+      }));
     }
-  });
+
+    const posters = rows
+      .map(({ id, data }) => toPlainPoster(id, data))
+      .filter((p) => Boolean(p.image));
+
+    cachedPosters = posters;
+    lastFetchTime = now;
+    return posters;
+  } catch (error) {
+    // Infrastructure / Admin failures must NOT become an empty array — the
+    // gallery UI interprets [] as "no published posters".
+    console.error("Failed fetching from Firestore:", error);
+    if (error instanceof PosterFetchError) throw error;
+    if (error instanceof FirebaseAdminError) {
+      throw new PosterFetchError();
+    }
+    throw new PosterFetchError();
+  }
+}
+
+/** Test-only: clear the in-memory poster cache between tests. */
+export function _resetPosterCacheForTests(): void {
+  cachedPosters = null;
+  lastFetchTime = 0;
+}
+
+export const fetchNotionPosters = createServerFn({ method: "POST" }).handler(
+  async (): Promise<Poster[]> => loadPublishedPosters(),
+);
 
 export const getBase64Image = createServerFn({ method: "POST" })
   .validator((url: string) => url)
