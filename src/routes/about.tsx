@@ -162,14 +162,14 @@ function About() {
         {/* Archive filmstrip — lazy discovery anchor */}
         {posters.length >= 5 && (
           <section aria-label="From the archive" className="mt-10">
-            <div className="mb-3 flex items-baseline justify-between gap-4">
+            <div className="mb-3 flex items-center justify-between gap-4">
               <p className="font-mono text-[10px] tracking-widest text-white/55 uppercase sm:text-xs">
                 From the Archive
               </p>
               <Link
                 to="/"
                 preload="intent"
-                className={`shrink-0 font-mono text-[10px] tracking-widest text-white/55 uppercase transition-colors duration-150 ease-[var(--ease-out)] hoverable:hover:text-[#FF6B6B] sm:text-xs ${focusRing}`}
+                className={`inline-flex min-h-11 shrink-0 items-center font-mono text-[10px] tracking-widest text-white/55 uppercase transition-colors duration-150 ease-[var(--ease-out)] hoverable:hover:text-[#FF6B6B] sm:text-xs ${focusRing}`}
               >
                 Browse all →
               </Link>

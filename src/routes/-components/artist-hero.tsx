@@ -170,7 +170,7 @@ export function ArtistHero({ slug, artistName, artistUrl, posters }: ArtistHeroP
           <Link
             to="/"
             preload="intent"
-            className={`inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-4 font-mono text-[10px] uppercase tracking-widest text-white/65 transition-colors duration-150 ease-[var(--ease-out)] hover:border-white/25 hover:bg-white/10 hover:text-[#FF6B6B] sm:text-xs ${focusRing}`}
+            className={`inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-4 font-mono text-[10px] uppercase tracking-widest text-white/65 transition-colors duration-150 ease-[var(--ease-out)] hover:border-white/25 hover:bg-white/10 hover:text-[#FF6B6B] sm:text-xs ${focusRing}`}
           >
             <ArrowLeft size={12} />
             <span>Back to Gallery</span>
@@ -182,7 +182,7 @@ export function ArtistHero({ slug, artistName, artistUrl, posters }: ArtistHeroP
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#FF6B6B]">
               Artist Showcase
             </p>
-            <h1 className="mt-3 font-display text-5xl uppercase leading-none text-[#F5F5F5] sm:text-6xl lg:text-7xl">
+            <h1 className="mt-3 break-words font-display text-5xl uppercase leading-none text-[#F5F5F5] sm:text-6xl lg:text-7xl">
               {artistName}
             </h1>
 

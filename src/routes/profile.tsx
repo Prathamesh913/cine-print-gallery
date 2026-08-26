@@ -317,7 +317,7 @@ function ProfilePage() {
             ) : (
               <button
                 onClick={startEditing}
-                className="group flex min-h-11 min-w-0 w-full items-center gap-1.5 text-left text-sm text-white/65 transition-colors hover:text-white/70"
+                className="group flex min-h-11 min-w-0 w-full items-center gap-1.5 text-left text-sm text-white/65 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
               >
                 {profileData?.bio ? (
                   <span className="min-w-0 break-words">{profileData.bio}</span>
@@ -337,7 +337,7 @@ function ProfilePage() {
               <p className="text-sm text-white/70">{profileError}</p>
               <button
                 onClick={retryProfile}
-                className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-white/15 px-4 py-1.5 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
               >
                 Retry
               </button>
@@ -412,7 +412,7 @@ function ProfilePage() {
                   <p className="text-white/70">{savedError}</p>
                   <button
                     onClick={retrySaved}
-                    className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
                   >
                     Retry
                   </button>
@@ -438,7 +438,7 @@ function ProfilePage() {
                   <p className="text-white/70">{colsError}</p>
                   <button
                     onClick={retryCollections}
-                    className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
                   >
                     Retry
                   </button>
@@ -485,7 +485,7 @@ function ProfilePage() {
             </p>
             <button
               onClick={handleExport}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 px-4 text-sm transition-colors hoverable:hover:border-white/30"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 px-4 text-sm transition-colors hoverable:hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
             >
               <Download size={14} />
               Export my data
