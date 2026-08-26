@@ -1,4 +1,4 @@
-import type { FirestoreApi } from "../../src/lib/firestore-db";
+import type { FirestoreApi } from "../../src/lib/firestore-shared";
 
 export class FakeAuthError extends Error {
   constructor(message = "token invalid") {
