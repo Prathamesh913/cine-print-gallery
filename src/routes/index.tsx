@@ -1,27 +1,88 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Film, Search } from "lucide-react";
+import { Clapperboard, SearchX } from "lucide-react";
 import { Header } from "@/components/Header";
 import { FilterBar } from "@/components/FilterBar";
 import { PosterGrid } from "@/components/PosterGrid";
 import { GalleryErrorBoundary } from "@/components/GalleryErrorBoundary";
+import { EmptyState } from "@/components/states";
 import { Footer } from "@/components/Footer";
 import { type Poster, type PosterStyle, type PosterGenre } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
+import { DailySpotlight, ArtistRail, type RailArtist } from "./-components/home-discovery";
+
+/**
+ * Deterministic, dependency-free PRNG plumbing backing the homepage "daily cut".
+ * Everything derives from the UTC date string (identical on server and client
+ * within a given day), so SSR output and client hydration always agree — no
+ * Math.random() ever enters the render path.
+ */
+
+/** FNV-1a 32-bit string hash → unsigned int seed. */
+function hashString(str: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/** Mulberry32 LCG — tiny, fast, deterministic per seed. */
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** UTC calendar date (YYYY-MM-DD) — the shared seed key for the day. */
+function getUtcDateString(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Non-mutating Fisher–Yates driven by the supplied rand. */
+function deterministicShuffle<T>(arr: readonly T[], rand: () => number): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 
 export const Route = createFileRoute("/")({
-  loader: () => fetchNotionPosters(),
+  // Ordering happens here — deterministic per UTC date — so SSR and client
+  // hydration render the identical "daily cut" with no post-hydration reflow.
+  loader: async () => {
+    const list = await fetchNotionPosters();
+    return {
+      posters: deterministicShuffle(list, mulberry32(hashString(getUtcDateString()))),
+    };
+  },
   head: () => ({
     meta: [
       { property: "og:url", content: "https://cineprint.click/" },
       { property: "og:image", content: "https://cineprint.click/og-image.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "CinePrint curated alternative movie and TV poster gallery" },
+      {
+        property: "og:image:alt",
+        content: "CinePrint curated alternative movie and TV poster gallery",
+      },
       { name: "twitter:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
-      { name: "twitter:description", content: "Curated gallery of custom alternative movie posters and minimalist film art." },
+      {
+        name: "twitter:description",
+        content: "Curated gallery of custom alternative movie posters and minimalist film art.",
+      },
       { name: "twitter:image", content: "https://cineprint.click/og-image.png" },
-      { name: "twitter:image:alt", content: "CinePrint curated alternative movie and TV poster gallery" },
+      {
+        name: "twitter:image:alt",
+        content: "CinePrint curated alternative movie and TV poster gallery",
+      },
     ],
     links: [{ rel: "canonical", href: "https://cineprint.click/" }],
   }),
@@ -37,8 +98,11 @@ function useDebounced<T>(value: T, ms = 300) {
   return v;
 }
 
+/** Minimum catalog size for the discovery chrome (spotlight + rail) to earn its place. */
+const DISCOVERY_MIN_POSTERS = 8;
+
 function Home() {
-  const posters = Route.useLoaderData();
+  const { posters } = Route.useLoaderData();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const dq = useDebounced(query, 300);
@@ -74,33 +138,43 @@ function Home() {
     return Array.from(decs).sort();
   }, [posters]);
 
-  const artists = useMemo(() => {
-    const art = new Set<string>();
+  const artistCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    const bump = (name?: string | null) => {
+      if (!name || name === "Unknown") return;
+      counts.set(name, (counts.get(name) ?? 0) + 1);
+    };
     posters.forEach((p) => {
       if (p.artists && p.artists.length > 0) {
-        p.artists.forEach((a) => a.name && art.add(a.name));
+        p.artists.forEach((a) => bump(a.name));
       } else if (p.artist) {
-        art.add(p.artist);
+        bump(p.artist);
       }
     });
-    return Array.from(art).filter((name) => name !== "Unknown").sort();
+    return counts;
   }, [posters]);
 
-  const [shuffledPosters, setShuffledPosters] = useState<Poster[]>(posters);
+  const artists = useMemo(() => Array.from(artistCounts.keys()).sort(), [artistCounts]);
 
-  useEffect(() => {
-    if (posters.length === 0) return;
-    const arr = [...posters];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    setShuffledPosters(arr);
+  const railArtists = useMemo<RailArtist[]>(
+    () =>
+      Array.from(artistCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 12)
+        .map(([name, count]) => ({ name, count })),
+    [artistCounts],
+  );
+
+  // Same seed as the loader's shuffle: index straight into the daily cut.
+  const featured = useMemo(() => {
+    if (posters.length < DISCOVERY_MIN_POSTERS) return null;
+    const dayIndex = hashString(getUtcDateString()) % posters.length;
+    return posters[dayIndex];
   }, [posters]);
 
   const filtered = useMemo(() => {
     const q = dq.trim().toLowerCase();
-    return shuffledPosters.filter((p) => {
+    return posters.filter((p) => {
       if (style !== "All" && p.style !== style) return false;
       if (genre !== "All" && !p.genre.includes(genre)) return false;
       if (decade !== "All") {
@@ -108,39 +182,46 @@ function Home() {
         if (`${dec}s` !== decade) return false;
       }
       if (artist !== "All") {
-        const hasArtist = p.artists && p.artists.length > 0
-          ? p.artists.some((a) => a.name === artist)
-          : p.artist === artist;
+        const hasArtist =
+          p.artists && p.artists.length > 0
+            ? p.artists.some((a) => a.name === artist)
+            : p.artist === artist;
         if (!hasArtist) return false;
       }
       if (!q) return true;
       const hay = [p.title, p.artist, ...p.genre, ...p.tags, p.style].join(" ").toLowerCase();
       return hay.includes(q);
     });
-  }, [shuffledPosters, dq, style, genre, decade, artist]);
+  }, [posters, dq, style, genre, decade, artist]);
+
+  // Discovery modules are chrome for browsing — hide while search/filters drive results.
+  const filtersActive = style !== "All" || genre !== "All" || decade !== "All" || artist !== "All";
+  const anyFilterActive = filtersActive || dq.trim() !== "";
+  const showDiscovery = !anyFilterActive;
 
   // Genuine empty catalog only — infrastructure failures throw PosterFetchError
   // from the loader and surface via the route error boundary instead.
   if (posters.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col justify-between" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
+      <div
+        className="min-h-screen flex flex-col justify-between"
+        style={{ backgroundColor: "#000000", color: "#F5F5F5" }}
+      >
         <Header query={query} onQueryChange={setQuery} showSearch={false} />
         <main className="page-shell py-20 flex-grow flex items-center justify-center">
-          <div className="max-w-md w-full rounded-2xl border border-white/15 bg-white/5 p-8 text-center shadow-xl backdrop-blur-md">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B] mb-4">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold mb-2 font-heading">No posters found</h2>
-            <p className="text-white/60 text-sm mb-6">
-              The gallery loaded successfully, but there are no published posters yet.
-            </p>
-            <ul className="text-left text-xs space-y-3 text-white/65 mb-2 max-w-xs mx-auto list-disc pl-5">
-              <li>Set at least one poster's Status to <span className="text-[#FF6B6B] font-semibold">"Published"</span>.</li>
+          <EmptyState
+            icon={Clapperboard}
+            title="No posters found"
+            body="The gallery loaded successfully, but there are no published posters yet."
+          >
+            <ul className="w-full max-w-xs list-disc space-y-3 pl-5 text-left text-xs text-white/65">
+              <li>
+                Set at least one poster's Status to{" "}
+                <span className="text-[#FF6B6B] font-semibold">"Published"</span>.
+              </li>
               <li>Confirm the poster has an image URL.</li>
             </ul>
-          </div>
+          </EmptyState>
         </main>
         <Footer />
       </div>
@@ -154,8 +235,27 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
-      <Header query={query} onQueryChange={setQuery} showSearch={false} onFeelingLucky={handleFeelingLucky} />
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: "#000000", color: "#F5F5F5" }}
+    >
+      <Header
+        query={query}
+        onQueryChange={setQuery}
+        showSearch={false}
+        onFeelingLucky={handleFeelingLucky}
+      />
+      {(featured || railArtists.length >= 4) && showDiscovery && (
+        <div className="page-shell flex-grow-0 space-y-8 pb-2 pt-6">
+          {featured && (
+            <DailySpotlight
+              poster={featured}
+              artistCount={artistCounts.get(featured.artists?.[0]?.name ?? featured.artist) ?? 1}
+            />
+          )}
+          {railArtists.length >= 4 && <ArtistRail artists={railArtists} />}
+        </div>
+      )}
       <FilterBar
         query={query}
         onQueryChange={setQuery}
@@ -172,7 +272,7 @@ function Home() {
         onDecade={setDecade}
         onArtist={setArtist}
       />
-      <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 flex-grow flex flex-col justify-center">
+      <main className="page-shell w-full py-6 flex-grow flex flex-col justify-center">
         <h1 className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</h1>
         {filtered.length > 0 && (
           <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase tabular-nums">
@@ -180,30 +280,19 @@ function Home() {
           </div>
         )}
         {filtered.length === 0 ? (
-          <div className="flex w-full min-h-[50vh] flex-col items-center justify-center py-12 text-center">
-            <div className="relative mb-6 text-white/30 animate-pulse">
-              <Film size={64} strokeWidth={1} />
-              <div className="absolute -bottom-2 -right-2 text-[#FF6B6B]">
-                <Search size={24} strokeWidth={2.5} />
-              </div>
-            </div>
-            <h2 
-              className="text-2xl font-bold tracking-tight text-[#F5F5F5] mb-2 font-heading"
-            >
-              Plot Twist: No Matches Found!
-            </h2>
-            <p className="max-w-md text-white/65 text-sm mb-8 leading-relaxed">
-              We searched the entire archive but couldn't find any posters matching{" "}
-              <span className="text-[#FF6B6B] font-semibold">
-                {query ? `"${query}"` : "the selected filters"}
-              </span>
-              . Maybe it's in the director's cut, or we haven't printed it yet!
-            </p>
-            <div className="flex flex-wrap gap-3 justify-center">
+          <div className="flex w-full min-h-[50vh] items-center justify-center py-12">
+            <EmptyState icon={SearchX} title="Plot Twist: No Matches Found!">
+              <p className="w-full max-w-md text-sm leading-relaxed text-white/65">
+                We searched the entire archive but couldn't find any posters matching{" "}
+                <span className="text-[#FF6B6B] font-semibold">
+                  {query ? `"${query}"` : "the selected filters"}
+                </span>
+                . Maybe it's in the director's cut, or we haven't printed it yet!
+              </p>
               {query && (
                 <button
                   onClick={() => setQuery("")}
-                  className="rounded-full bg-white/5 border border-white/15 px-5 py-2 text-sm font-medium text-[#F5F5F5] hover:bg-white/10 active:scale-95 transition-all duration-150"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 py-2 text-sm font-medium text-[#F5F5F5] transition-all duration-150 hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
                 >
                   Clear Search
                 </button>
@@ -216,12 +305,12 @@ function Home() {
                     setDecade("All");
                     setArtist("All");
                   }}
-                  className="rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] hover:bg-[#FF8585] active:scale-95 transition-all duration-150"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212] transition-all duration-150 hover:bg-[#FF8585] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
                 >
                   Reset Filters
                 </button>
               )}
-            </div>
+            </EmptyState>
           </div>
         ) : (
           <GalleryErrorBoundary>

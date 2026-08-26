@@ -109,6 +109,7 @@ export function Header({
               <span>Lucky</span>
             </button>
           )}
+          <NavLink to="/constellation">Constellation</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/submit">Submit</NavLink>
           <NavLink to="/saved">Saved</NavLink>
@@ -178,6 +179,9 @@ export function Header({
                 Lucky
               </MobileAction>
             )}
+            <MobileNavLink to="/constellation" onClick={() => setMobileOpen(false)}>
+              Constellation
+            </MobileNavLink>
             <MobileNavLink to="/about" onClick={() => setMobileOpen(false)}>
               About
             </MobileNavLink>
