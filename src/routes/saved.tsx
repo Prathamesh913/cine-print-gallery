@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { FolderPlus, Heart } from "lucide-react";
+import { FolderPlus, Heart, LogIn } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PosterGrid } from "@/components/PosterGrid";
 import { GalleryErrorBoundary } from "@/components/GalleryErrorBoundary";
@@ -8,11 +8,17 @@ import { Footer } from "@/components/Footer";
 import { TabToggle } from "@/components/TabToggle";
 import { CollectionCard } from "@/components/CollectionCard";
 import { CreateCollectionModal } from "@/components/CreateCollectionModal";
+import { CollectionCardSkeleton, EmptyState } from "@/components/states";
 import { type Poster } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
 import { useSaved } from "@/lib/saved";
 import { useAuth } from "@/lib/auth";
 import { useCollections } from "@/hooks/use-collections";
+
+const primaryPill =
+  "inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-[#FF6B6B] px-5 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
+const outlinePill =
+  "inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-5 text-sm font-medium text-white transition duration-150 ease-[var(--ease-out)] hover:bg-white/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
 
 export const Route = createFileRoute("/saved")({
   loader: () => fetchNotionPosters(),
@@ -63,11 +69,12 @@ function SavedPage() {
     <div className="min-h-screen" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} onFeelingLucky={handleFeelingLucky} />
       <main className="page-shell py-10">
-        <div className="mb-8 flex items-center justify-between gap-4">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-2xl font-semibold font-heading">
-              {tab === "pins" ? "Pins" : "Collections"}
-            </h1>
+            <div className="text-[10px] font-mono uppercase tracking-widest text-white/55 sm:text-xs">
+              {tab === "pins" ? "Your Pins" : "Your Collections"}
+            </div>
+            <h1 className="mt-1 text-2xl font-semibold font-heading">Saved</h1>
             <p className="mt-1 truncate text-sm text-white/60">
               {tab === "pins"
                 ? "Quick pins stay frictionless."
@@ -81,12 +88,14 @@ function SavedPage() {
             className="shrink-0"
             tabs={[
               { id: "pins", label: "Pins", icon: Heart, count: posters.length },
-              {
-                id: "collections",
-                label: "Collections",
-                icon: FolderPlus,
-                count: user ? collections.length : "—",
-              },
+              user
+                ? {
+                    id: "collections",
+                    label: "Collections",
+                    icon: FolderPlus,
+                    count: collections.length,
+                  }
+                : { id: "collections", label: "Collections", icon: FolderPlus },
             ]}
           />
         </div>
@@ -100,31 +109,27 @@ function SavedPage() {
             ) : savedError ? (
               <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
                 <p className="text-white/70">{savedError}</p>
-                <button
-                  onClick={retrySaved}
-                  className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
-                >
+                <button type="button" onClick={retrySaved} className={outlinePill}>
                   Retry
                 </button>
               </div>
             ) : (
               <>
-                {posters.length > 0 && (
-                  <div className="mb-6 text-[10px] font-mono uppercase tracking-widest text-white/55 sm:text-xs">
-                    Showing {posters.length} poster{posters.length !== 1 && "s"}
-                  </div>
-                )}
                 {posters.length === 0 ? (
-                  <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
-                    <p className="text-white/60">
-                      Nothing pinned yet. Start discovering posters you love.
-                    </p>
-                    <Link
-                      to="/"
-                      className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                  <div className="flex min-h-[50vh] items-center justify-center">
+                    <EmptyState
+                      icon={Heart}
+                      title="Nothing pinned yet"
+                      body={
+                        user
+                          ? "Tap the heart on any poster to pin it here."
+                          : "Pins are saved on this device — sign in to sync them everywhere."
+                      }
                     >
-                      Browse the gallery
-                    </Link>
+                      <Link to="/" preload="intent" className={primaryPill}>
+                        Browse Posters
+                      </Link>
+                    </EmptyState>
                   </div>
                 ) : (
                   <GalleryErrorBoundary>
@@ -137,26 +142,28 @@ function SavedPage() {
         ) : (
           <>
             {!user && !loading ? (
-              <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
-                <p className="max-w-sm text-white/60">
-                  Sign in to create collections like “Horror”, “Minimal Typography”, or “Posters I’d
-                  Hang”.
-                </p>
-                <Link
-                  to="/login"
-                  search={{ redirect: "/saved" }}
-                  className="rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-medium text-[#121212]"
+              <div className="flex min-h-[40vh] items-center justify-center">
+                <EmptyState
+                  icon={LogIn}
+                  title="Sign in to create collections"
+                  body={
+                    "Save posters into collections like “Horror”, “Minimal Typography”, or “Posters I’d Hang”."
+                  }
                 >
-                  Sign in
-                </Link>
+                  <Link
+                    to="/login"
+                    search={{ redirect: "/saved" }}
+                    preload="intent"
+                    className={primaryPill}
+                  >
+                    Sign in
+                  </Link>
+                </EmptyState>
               </div>
             ) : (
               <>
                 <div className="mb-6">
-                  <button
-                    onClick={() => setCreateOpen(true)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-4 py-2.5 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 hoverable:hover:bg-[#FF8585] active:scale-95"
-                  >
+                  <button onClick={() => setCreateOpen(true)} className={primaryPill}>
                     <FolderPlus size={15} />
                     New collection
                   </button>
@@ -165,34 +172,28 @@ function SavedPage() {
                 {colsError ? (
                   <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
                     <p className="text-white/70">{colsError}</p>
-                    <button
-                      onClick={retryCollections}
-                      className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
-                    >
+                    <button type="button" onClick={retryCollections} className={outlinePill}>
                       Retry
                     </button>
                   </div>
                 ) : (
                   <>
-                    {collections.length > 0 && (
-                      <div className="mb-6 text-[10px] font-mono uppercase tracking-widest text-white/55 sm:text-xs">
-                        Showing {collections.length} collection{collections.length !== 1 && "s"}
-                      </div>
-                    )}
-
                     {colsLoading && collections.length === 0 ? (
-                      <p className="py-16 text-center text-sm text-white/55">
-                        Loading collections…
-                      </p>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {Array.from({ length: 3 }, (_, i) => (
+                          <CollectionCardSkeleton key={i} />
+                        ))}
+                      </div>
                     ) : collections.length === 0 ? (
-                      <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
-                        <p className="text-white/70">No collections yet.</p>
-                        <p className="max-w-sm text-xs text-white/50">
-                          Examples: Posters I’d Hang · Horror · Korean Cinema · Color Inspiration
-                        </p>
+                      <div className="flex min-h-[30vh] items-center justify-center">
+                        <EmptyState
+                          icon={FolderPlus}
+                          title="No collections yet"
+                          body='Group posters however you like — try "Horror", "Korean Cinema", or "Color Inspiration".'
+                        />
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {collections.map((col) => {
                           const coverIds = Array.from(
                             new Set(
