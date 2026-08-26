@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useEffect, useState, useRef, useReducer } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -41,6 +41,10 @@ import { useSaved } from "@/lib/saved";
 import { useAuth } from "@/lib/auth";
 import { useCollections } from "@/hooks/use-collections";
 import { useUserProfile } from "@/lib/user-profile";
+import { CollectionCardSkeleton, EmptyState } from "@/components/states";
+
+const primaryPill =
+  "inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-[#FF6B6B] px-5 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
 
 export const Route = createFileRoute("/profile")({
   loader: () => fetchNotionPosters(),
@@ -235,7 +239,7 @@ function ProfilePage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} />
-      <main className="mx-auto max-w-[1600px]">
+      <main className="page-shell pb-16 pt-6">
         {/* Banner */}
         <div className="relative h-40 overflow-hidden md:h-52">
           {bannerPoster ? (
@@ -254,9 +258,9 @@ function ProfilePage() {
         </div>
 
         {/* Profile content */}
-        <div className="px-4 pb-10 sm:px-6">
+        <div>
           {/* Avatar + name row */}
-          <div className="relative z-10 -mt-12 mb-6 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:gap-4">
+          <div className="relative z-10 -mt-12 mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:gap-4">
             <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 border-white/15 shadow-lg">
               {user.photoURL ? (
                 <img
@@ -272,9 +276,7 @@ function ProfilePage() {
             </div>
             <div className="min-w-0 w-full flex-1 pb-1 sm:w-auto">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1
-                  className="min-w-0 break-words text-xl font-semibold sm:text-2xl font-heading"
-                >
+                <h1 className="min-w-0 break-words text-xl font-semibold sm:text-2xl font-heading">
                   {user.displayName || "User"}
                 </h1>
                 {badgeLabel && (
@@ -284,6 +286,10 @@ function ProfilePage() {
                   </span>
                 )}
               </div>
+
+              {user.email && (
+                <p className="mt-0.5 max-w-full truncate text-xs text-white/45">{user.email}</p>
+              )}
 
               {nextMilestone && <p className="mt-0.5 text-[11px] text-white/35">{nextMilestone}</p>}
             </div>
@@ -320,7 +326,7 @@ function ProfilePage() {
                 )}
                 <Pencil
                   size={12}
-                  className="shrink-0 opacity-0 transition-opacity group-hover:opacity-60"
+                  className="shrink-0 opacity-40 transition-opacity hoverable:hover:opacity-100 group-focus-within:opacity-100 group-focus-visible:opacity-100"
                 />
               </button>
             )}
@@ -339,55 +345,60 @@ function ProfilePage() {
           )}
 
           {/* Stats */}
-          <div className="mb-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-white/5 bg-white/[0.06] px-4 py-3">
-              <div className="flex items-center gap-2 text-lg font-semibold">
-                <Bookmark size={14} className="text-[#FF6B6B]" />
-                {pinnedCount}
-              </div>
-              <p className="mt-0.5 text-xs text-white/55">
+          <div className="mb-8 grid grid-cols-1 divide-y divide-white/10 rounded-2xl border border-white/12 bg-white/[0.06] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            <div className="flex items-center gap-2.5 px-4 py-3">
+              <Bookmark size={14} className="shrink-0 text-[#FF6B6B]" />
+              <span className="text-lg font-semibold tabular-nums">{pinnedCount}</span>
+              <span className="min-w-0 truncate font-mono text-[10px] uppercase tracking-widest text-white/55">
                 {pinnedCount === 1 ? "Poster pinned" : "Posters pinned"}
-              </p>
+              </span>
             </div>
-            <div className="rounded-xl border border-white/5 bg-white/[0.06] px-4 py-3">
-              <div className="flex items-center gap-2 text-lg font-semibold">
-                <Calendar size={14} className="text-[#FF6B6B]" />
-                {memberSince || "—"}
-              </div>
-              <p className="mt-0.5 text-xs text-white/55">Member since</p>
+            <div className="flex items-center gap-2.5 px-4 py-3">
+              <Calendar size={14} className="shrink-0 text-[#FF6B6B]" />
+              <span className="text-lg font-semibold tabular-nums">{memberSince || "—"}</span>
+              <span className="min-w-0 truncate font-mono text-[10px] uppercase tracking-widest text-white/55">
+                Member since
+              </span>
             </div>
-            <div className="rounded-xl border border-white/5 bg-white/[0.06] px-4 py-3">
-              <div className="flex items-center gap-2 text-lg font-semibold">
-                <Image size={14} className="text-[#FF6B6B]" />
-                {postersList.length}
-              </div>
-              <p className="mt-0.5 text-xs text-white/55">
+            <div className="flex items-center gap-2.5 px-4 py-3">
+              <Image size={14} className="shrink-0 text-[#FF6B6B]" />
+              <span className="text-lg font-semibold tabular-nums">{postersList.length}</span>
+              <span className="min-w-0 truncate font-mono text-[10px] uppercase tracking-widest text-white/55">
                 {postersList.length === 1 ? "Poster in gallery" : "Posters in gallery"}
-              </p>
+              </span>
             </div>
           </div>
 
           {/* Pins / Collections */}
           <div className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-            <h2
-              className="shrink-0 text-xl font-semibold font-heading"
-            >
+            <h2 className="shrink-0 text-xl font-semibold font-heading">
               {tab === "pins" ? "Your Pins" : "Collections"}
             </h2>
-            <TabToggle
-              value={tab}
-              onChange={setTab}
-              className="w-full sm:w-auto"
-              tabs={[
-                { id: "pins", label: "Pins", icon: Heart, count: pinnedCount },
-                {
-                  id: "collections",
-                  label: "Collections",
-                  icon: FolderPlus,
-                  count: collections.length,
-                },
-              ]}
-            />
+            <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
+              <TabToggle
+                value={tab}
+                onChange={setTab}
+                className="w-full sm:w-auto"
+                tabs={[
+                  { id: "pins", label: "Pins", icon: Heart, count: pinnedCount },
+                  {
+                    id: "collections",
+                    label: "Collections",
+                    icon: FolderPlus,
+                    count: collections.length,
+                  },
+                ]}
+              />
+              {tab === "collections" && (
+                <button
+                  onClick={() => setCreateOpen(true)}
+                  className={`${primaryPill} w-full sm:w-auto`}
+                >
+                  <FolderPlus size={15} />
+                  New collection
+                </button>
+              )}
+            </div>
           </div>
 
           {tab === "pins" ? (
@@ -406,36 +417,22 @@ function ProfilePage() {
                     Retry
                   </button>
                 </div>
+              ) : pinnedCount === 0 ? (
+                <EmptyState
+                  icon={Heart}
+                  title="You haven't pinned any posters yet."
+                  body="Tap the heart on any poster to pin it here."
+                >
+                  <Link to="/" preload="intent" className={primaryPill}>
+                    Browse Posters
+                  </Link>
+                </EmptyState>
               ) : (
-                <>
-                  {pinnedCount > 0 && (
-                    <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase">
-                      Showing {pinnedCount} {pinnedCount === 1 ? "poster" : "posters"}
-                    </div>
-                  )}
-
-                  {pinnedCount === 0 ? (
-                    <div className="flex min-h-[30vh] flex-col items-center justify-center gap-4 text-center">
-                      <p className="text-white/60">You haven't pinned any posters yet.</p>
-                    </div>
-                  ) : (
-                    <PosterGrid posters={posters} onOpen={handleOpen} />
-                  )}
-                </>
+                <PosterGrid posters={posters} onOpen={handleOpen} />
               )}
             </>
           ) : (
             <>
-              <div className="mb-6">
-                <button
-                  onClick={() => setCreateOpen(true)}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF6B6B] px-4 py-2.5 text-sm font-medium text-[#121212] transition-[transform,background-color] duration-150 hoverable:hover:bg-[#FF8585] active:scale-95"
-                >
-                  <FolderPlus size={15} />
-                  New collection
-                </button>
-              </div>
-
               {colsError ? (
                 <div className="flex min-h-[30vh] flex-col items-center justify-center gap-4 text-center">
                   <p className="text-white/70">{colsError}</p>
@@ -446,55 +443,42 @@ function ProfilePage() {
                     Retry
                   </button>
                 </div>
+              ) : colsLoading && collections.length === 0 ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {[0, 1, 2].map((i) => (
+                    <CollectionCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : collections.length === 0 ? (
+                <div className="flex min-h-[30vh] items-center justify-center">
+                  <EmptyState
+                    icon={FolderPlus}
+                    title="No collections yet"
+                    body='Group posters however you like — try "Horror", "Korean Cinema", or "Color Inspiration".'
+                  />
+                </div>
               ) : (
-                <>
-                  {collections.length > 0 && (
-                    <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase">
-                      Showing {collections.length} collection{collections.length !== 1 && "s"}
-                    </div>
-                  )}
-
-                  {colsLoading && collections.length === 0 ? (
-                    <p className="py-16 text-center text-sm text-white/55">Loading collections…</p>
-                  ) : collections.length === 0 ? (
-                    <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
-                      <p className="text-white/70">No collections yet.</p>
-                      <p className="max-w-sm text-xs text-white/50">
-                        Examples: Posters I'd Hang · Horror · Korean Cinema · Color Inspiration
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                      {collections.map((col) => {
-                        const coverIds = Array.from(
-                          new Set(
-                            [col.coverPosterId, ...col.posterIds].filter(Boolean) as string[],
-                          ),
-                        ).slice(0, 4);
-                        const coverPosters = coverIds
-                          .map((id) => posterMap.get(id))
-                          .filter((poster): poster is Poster => Boolean(poster));
-                        return (
-                          <CollectionCard
-                            key={col.id}
-                            collection={col}
-                            coverPosters={coverPosters}
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
-                </>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {collections.map((col) => {
+                    const coverIds = Array.from(
+                      new Set([col.coverPosterId, ...col.posterIds].filter(Boolean) as string[]),
+                    ).slice(0, 4);
+                    const coverPosters = coverIds
+                      .map((id) => posterMap.get(id))
+                      .filter((poster): poster is Poster => Boolean(poster));
+                    return (
+                      <CollectionCard key={col.id} collection={col} coverPosters={coverPosters} />
+                    );
+                  })}
+                </div>
               )}
             </>
           )}
         </div>
 
         {/* Data & account */}
-        <div className="mt-10 border-t border-white/10 px-4 pt-8 sm:px-6">
-          <h2 className="mb-4 text-lg font-semibold font-heading">
-            Data & account
-          </h2>
+        <div className="mt-8 border-t border-white/10 pt-8">
+          <h2 className="mb-4 text-lg font-semibold font-heading">Data & account</h2>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-white/65">
               Export your profile, saved posters, and collections.
