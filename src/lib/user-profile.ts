@@ -89,8 +89,14 @@ export async function loadUserProfile(
   token: string,
 ): Promise<LoadResult<UserProfile>> {
   try {
-    const profile = await getUserProfile({ data: { token, uid } });
-    return { ok: true, data: profile };
+    const res = await getUserProfile({ data: { token } });
+    // Migrated server fns resolve { ok:false } instead of rejecting; treat
+    // that exactly like the RPC failures this function always handled.
+    if (!res.ok) {
+      console.error("Failed to load user profile:", res.error.message);
+      return { ok: false, error: PROFILE_LOAD_ERROR };
+    }
+    return { ok: true, data: res.data };
   } catch (err) {
     console.error("Failed to load user profile:", err);
     return { ok: false, error: PROFILE_LOAD_ERROR };
@@ -185,7 +191,8 @@ export function useUserProfile() {
       if (!user) return;
       const token = await getAuthToken(user);
       if (!token) throw new Error("No auth token");
-      await updateBio({ data: { token, uid: user.uid, bio } });
+      const res = await updateBio({ data: { token, bio } });
+      if (!res.ok) throw new Error(res.error.message);
       const entry: CacheEntry = {
         uid: user.uid,
         createdAt: snapshot.data?.uid === user.uid ? snapshot.data.createdAt : null,

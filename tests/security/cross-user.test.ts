@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { requireAuth } from "../../src/lib/server-auth";
+import { verifyTokenUid } from "../../src/lib/server-auth";
 import { FakeDb } from "./fake-db";
 import {
   getUserLikedIdsCore,
@@ -12,17 +12,30 @@ import {
   deleteCollectionCore,
 } from "../../src/lib/collections-core";
 
-// Simulates the server-function wrapper path:
-//   token verification -> requireAuth(token, claimedUid) -> core with verified UID.
+// Simulates the CURRENT server-function wrapper path:
+//   token verification -> verifyTokenUid(token) -> core with VERIFIED UID.
+// There is no client-declared UID parameter anymore; forged uid fields never
+// reach verification (pinned by tests/server/auth-middleware.test.ts).
 // The FakeDb stands in for Firestore; verification is mocked to the token holder.
 
 const verifyIdToken = vi.fn();
-vi.mock("../../src/server/firebase/admin", () => ({
-  getAdminAuth: () => Promise.resolve({ verifyIdToken }),
-}));
+vi.mock("../../src/server/firebase/admin", () => {
+  class FirebaseAdminError extends Error {
+    stage: string;
+    constructor(stage: string, message: string) {
+      super(`[firebase-admin/${stage}] ${message}`);
+      this.name = "FirebaseAdminError";
+      this.stage = stage;
+    }
+  }
+  return {
+    getAdminAuth: () => Promise.resolve({ verifyIdToken }),
+    FirebaseAdminError,
+  };
+});
 
-async function asUser(token: string, claimedUid: string): Promise<string> {
-  return requireAuth(token, claimedUid);
+async function asUser(token: string): Promise<string> {
+  return verifyTokenUid(token);
 }
 
 describe("cross-user protection through the full wrapper path", () => {
@@ -39,11 +52,8 @@ describe("cross-user protection through the full wrapper path", () => {
       m.toggleUserLikeCore(db, "user-b", "p-secret"),
     );
 
-    // A tries to read with B's claimed UID.
-    await expect(asUser("token-of-a", "user-b")).rejects.toThrow();
-
-    // A reads with its own UID — must not see B's data.
-    const aUid = await asUser("token-of-a", "user-a");
+    // A reads with its own verified UID — must not see B's data.
+    const aUid = await asUser("token-of-a");
     expect(await getUserLikedIdsCore(db, aUid)).toEqual([]);
     expect(await getUserLikedIdsCore(db, "user-b")).toEqual(["p-secret"]);
   });
@@ -53,9 +63,7 @@ describe("cross-user protection through the full wrapper path", () => {
     const db = new FakeDb();
     await updateBioCore(db, "user-b", "original");
 
-    await expect(asUser("token-of-a", "user-b")).rejects.toThrow();
-
-    const aUid = await asUser("token-of-a", "user-a");
+    const aUid = await asUser("token-of-a");
     await updateBioCore(db, aUid, "A's new bio");
     expect((await getUserProfileCore(db, "user-b")).bio).toBe("original");
     expect((await getUserProfileCore(db, "user-a")).bio).toBe("A's new bio");
@@ -70,11 +78,8 @@ describe("cross-user protection through the full wrapper path", () => {
       visibility: "private",
     });
 
-    // A cannot even resolve with B's claimed UID.
-    await expect(asUser("token-of-a", "user-b")).rejects.toThrow();
-
     // A uses its own verified UID.
-    const aUid = await asUser("token-of-a", "user-a");
+    const aUid = await asUser("token-of-a");
 
     // A cannot see B's private collection.
     await expect(getCollectionCore(db, bCol.id, aUid)).resolves.toBeNull();
@@ -109,7 +114,7 @@ describe("cross-user protection through the full wrapper path", () => {
       visibility: "private",
     });
 
-    const aUid = await asUser("token-of-a", "user-a");
+    const aUid = await asUser("token-of-a");
     await expect(getCollectionCore(db, priv.id, aUid)).resolves.toBeNull();
   });
 });

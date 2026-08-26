@@ -1,4 +1,6 @@
 import { AppError, isAppError } from "./app-error";
+import { createLogger } from "../request/logging";
+import { createRequestId } from "../request/context";
 
 /**
  * The ONLY error shape clients receive from migrated server functions.
@@ -45,6 +47,39 @@ export function toPublicError(error: unknown): ErrorResponseBody {
 
 export function toSuccessBody<T>(data: T): SuccessBody<T> {
   return { ok: true, data };
+}
+
+/**
+ * Shared feature envelope runner (lifted from the Account migration once a
+ * second consumer appeared): success/failure bodies with one structured log
+ * line per operation.
+ *
+ * Known AppErrors keep their code + public message; anything else collapses to
+ * a generic INTERNAL body — causes/stacks/driver details stay server-side.
+ * Handlers must reference this ONLY inside .handler() closures: an export is
+ * fine here (src/server/**), but client-reachable feature modules must not
+ * re-export it or their RPC stubs pin the server edge into the client bundle.
+ */
+export async function withEnvelope<T>(
+  operation: string,
+  uid: string | undefined,
+  fn: () => Promise<T>,
+): Promise<SuccessBody<T> | ErrorResponseBody> {
+  const logger = createLogger({
+    requestId: createRequestId(),
+    operation,
+    ...(uid !== undefined ? { uid } : {}),
+  });
+  const start = Date.now();
+  try {
+    const data = await fn();
+    logger.info("request completed", { durationMs: Date.now() - start });
+    return { ok: true, data };
+  } catch (err) {
+    logger.error("request failed", { durationMs: Date.now() - start });
+    // Unknown errors collapse to a safe INTERNAL body; causes stay server-side.
+    return toPublicError(err);
+  }
 }
 
 const SENSITIVE_KEY =

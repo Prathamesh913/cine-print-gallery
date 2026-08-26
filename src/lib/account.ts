@@ -3,9 +3,7 @@ import { getDb } from "./firestore-db";
 import { getAdminAuth } from "../server/firebase/admin";
 import { buildAccountExport, performAccountDeletion, type UserDataExport } from "./account-core";
 import { authMiddleware, requireUid } from "./auth-middleware";
-import { toPublicError, type SuccessBody, type ErrorResponseBody } from "../server/errors/error-response";
-import { createLogger } from "../server/request/logging";
-import { createRequestId } from "../server/request/context";
+import { withEnvelope, type SuccessBody, type ErrorResponseBody } from "../server/errors/error-response";
 
 export type { UserDataExport } from "./account-core";
 
@@ -21,34 +19,8 @@ export type { UserDataExport } from "./account-core";
  * client graph and trips import-protection.
  */
 
-/**
- * Feature envelope runner: success/failure bodies with one structured log line
- * per operation. Promote to src/server when the next feature adopts the same
- * convention (kept here until a second consumer proves the shape).
- */
-// ponytail: duplicate this helper per feature ONLY until two exist; then lift
-// to src/server/errors/error-response.ts unchanged.
-async function withEnvelope<T>(
-  operation: string,
-  uid: string | undefined,
-  fn: () => Promise<T>,
-): Promise<SuccessBody<T> | ErrorResponseBody> {
-  const logger = createLogger({
-    requestId: createRequestId(),
-    operation,
-    ...(uid !== undefined ? { uid } : {}),
-  });
-  const start = Date.now();
-  try {
-    const data = await fn();
-    logger.info("request completed", { durationMs: Date.now() - start });
-    return { ok: true, data };
-  } catch (err) {
-    logger.error("request failed", { durationMs: Date.now() - start });
-    // Unknown errors collapse to a safe INTERNAL body; causes stay server-side.
-    return toPublicError(err);
-  }
-}
+// Shared envelope runner lives in src/server/errors/error-response.ts
+// (withEnvelope) — lifted there once Account stopped being its only consumer.
 
 /**
  * Returns the authenticated user's data export.

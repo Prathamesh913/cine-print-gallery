@@ -21,37 +21,60 @@ describe("loadSaved", () => {
   });
 
   it("successful load merges anonymous ids first and returns the account list", async () => {
-    mergeMock.mockResolvedValue(undefined);
-    getMock.mockResolvedValue(["a", "b"]);
+    mergeMock.mockResolvedValue({ ok: true, data: null });
+    getMock.mockResolvedValue({ ok: true, data: ["a", "b"] });
 
     const result = await loadSaved("uid", "token", ["anon-1"]);
 
+    // Identity is no longer sent: the server derives it from the token.
     expect(mergeMock).toHaveBeenCalledWith({
-      data: { token: "token", uid: "uid", posterIds: ["anon-1"] },
+      data: { token: "token", posterIds: ["anon-1"] },
     });
     expect(result).toEqual({ ok: true, data: ["a", "b"] });
   });
 
   it("successful load with no anonymous ids just reads the account list", async () => {
-    getMock.mockResolvedValue(["a"]);
+    getMock.mockResolvedValue({ ok: true, data: ["a"] });
     const result = await loadSaved("uid", "token", []);
     expect(mergeMock).not.toHaveBeenCalled();
     expect(result).toEqual({ ok: true, data: ["a"] });
   });
 
   it("empty successful load is not treated as an error", async () => {
-    getMock.mockResolvedValue([]);
+    getMock.mockResolvedValue({ ok: true, data: [] });
     const result = await loadSaved("uid", "token", []);
     expect(result).toEqual({ ok: true, data: [] });
   });
 
-  it("failed load exposes an error instead of an empty success", async () => {
+  it("a rejected RPC call exposes an error instead of an empty success", async () => {
     getMock.mockRejectedValue(new Error("network"));
     const result = await loadSaved("uid", "token", []);
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error).toBe(SAVED_LOAD_ERROR);
     }
+  });
+
+  it("a resolved { ok:false } envelope follows the same failure path as a rejection", async () => {
+    getMock.mockResolvedValue({
+      ok: false,
+      error: { code: "INTERNAL", message: "Something went wrong. Please try again." },
+    });
+    const result = await loadSaved("uid", "token", []);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe(SAVED_LOAD_ERROR);
+    }
+  });
+
+  it("failed merge follows the same failure path without destroying local data", async () => {
+    mergeMock.mockResolvedValue({
+      ok: false,
+      error: { code: "INTERNAL", message: "Something went wrong. Please try again." },
+    });
+    const result = await loadSaved("uid", "token", ["anon-1"]);
+    expect(result.ok).toBe(false);
+    expect(getMock).not.toHaveBeenCalled();
   });
 
   it("failed load does not destroy anonymous local data (localStorage untouched in node)", async () => {
