@@ -273,8 +273,7 @@ function ProfilePage() {
             <div className="min-w-0 w-full flex-1 pb-1 sm:w-auto">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1
-                  style={{ fontFamily: "Poppins, sans-serif" }}
-                  className="min-w-0 break-words text-xl font-semibold sm:text-2xl"
+                  className="min-w-0 break-words text-xl font-semibold sm:text-2xl font-heading"
                 >
                   {user.displayName || "User"}
                 </h1>
@@ -371,8 +370,7 @@ function ProfilePage() {
           {/* Pins / Collections */}
           <div className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <h2
-              style={{ fontFamily: "Poppins, sans-serif" }}
-              className="shrink-0 text-xl font-semibold"
+              className="shrink-0 text-xl font-semibold font-heading"
             >
               {tab === "pins" ? "Your Pins" : "Collections"}
             </h2>
@@ -494,7 +492,7 @@ function ProfilePage() {
 
         {/* Data & account */}
         <div className="mt-10 border-t border-white/10 px-4 pt-8 sm:px-6">
-          <h2 style={{ fontFamily: "Poppins, sans-serif" }} className="mb-4 text-lg font-semibold">
+          <h2 className="mb-4 text-lg font-semibold font-heading">
             Data & account
           </h2>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

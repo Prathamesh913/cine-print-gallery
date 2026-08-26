@@ -53,8 +53,7 @@ export function Header({
           <Link to="/" className="flex shrink-0 items-center gap-2" data-cuelume-hover="tick">
             <FrameIcon />
             <span
-              style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              className="text-2xl tracking-[0.12em] sm:text-3xl"
+              className="text-2xl tracking-[0.12em] sm:text-3xl font-display"
             >
               CINEPRINT
             </span>
@@ -81,8 +80,7 @@ export function Header({
         <Link to="/" className="flex min-w-0 shrink items-center gap-2" data-cuelume-hover="tick">
           <FrameIcon />
           <span
-            style={{ fontFamily: "Bebas Neue, sans-serif" }}
-            className="truncate text-2xl tracking-[0.12em] sm:text-3xl"
+            className="truncate text-2xl tracking-[0.12em] sm:text-3xl font-display"
           >
             CINEPRINT
           </span>

@@ -39,8 +39,7 @@ export class GalleryErrorBoundary extends Component<Props, State> {
             </div>
           </div>
           <h2 
-            style={{ fontFamily: "Poppins, sans-serif" }} 
-            className="text-2xl font-bold tracking-tight text-[#F5F5F5] mb-2"
+            className="text-2xl font-bold tracking-tight text-[#F5F5F5] mb-2 font-heading"
           >
             Scene Interrupted: Rendering Error
           </h2>

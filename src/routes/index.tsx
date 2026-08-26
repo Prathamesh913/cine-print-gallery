@@ -125,14 +125,14 @@ function Home() {
     return (
       <div className="min-h-screen flex flex-col justify-between" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
         <Header query={query} onQueryChange={setQuery} showSearch={false} />
-        <main className="mx-auto max-w-[1600px] px-4 py-20 sm:px-6 flex-grow flex items-center justify-center">
+        <main className="page-shell py-20 flex-grow flex items-center justify-center">
           <div className="max-w-md w-full rounded-2xl border border-white/15 bg-white/5 p-8 text-center shadow-xl backdrop-blur-md">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B] mb-4">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
             </div>
-            <h2 style={{ fontFamily: "Poppins, sans-serif" }} className="text-xl font-semibold mb-2">No posters found</h2>
+            <h2 className="text-xl font-semibold mb-2 font-heading">No posters found</h2>
             <p className="text-white/60 text-sm mb-6">
               The gallery loaded successfully, but there are no published posters yet.
             </p>
@@ -188,8 +188,7 @@ function Home() {
               </div>
             </div>
             <h2 
-              style={{ fontFamily: "Poppins, sans-serif" }} 
-              className="text-2xl font-bold tracking-tight text-[#F5F5F5] mb-2"
+              className="text-2xl font-bold tracking-tight text-[#F5F5F5] mb-2 font-heading"
             >
               Plot Twist: No Matches Found!
             </h2>

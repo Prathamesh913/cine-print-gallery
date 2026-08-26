@@ -25,14 +25,12 @@ function NotFoundComponent() {
           <Film size={32} strokeWidth={1.5} />
         </div>
         <h1
-          style={{ fontFamily: "Bebas Neue, sans-serif" }}
-          className="text-6xl tracking-widest text-[#FF6B6B]"
+          className="text-6xl tracking-widest text-[#FF6B6B] font-display"
         >
           404 ERROR
         </h1>
         <h2
-          style={{ fontFamily: "Poppins, sans-serif" }}
-          className="mt-3 text-xl font-bold text-[#F5F5F5]"
+          className="mt-3 text-xl font-bold text-[#F5F5F5] font-heading"
         >
           Scene Cut: Page Not Found!
         </h2>
@@ -68,14 +66,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           <WifiOff size={32} strokeWidth={1.5} />
         </div>
         <h1
-          style={{ fontFamily: "Bebas Neue, sans-serif" }}
-          className="text-5xl tracking-widest text-[#FF6B6B]"
+          className="text-5xl tracking-widest text-[#FF6B6B] font-display"
         >
           LOST SIGNAL
         </h1>
         <h2
-          style={{ fontFamily: "Poppins, sans-serif" }}
-          className="mt-3 text-xl font-bold text-[#F5F5F5]"
+          className="mt-3 text-xl font-bold text-[#F5F5F5] font-heading"
         >
           Projector Error: Off The Grid
         </h2>

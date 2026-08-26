@@ -22,7 +22,8 @@ export function TabToggle<T extends string>({
 }: TabToggleProps<T>) {
   return (
     <div
-      className={`inline-flex rounded-full border border-white/15 bg-white/[0.06] p-1 ${className ?? ""}`}
+      role="tablist"
+      className={`inline-flex items-center gap-1 rounded-xl border border-white/12 bg-white/[0.06] p-1 ${className ?? ""}`}
     >
       {tabs.map((tab) => {
         const active = value === tab.id;
@@ -30,18 +31,21 @@ export function TabToggle<T extends string>({
         return (
           <button
             key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={active}
             onClick={() => onChange(tab.id)}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 text-sm transition-colors sm:min-h-0"
-            style={{
-              backgroundColor: active ? "#FF6B6B" : "transparent",
-              color: active ? "#121212" : "rgba(255,255,255,0.55)",
-            }}
+            className={`inline-flex h-11 items-center gap-2 rounded-lg px-4 text-sm font-medium transition-[background-color,color] duration-150 ease-[var(--ease-out)] focus-visible:relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]/70 ${
+              active
+                ? "bg-[#FF6B6B] text-[#121212]"
+                : "text-white/55 hoverable:hover:bg-white/[0.08] hoverable:hover:text-white/85"
+            }`}
           >
-            {Icon && <Icon size={13} fill={active ? "currentColor" : "none"} />}
+            {Icon && <Icon size={14} fill={active ? "currentColor" : "none"} />}
             {tab.label}
             {tab.count !== undefined && (
               <span
-                className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-none ${
+                className={`rounded-full px-2 py-0.5 text-[11px] font-medium leading-none ${
                   active ? "bg-[#121212] text-[#FF6B6B]" : "bg-white/15 text-white/75"
                 }`}
               >

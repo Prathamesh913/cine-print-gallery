@@ -97,7 +97,7 @@ function ArtistPage() {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} onFeelingLucky={handleFeelingLucky} />
 
-      <main className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 flex-grow flex flex-col justify-center">
+      <main className="page-shell py-8 flex-grow flex flex-col justify-center">
         {/* Back Link */}
         <div className="mb-6">
           <Link
@@ -113,10 +113,10 @@ function ArtistPage() {
         <div className="mb-8 border-b border-white/5 pb-6">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
-              <span style={{ fontFamily: "Bebas Neue, sans-serif", color: "#FF6B6B" }} className="text-xs tracking-[0.2em] uppercase">
+              <span className="text-xs tracking-[0.2em] uppercase font-display text-[#FF6B6B]">
                 ARTIST SHOWCASE
               </span>
-              <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="text-3xl font-semibold tracking-tight text-[#F5F5F5] mt-1">
+              <h1  className="text-3xl font-semibold tracking-tight text-[#F5F5F5] mt-1 font-heading">
                 {artistName}
               </h1>
             </div>
@@ -142,7 +142,7 @@ function ArtistPage() {
         {/* Poster Grid */}
         {artistPosters.length === 0 ? (
           <div className="flex w-full min-h-[40vh] flex-col items-center justify-center py-12 text-center">
-            <h2 style={{ fontFamily: "Poppins, sans-serif" }} className="text-xl font-semibold mb-2">No Posters Found</h2>
+            <h2  className="text-xl font-semibold mb-2 font-heading">No Posters Found</h2>
             <p className="text-white/65 text-sm">We couldn't find any posters for this artist.</p>
           </div>
         ) : (

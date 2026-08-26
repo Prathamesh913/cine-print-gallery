@@ -224,7 +224,7 @@ function CollectionPage() {
       <div className="min-h-screen" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
         <Header showSearch={false} />
         <main className="mx-auto flex min-h-[50vh] max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
-          <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="text-xl font-semibold">
+          <h1  className="text-xl font-semibold font-heading">
             Collection unavailable
           </h1>
           <p className="text-sm text-white/65">
@@ -247,7 +247,7 @@ function CollectionPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} />
-      <main className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
+      <main className="page-shell py-8">
         <Link
           to="/saved"
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hoverable:hover:text-white/70"
@@ -279,8 +279,7 @@ function CollectionPage() {
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xl font-semibold focus:border-[#FF6B6B] focus:outline-none"
-                    style={{ fontFamily: "Poppins, sans-serif" }}
+                    className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xl font-semibold focus:border-[#FF6B6B] focus:outline-none font-heading"
                     maxLength={80}
                   />
                   <textarea
@@ -314,8 +313,7 @@ function CollectionPage() {
               ) : (
                 <>
                   <h1
-                    style={{ fontFamily: "Poppins, sans-serif" }}
-                    className="break-words text-2xl font-semibold sm:text-3xl"
+                    className="break-words text-2xl font-semibold sm:text-3xl font-heading"
                     title={collection.name}
                   >
                     {collection.name}

@@ -143,8 +143,7 @@ function LoginPage() {
               </div>
 
               <h1
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-                className="text-4xl tracking-widest text-[#FF6B6B]"
+                className="text-4xl tracking-widest text-[#FF6B6B] font-display"
               >
                 SIGN IN
               </h1>

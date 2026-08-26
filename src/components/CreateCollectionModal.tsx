@@ -24,7 +24,7 @@ export function CreateCollectionModal({ open, onOpenChange, create }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="z-[80] border-white/15 bg-[#1c1c1c] text-[#F5F5F5] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle style={{ fontFamily: "Poppins, sans-serif" }}>Create collection</DialogTitle>
+          <DialogTitle className="font-heading">Create collection</DialogTitle>
           <DialogDescription className="text-white/65">
             Organize your pinned posters into a collection.
           </DialogDescription>

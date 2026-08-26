@@ -62,10 +62,10 @@ function SavedPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} onFeelingLucky={handleFeelingLucky} />
-      <main className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6">
+      <main className="page-shell py-10">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="text-2xl font-semibold">
+            <h1 className="text-2xl font-semibold font-heading">
               {tab === "pins" ? "Pins" : "Collections"}
             </h1>
             <p className="mt-1 truncate text-sm text-white/60">

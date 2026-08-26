@@ -20,10 +20,10 @@ function About() {
       <main className="mx-auto w-full max-w-2xl px-6 py-16 flex-grow flex flex-col justify-center">
         {/* About CinePrint Section */}
         <div className="text-center">
-          <span style={{ fontFamily: "Bebas Neue, sans-serif", color: "#FF6B6B" }} className="text-sm tracking-[0.3em] uppercase">
+          <span className="text-sm tracking-[0.3em] uppercase font-display text-[#FF6B6B]">
             ABOUT CINEPRINT
           </span>
-          <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="mt-2 text-3xl font-bold sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-bold sm:text-4xl font-heading">
             Celebrating alternative movie posters & custom film art.
           </h1>
           <p className="mt-6 text-base leading-relaxed text-white/70">
@@ -48,10 +48,10 @@ function About() {
             </div>
 
             <div>
-              <span style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xs uppercase tracking-[0.25em] text-[#FF6B6B]">
+              <span className="text-xs uppercase tracking-[0.25em] text-[#FF6B6B] font-display">
                 CREATOR & CURATOR
               </span>
-              <h2 style={{ fontFamily: "Bebas Neue, sans-serif" }} className="mt-1 text-5xl tracking-wide uppercase text-white font-bold leading-none">
+              <h2 className="mt-1 text-5xl tracking-wide uppercase text-white font-bold leading-none font-display">
                 Prathamesh
               </h2>
               <p className="mt-4 text-sm text-white/70 leading-relaxed font-sans max-w-md">
@@ -107,15 +107,15 @@ function About() {
             <div className="space-y-3 text-left">
               <div>
                 <p className="text-[9px] font-mono tracking-widest text-white/45 uppercase">SECTION</p>
-                <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-white">ARCHIVE</p>
+                <p className="text-xl tracking-wider text-white font-display">ARCHIVE</p>
               </div>
               <div>
                 <p className="text-[9px] font-mono tracking-widest text-white/45 uppercase">TICKET NO.</p>
-                <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-[#FF6B6B]">#0001</p>
+                <p className="text-xl tracking-wider text-[#FF6B6B] font-display">#0001</p>
               </div>
               <div className="sm:block hidden">
                 <p className="text-[9px] font-mono tracking-widest text-white/45 uppercase">ADMIT</p>
-                <p style={{ fontFamily: "Bebas Neue, sans-serif" }} className="text-xl tracking-wider text-white">ONE CURATOR</p>
+                <p className="text-xl tracking-wider text-white font-display">ONE CURATOR</p>
               </div>
             </div>
 
