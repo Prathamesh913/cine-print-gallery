@@ -9,7 +9,12 @@ import { EmptyState } from "@/components/states";
 import { Footer } from "@/components/Footer";
 import { type Poster, type PosterStyle, type PosterGenre } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
-import { DailySpotlight, ArtistRail, type RailArtist } from "./-components/home-discovery";
+import {
+  DailySpotlight,
+  ArtistRail,
+  PosterDiscoveryRail,
+  type RailArtist,
+} from "./-components/home-discovery";
 
 /**
  * Deterministic, dependency-free PRNG plumbing backing the homepage "daily cut".
@@ -156,21 +161,41 @@ function Home() {
 
   const artists = useMemo(() => Array.from(artistCounts.keys()).sort(), [artistCounts]);
 
-  const railArtists = useMemo<RailArtist[]>(
-    () =>
-      Array.from(artistCounts.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 12)
-        .map(([name, count]) => ({ name, count })),
-    [artistCounts],
-  );
-
   // Same seed as the loader's shuffle: index straight into the daily cut.
   const featured = useMemo(() => {
     if (posters.length < DISCOVERY_MIN_POSTERS) return null;
     const dayIndex = hashString(getUtcDateString()) % posters.length;
     return posters[dayIndex];
   }, [posters]);
+
+  const discoveryPosters = useMemo(() => {
+    if (!featured || posters.length < DISCOVERY_MIN_POSTERS) return [];
+    const remaining = posters.filter((p) => p.id !== featured.id);
+    const salted = hashString(`${getUtcDateString()}:more`);
+    return deterministicShuffle(remaining, mulberry32(salted)).slice(0, 8);
+  }, [posters, featured]);
+
+  const railArtists = useMemo<RailArtist[]>(() => {
+    // Group covers per artist for poster-as-identity cards.
+    const groups = new Map<string, Poster[]>();
+    for (const poster of posters) {
+      const names =
+        poster.artists && poster.artists.length > 0
+          ? poster.artists.map((a) => a.name)
+          : [poster.artist];
+      for (const raw of names) {
+        const name = (raw ?? "").trim();
+        if (!name || name.toLowerCase() === "unknown") continue;
+        if (!groups.has(name)) groups.set(name, []);
+        const arr = groups.get(name)!;
+        if (arr.length < 3) arr.push(poster);
+      }
+    }
+    return Array.from(artistCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([name, count]) => ({ name, count, covers: groups.get(name) ?? [] }));
+  }, [posters, artistCounts]);
 
   const filtered = useMemo(() => {
     const q = dq.trim().toLowerCase();
@@ -245,17 +270,26 @@ function Home() {
         showSearch={false}
         onFeelingLucky={handleFeelingLucky}
       />
-      {(featured || railArtists.length >= 4) && showDiscovery && (
-        <div className="page-shell flex-grow-0 space-y-8 pb-2 pt-6">
+      {(featured || discoveryPosters.length >= 4 || railArtists.length >= 4) && showDiscovery && (
+        <div className="page-shell flex-grow-0 space-y-6 pb-2 pt-5">
           {featured && (
             <DailySpotlight
               poster={featured}
               artistCount={artistCounts.get(featured.artists?.[0]?.name ?? featured.artist) ?? 1}
             />
           )}
+          {discoveryPosters.length >= 4 && (
+            <PosterDiscoveryRail posters={discoveryPosters} onOpen={handleOpen} />
+          )}
           {railArtists.length >= 4 && <ArtistRail artists={railArtists} />}
         </div>
       )}
+      <div className="page-shell pb-3 pt-4">
+        <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
+          The Archive · Browse
+        </p>
+        <h2 className="mt-1 font-heading text-xl font-semibold">Explore the full collection</h2>
+      </div>
       <FilterBar
         query={query}
         onQueryChange={setQuery}

@@ -1,17 +1,21 @@
 import { Link } from "@tanstack/react-router";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
+import posterPalettesRaw from "@/lib/poster-palettes.json";
 
-/** Single-line poster card recipe reused by the grid; kept local for brevity. */
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
+
+const posterPalettes = posterPalettesRaw as Record<
+  string,
+  { palette: string[]; primary: string; hsl: { h: number; s: number; l: number } }
+>;
 
 interface DailySpotlightProps {
   poster: Poster;
-  /** How many posters in the catalog are by this artist (>1 enables the outline CTA). */
   artistCount: number;
 }
 
-/** "Fresh Focus" — date-seeded featured poster module above the wall. */
+/** "Fresh Focus" — compact editorial hero, denser and shorter than before. */
 export function DailySpotlight({ poster, artistCount }: DailySpotlightProps) {
   const artistName =
     poster.artists && poster.artists.length > 0
@@ -19,17 +23,18 @@ export function DailySpotlight({ poster, artistCount }: DailySpotlightProps) {
       : poster.artist;
   const hasArtist = Boolean(artistName) && artistName !== "Unknown";
   const slug = hasArtist ? slugifyArtist(artistName) : undefined;
+  const palette = posterPalettes[poster.id]?.palette?.slice(0, 5) ?? null;
+  const tags = poster.tags?.slice(0, 3) ?? [];
 
   return (
     <section
       aria-label="Fresh Focus — daily pick"
-      className="grid items-center gap-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:grid-cols-[minmax(0,280px)_1fr] sm:p-6"
+      className="grid items-stretch gap-5 rounded-xl border border-white/12 bg-white/[0.06] p-4 sm:grid-cols-[260px_1fr] sm:p-5"
     >
       <div
-        className="overflow-hidden rounded-2xl"
+        className="overflow-hidden rounded-lg"
         style={{ aspectRatio: "2 / 3", backgroundColor: "#1E1E1E" }}
       >
-        {/* LCP candidate for the day's cut — load eagerly. */}
         <PosterImage
           poster={poster}
           purpose="gallery"
@@ -39,29 +44,59 @@ export function DailySpotlight({ poster, artistCount }: DailySpotlightProps) {
         />
       </div>
 
-      <div className="min-w-0">
+      <div className="flex min-w-0 flex-col justify-center">
         <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
           Fresh Focus · Daily Pick
         </p>
         <h2 className="mt-2 line-clamp-2 font-display text-4xl uppercase leading-none sm:text-5xl">
           {poster.title}
         </h2>
-        <p className="mt-3 text-sm text-white/65">
-          {poster.year} · {poster.genre.join(" / ")}
+        <p className="mt-2 text-sm text-white/65">
+          {poster.year} · {poster.genre.join(" / ") || poster.style}
         </p>
+        {(poster.style || tags.length > 0) && (
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            {poster.style && (
+              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">
+                {poster.style}
+              </span>
+            )}
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/65"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {hasArtist ? (
           <Link
             to="/artist/$slug"
             params={{ slug: slug! }}
-            className={`mt-2 inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/55 transition-colors hover:text-[#FF6B6B] ${focusRing}`}
+            className={`mt-3 inline-flex min-h-11 w-fit items-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/55 transition-colors hover:text-[#FF6B6B] ${focusRing}`}
           >
             By {artistName}
           </Link>
         ) : (
-          <p className="mt-2 inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
+          <p className="mt-3 inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
             By {poster.artist || "Unknown Artist"}
           </p>
+        )}
+
+        {palette && palette.length > 0 && (
+          <div className="mt-2 flex items-center gap-1.5">
+            {palette.map((color) => (
+              <span
+                key={color}
+                aria-hidden
+                className="h-5 w-5 rounded-full border border-white/10"
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
         )}
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -87,12 +122,63 @@ export function DailySpotlight({ poster, artistCount }: DailySpotlightProps) {
   );
 }
 
+// Poster discovery rail — dense horizontal scroll of real poster art right after hero.
+
+interface PosterDiscoveryProps {
+  posters: Poster[];
+  onOpen: (p: Poster) => void;
+}
+
+export function PosterDiscoveryRail({ posters, onOpen }: PosterDiscoveryProps) {
+  if (posters.length === 0) return null;
+  return (
+    <section aria-label="More to discover">
+      <div className="mb-3 flex items-baseline justify-between gap-4">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-white/55 sm:text-xs">
+          More to Discover
+        </p>
+        <p className="font-mono text-[10px] tabular-nums tracking-widest text-white/45 sm:text-xs">
+          {posters.length}
+        </p>
+      </div>
+      <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 scrollbar-hide">
+        {posters.map((poster) => (
+          <button
+            key={poster.id}
+            type="button"
+            onClick={() => onOpen(poster)}
+            className={`group flex w-32 shrink-0 flex-col gap-2 sm:w-36 ${focusRing} rounded-xl text-left`}
+          >
+            <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl border border-white/12 bg-[#1E1E1E] transition group-hover:border-white/22">
+              <PosterImage
+                poster={poster}
+                purpose="gallery"
+                loading="lazy"
+                alt={`${poster.title} (${poster.year})`}
+                className="h-full w-full object-cover transition duration-200 group-hover:scale-[1.02]"
+              />
+            </div>
+            <span className="line-clamp-1 text-xs font-medium leading-tight text-[#F5F5F5] group-hover:text-white">
+              {poster.title}
+            </span>
+            <span className="text-[11px] tabular-nums text-white/50">
+              {poster.year}
+              {poster.genre[0] ? ` · ${poster.genre[0]}` : ""}
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export interface RailArtist {
   name: string;
   count: number;
+  covers: Poster[];
 }
 
-/** "Explore Artists" — horizontal-scroll strip of the most prolific artists. */
+/** Radically redesigned ArtistRail — poster work is the card identity. */
 export function ArtistRail({ artists }: { artists: RailArtist[] }) {
   if (artists.length < 4) return null;
 
@@ -106,20 +192,73 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
           {artists.length}
         </p>
       </div>
-      <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 scrollbar-hide">
-        {artists.map(({ name, count }) => (
+      <div className="-mx-1 flex gap-3.5 overflow-x-auto px-1 pb-2 scrollbar-hide">
+        {artists.map(({ name, count, covers }) => (
           <Link
             key={name}
             to="/artist/$slug"
             params={{ slug: slugifyArtist(name) }}
-            className={`flex w-28 shrink-0 flex-col items-center gap-2 rounded-2xl border border-white/12 bg-white/[0.06] p-4 transition hover:border-white/25 ${focusRing}`}
+            className={`group flex w-36 shrink-0 flex-col gap-2.5 sm:w-40 ${focusRing} rounded-xl`}
           >
-            <span aria-hidden className="font-display text-3xl leading-none text-[#FF6B6B]">
-              {name.charAt(0).toUpperCase()}
-            </span>
-            <span className="w-full line-clamp-1 text-center text-xs text-[#F5F5F5]">{name}</span>
-            <span className="text-[11px] tabular-nums text-white/50">
-              {count} poster{count !== 1 ? "s" : ""}
+            <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl border border-white/12 bg-[#1E1E1E] transition group-hover:border-white/22">
+              {covers.length === 1 ? (
+                <PosterImage
+                  poster={covers[0]}
+                  purpose="gallery"
+                  loading="lazy"
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              ) : covers.length === 2 ? (
+                <>
+                  <PosterImage
+                    poster={covers[0]}
+                    purpose="gallery"
+                    loading="lazy"
+                    alt=""
+                    className="absolute inset-0 h-full w-full -rotate-[4deg] scale-[0.94] object-cover opacity-90"
+                  />
+                  <PosterImage
+                    poster={covers[1]}
+                    purpose="gallery"
+                    loading="lazy"
+                    alt=""
+                    className="relative h-full w-full object-cover shadow-xl"
+                  />
+                </>
+              ) : (
+                <>
+                  <PosterImage
+                    poster={covers[0]}
+                    purpose="gallery"
+                    loading="lazy"
+                    alt=""
+                    className="absolute inset-0 h-full w-full -rotate-[5deg] scale-[0.96] object-cover opacity-90"
+                  />
+                  <PosterImage
+                    poster={covers[1]}
+                    purpose="gallery"
+                    loading="lazy"
+                    alt=""
+                    className="absolute inset-0 left-[6%] right-[6%] h-full w-[88%] rotate-0 object-cover shadow-xl"
+                  />
+                  <PosterImage
+                    poster={covers[2]}
+                    purpose="gallery"
+                    loading="lazy"
+                    alt=""
+                    className="absolute inset-0 left-[12%] h-full w-full rotate-[5deg] scale-[0.96] object-cover opacity-95"
+                  />
+                </>
+              )}
+              {count > 1 && (
+                <span className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-white/85 backdrop-blur">
+                  ×{count}
+                </span>
+              )}
+            </div>
+            <span className="line-clamp-2 min-h-[2.2em] text-pretty text-left text-[13px] font-medium leading-tight text-[#F5F5F5] group-hover:text-white">
+              {name}
             </span>
           </Link>
         ))}
