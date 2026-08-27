@@ -200,7 +200,7 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
             <div className="relative flex h-[168px] items-end justify-center overflow-visible px-3 pt-4 sm:h-[184px]">
               <div className="relative flex items-end justify-center">
                 {covers.length === 1 ? (
-                  <div className="relative h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-md sm:h-[144px] sm:w-[96px]">
+                  <div className="relative h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-md transition duration-300 ease-[var(--ease-out)] group-hover:-translate-y-[2px] group-hover:scale-[1.01] group-focus-visible:-translate-y-[2px] group-focus-visible:scale-[1.01] sm:h-[144px] sm:w-[96px]">
                     <PosterImage
                       poster={covers[0]}
                       purpose="gallery"
@@ -211,7 +211,7 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
                   </div>
                 ) : covers.length === 2 ? (
                   <>
-                    <div className="absolute bottom-0 left-1/2 h-[124px] w-[84px] -translate-x-[62%] -rotate-[5deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-md sm:h-[136px] sm:w-[92px]">
+                    <div className="absolute bottom-0 left-1/2 h-[124px] w-[84px] -translate-x-[62%] -rotate-[5deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-md transition duration-300 ease-[var(--ease-out)] group-hover:-translate-x-[70%] group-hover:-rotate-[8deg] group-focus-visible:-translate-x-[70%] group-focus-visible:-rotate-[8deg] sm:h-[136px] sm:w-[92px]">
                       <PosterImage
                         poster={covers[0]}
                         purpose="gallery"
@@ -220,7 +220,7 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <div className="relative z-10 h-[132px] w-[88px] translate-x-[14%] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-lg sm:h-[144px] sm:w-[96px]">
+                    <div className="relative z-10 h-[132px] w-[88px] translate-x-[14%] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-lg transition duration-200 ease-[var(--ease-out)] group-hover:-translate-y-[3px] group-focus-visible:-translate-y-[3px] sm:h-[144px] sm:w-[96px]">
                       <PosterImage
                         poster={covers[1]}
                         purpose="gallery"
@@ -232,7 +232,7 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
                   </>
                 ) : (
                   <>
-                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] -translate-x-[108%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-80 shadow-md sm:h-[132px] sm:w-[88px]">
+                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] -translate-x-[108%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-80 shadow-md transition duration-300 ease-[var(--ease-out)] group-hover:-translate-x-[118%] group-hover:-rotate-[9deg] group-focus-visible:-translate-x-[118%] group-focus-visible:-rotate-[9deg] sm:h-[132px] sm:w-[88px]">
                       <PosterImage
                         poster={covers[0]}
                         purpose="gallery"
@@ -241,7 +241,7 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <div className="relative z-10 h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl sm:h-[144px] sm:w-[96px]">
+                    <div className="relative z-10 h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition duration-200 ease-[var(--ease-out)] group-hover:-translate-y-[2px] group-hover:scale-[1.01] group-focus-visible:-translate-y-[2px] group-focus-visible:scale-[1.01] sm:h-[144px] sm:w-[96px]">
                       <PosterImage
                         poster={covers[1]}
                         purpose="gallery"
@@ -250,7 +250,7 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] translate-x-[8%] rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-md sm:h-[132px] sm:w-[88px]">
+                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] translate-x-[8%] rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-md transition duration-300 ease-[var(--ease-out)] group-hover:translate-x-[16%] group-hover:rotate-[9deg] group-focus-visible:translate-x-[16%] group-focus-visible:rotate-[9deg] sm:h-[132px] sm:w-[88px]">
                       <PosterImage
                         poster={covers[2]}
                         purpose="gallery"
