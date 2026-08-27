@@ -266,7 +266,7 @@ function Home() {
         />
       )}
       {railArtists.length >= 4 && showDiscovery && (
-        <div id="artists" className="page-shell pt-8 pb-2">
+        <div id="artists" className="page-shell scroll-mt-24 pt-8 pb-2">
           <ArtistRail artists={railArtists} />
         </div>
       )}
@@ -293,7 +293,7 @@ function Home() {
         onArtist={setArtist}
       />
       <main className="page-shell w-full py-6 flex-grow flex flex-col justify-center">
-        <h1 className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</h1>
+        <p className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</p>
         {filtered.length > 0 && (
           <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase tabular-nums">
             Showing {filtered.length} poster{filtered.length !== 1 && "s"}

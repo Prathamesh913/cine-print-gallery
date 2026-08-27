@@ -21,24 +21,22 @@ export function DailySpotlight({ poster, totalPosters, totalArtists }: DailySpot
   return (
     <section
       aria-label="CinePrint manifesto"
-      className="mx-auto grid max-w-[1600px] grid-cols-12 gap-6 border-b border-white/10 px-4 pb-8 pt-6 sm:gap-8 sm:px-6 sm:pt-8 lg:gap-10 lg:pb-12"
+      className="mx-auto grid max-w-[1280px] grid-cols-12 gap-6 border-b border-white/10 px-4 pb-8 pt-6 sm:gap-6 sm:px-6 sm:pt-8 lg:gap-6 lg:pb-10"
     >
-      {/* Left: manifesto */}
-      <div className="col-span-12 lg:col-span-7">
+      {/* Left: manifesto — editorial, left-aligned */}
+      <div className="col-span-12 lg:col-span-7 lg:pr-2">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
-          Independent Print Archive — Est. 2024
+          Independent Print Archive — Est. 2026
         </p>
         <h1 className="mt-3 font-display text-[clamp(44px,7vw,110px)] uppercase leading-[0.85] tracking-[0.01em]">
-          Every Film
+          One Film.
           <br />
-          Deserves
-          <br />
-          <span className="text-[#FF6B6B]">Another Poster.</span>
+          <span className="text-[#FF6B6B]">Many Visions.</span>
         </h1>
         <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-white/60 sm:text-[15px]">
-          Discover cinema through
+          Discover cinema through the work of independent artists.
           <br className="hidden sm:block" />
-          the work of independent artists.
+          Every poster is an independent reinterpretation.
         </p>
         <a
           href="#artists"
@@ -58,13 +56,13 @@ export function DailySpotlight({ poster, totalPosters, totalArtists }: DailySpot
         </p>
       </div>
 
-      {/* Right: featured poster as physical print */}
-      <div className="col-span-12 lg:col-span-5 lg:pt-2">
+      {/* Right: featured poster as physical print — tucked into manifesto gutter */}
+      <div className="col-span-12 lg:col-span-5 lg:-ml-6 lg:pt-1 xl:-ml-8">
         <Link
           to="/poster/$id"
           params={{ id: poster.id }}
           aria-label={`${poster.title} by ${artistName} — view poster`}
-          className={`group mx-auto block max-w-[320px] rotate-[0.6deg] border border-white/10 bg-[#0A0A0A] p-2 pb-8 shadow-[0_20px_48px_rgba(0,0,0,0.8),0_4px_12px_rgba(0,0,0,0.5)] transition duration-200 hover:border-white/20 sm:max-w-[360px] lg:ml-auto lg:mr-0 ${focusRing} rounded-sm`}
+          className={`group mx-auto block max-w-[320px] rotate-[0.6deg] border border-white/10 bg-[#0A0A0A] p-2 pb-8 shadow-[0_20px_48px_rgba(0,0,0,0.8),0_4px_12px_rgba(0,0,0,0.5)] transition duration-200 hover:border-white/20 sm:max-w-[380px] lg:mx-0 lg:ml-2 ${focusRing} rounded-sm`}
         >
           <div className="aspect-[2/3] overflow-hidden bg-[#1E1E1E]">
             <PosterImage
@@ -80,7 +78,7 @@ export function DailySpotlight({ poster, totalPosters, totalArtists }: DailySpot
             <span className="tabular-nums">{poster.year}</span>
           </div>
         </Link>
-        <div className="mx-auto mt-3 flex max-w-[320px] items-center justify-between gap-3 border-t border-white/10 pt-3 sm:max-w-[360px] lg:ml-auto lg:mr-0">
+        <div className="mx-auto mt-3 flex max-w-[320px] items-center justify-between gap-3 border-t border-white/10 pt-3 sm:max-w-[380px] lg:mx-0 lg:ml-2">
           <span className="min-w-0 truncate font-mono text-[11px] text-white/60">
             {poster.title}
           </span>
