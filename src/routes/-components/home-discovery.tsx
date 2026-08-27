@@ -1,172 +1,103 @@
 import { Link } from "@tanstack/react-router";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
-import posterPalettesRaw from "@/lib/poster-palettes.json";
-
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
-
-const posterPalettes = posterPalettesRaw as Record<
-  string,
-  { palette: string[]; primary: string; hsl: { h: number; s: number; l: number } }
->;
 
 interface DailySpotlightProps {
   poster: Poster;
-  artistCount: number;
+  totalPosters: number;
+  totalArtists: number;
 }
 
-/** "Fresh Focus" — compact editorial hero, denser and shorter than before. */
-export function DailySpotlight({ poster, artistCount }: DailySpotlightProps) {
+/** Manifesto-led hero — identity first, poster as proof. */
+export function DailySpotlight({ poster, totalPosters, totalArtists }: DailySpotlightProps) {
   const artistName =
     poster.artists && poster.artists.length > 0
       ? (poster.artists[0]?.name ?? poster.artist)
       : poster.artist;
   const hasArtist = Boolean(artistName) && artistName !== "Unknown";
   const slug = hasArtist ? slugifyArtist(artistName) : undefined;
-  const palette = posterPalettes[poster.id]?.palette?.slice(0, 5) ?? null;
-  const tags = poster.tags?.slice(0, 3) ?? [];
 
   return (
     <section
-      aria-label="Fresh Focus — daily pick"
-      className="grid items-stretch gap-5 rounded-xl border border-white/12 bg-white/[0.06] p-4 sm:grid-cols-[260px_1fr] sm:p-5"
+      aria-label="CinePrint manifesto"
+      className="mx-auto grid max-w-[1600px] grid-cols-12 gap-6 border-b border-white/10 px-4 pb-8 pt-6 sm:gap-8 sm:px-6 sm:pt-8 lg:gap-10 lg:pb-12"
     >
-      <div
-        className="overflow-hidden rounded-lg"
-        style={{ aspectRatio: "2 / 3", backgroundColor: "#1E1E1E" }}
-      >
-        <PosterImage
-          poster={poster}
-          purpose="gallery"
-          loading="eager"
-          alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
-          className="h-full w-full object-cover"
-        />
+      {/* Left: manifesto */}
+      <div className="col-span-12 lg:col-span-7">
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
+          Independent Print Archive — Est. 2024
+        </p>
+        <h1 className="mt-3 font-display text-[clamp(44px,7vw,110px)] uppercase leading-[0.85] tracking-[0.01em]">
+          Every Film
+          <br />
+          Deserves
+          <br />
+          <span className="text-[#FF6B6B]">Another Poster.</span>
+        </h1>
+        <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-white/60 sm:text-[15px]">
+          Discover cinema through
+          <br className="hidden sm:block" />
+          the work of independent artists.
+        </p>
+        <a
+          href="#artists"
+          onClick={(e) => {
+            e.preventDefault();
+            const id = document.getElementById("artists");
+            if (!id) return;
+            const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            id.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+          }}
+          className={`mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-[#FF6B6B] px-7 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 ${focusRing}`}
+        >
+          Explore Artists
+        </a>
+        <p className="mt-4 font-mono text-[11px] tabular-nums tracking-wide text-white/35">
+          {totalPosters} prints · {totalArtists} artists
+        </p>
       </div>
 
-      <div className="flex min-w-0 flex-col justify-center">
-        <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
-          Fresh Focus · Daily Pick
-        </p>
-        <h2 className="mt-2 line-clamp-2 font-display text-4xl uppercase leading-none sm:text-5xl">
-          {poster.title}
-        </h2>
-        <p className="mt-2 text-sm text-white/65">
-          {poster.year} · {poster.genre.join(" / ") || poster.style}
-        </p>
-        {(poster.style || tags.length > 0) && (
-          <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            {poster.style && (
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">
-                {poster.style}
-              </span>
-            )}
-            {tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/65"
-              >
-                {tag}
-              </span>
-            ))}
+      {/* Right: featured poster as physical print */}
+      <div className="col-span-12 lg:col-span-5 lg:pt-2">
+        <Link
+          to="/poster/$id"
+          params={{ id: poster.id }}
+          aria-label={`${poster.title} by ${artistName} — view poster`}
+          className={`group mx-auto block max-w-[320px] rotate-[0.6deg] border border-white/10 bg-[#0A0A0A] p-2 pb-8 shadow-[0_20px_48px_rgba(0,0,0,0.8),0_4px_12px_rgba(0,0,0,0.5)] transition duration-200 hover:border-white/20 sm:max-w-[360px] lg:ml-auto lg:mr-0 ${focusRing} rounded-sm`}
+        >
+          <div className="aspect-[2/3] overflow-hidden bg-[#1E1E1E]">
+            <PosterImage
+              poster={poster}
+              purpose="gallery"
+              loading="eager"
+              alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
+              className="h-full w-full object-cover"
+            />
           </div>
-        )}
-
-        {hasArtist ? (
-          <Link
-            to="/artist/$slug"
-            params={{ slug: slug! }}
-            className={`mt-3 inline-flex min-h-11 w-fit items-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/55 transition-colors hover:text-[#FF6B6B] ${focusRing}`}
-          >
-            By {artistName}
-          </Link>
-        ) : (
-          <p className="mt-3 inline-flex min-h-11 items-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
-            By {poster.artist || "Unknown Artist"}
-          </p>
-        )}
-
-        {palette && palette.length > 0 && (
-          <div className="mt-2 flex items-center gap-1.5">
-            {palette.map((color) => (
-              <span
-                key={color}
-                aria-hidden
-                className="h-5 w-5 rounded-full border border-white/10"
-                style={{ backgroundColor: color }}
-              />
-            ))}
+          <div className="flex items-center justify-between pt-2 font-mono text-[10px] uppercase tracking-wide text-white/40">
+            <span>Featured</span>
+            <span className="tabular-nums">{poster.year}</span>
           </div>
-        )}
-
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Link
-            to="/poster/$id"
-            params={{ id: poster.id }}
-            className={`inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-[#FF6B6B] px-5 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 ${focusRing}`}
-          >
-            View Poster
-          </Link>
-          {hasArtist && artistCount > 1 && (
+        </Link>
+        <div className="mx-auto mt-3 flex max-w-[320px] items-center justify-between gap-3 border-t border-white/10 pt-3 sm:max-w-[360px] lg:ml-auto lg:mr-0">
+          <span className="min-w-0 truncate font-mono text-[11px] text-white/60">
+            {poster.title}
+          </span>
+          {hasArtist ? (
             <Link
               to="/artist/$slug"
               params={{ slug: slug! }}
-              className={`inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border border-white/15 bg-white/5 px-5 text-sm text-[#F5F5F5] transition duration-150 ease-[var(--ease-out)] hover:border-white/25 hover:bg-white/10 active:scale-95 ${focusRing}`}
+              className={`shrink-0 font-mono text-[11px] uppercase tracking-wide text-white/45 transition-colors hover:text-[#FF6B6B] ${focusRing}`}
             >
-              More by {artistName}
+              By {artistName} →
             </Link>
+          ) : (
+            <span className="shrink-0 font-mono text-[11px] uppercase tracking-wide text-white/45">
+              {poster.artist}
+            </span>
           )}
         </div>
-      </div>
-    </section>
-  );
-}
-
-// Poster discovery rail — dense horizontal scroll of real poster art right after hero.
-
-interface PosterDiscoveryProps {
-  posters: Poster[];
-  onOpen: (p: Poster) => void;
-}
-
-export function PosterDiscoveryRail({ posters, onOpen }: PosterDiscoveryProps) {
-  if (posters.length === 0) return null;
-  return (
-    <section aria-label="More to discover">
-      <div className="mb-3 flex items-baseline justify-between gap-4">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/55 sm:text-xs">
-          More to Discover
-        </p>
-        <p className="font-mono text-[10px] tabular-nums tracking-widest text-white/45 sm:text-xs">
-          {posters.length}
-        </p>
-      </div>
-      <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 scrollbar-hide">
-        {posters.map((poster) => (
-          <button
-            key={poster.id}
-            type="button"
-            onClick={() => onOpen(poster)}
-            className={`group flex w-32 shrink-0 flex-col gap-2 sm:w-36 ${focusRing} rounded-xl text-left`}
-          >
-            <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl border border-white/12 bg-[#1E1E1E] transition group-hover:border-white/22">
-              <PosterImage
-                poster={poster}
-                purpose="gallery"
-                loading="lazy"
-                alt={`${poster.title} (${poster.year})`}
-                className="h-full w-full object-cover transition duration-200 group-hover:scale-[1.02]"
-              />
-            </div>
-            <span className="line-clamp-1 text-xs font-medium leading-tight text-[#F5F5F5] group-hover:text-white">
-              {poster.title}
-            </span>
-            <span className="text-[11px] tabular-nums text-white/50">
-              {poster.year}
-              {poster.genre[0] ? ` · ${poster.genre[0]}` : ""}
-            </span>
-          </button>
-        ))}
       </div>
     </section>
   );
