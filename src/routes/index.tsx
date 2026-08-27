@@ -156,11 +156,26 @@ function Home() {
 
   const artists = useMemo(() => Array.from(artistCounts.keys()).sort(), [artistCounts]);
 
-  // Same seed as the loader's shuffle: index straight into the daily cut.
-  const featured = useMemo(() => {
+  const heroFilmPosters = useMemo(() => {
     if (posters.length < DISCOVERY_MIN_POSTERS) return null;
-    const dayIndex = hashString(getUtcDateString()) % posters.length;
-    return posters[dayIndex];
+    const groups = new Map<string, Poster[]>();
+    for (const p of posters) {
+      const key = p.title.trim().toLowerCase();
+      if (!key) continue;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(p);
+    }
+    let candidates = Array.from(groups.values()).filter((g) => g.length >= 3);
+    if (candidates.length === 0)
+      candidates = Array.from(groups.values()).filter((g) => g.length >= 2);
+    if (candidates.length === 0) {
+      const dayIndex = hashString(getUtcDateString()) % posters.length;
+      return [posters[dayIndex]];
+    }
+    candidates.sort((a, b) => a[0].title.localeCompare(b[0].title));
+    const pick = candidates[hashString(getUtcDateString()) % candidates.length];
+    const salted = hashString(`${getUtcDateString()}:hero:${pick[0].title}`);
+    return deterministicShuffle(pick, mulberry32(salted)).slice(0, 3);
   }, [posters]);
 
   const railArtists = useMemo<RailArtist[]>(() => {
@@ -258,9 +273,9 @@ function Home() {
         showSearch={false}
         onFeelingLucky={handleFeelingLucky}
       />
-      {featured && showDiscovery && (
+      {heroFilmPosters && showDiscovery && (
         <DailySpotlight
-          poster={featured}
+          filmPosters={heroFilmPosters}
           totalPosters={posters.length}
           totalArtists={artistCounts.size}
         />

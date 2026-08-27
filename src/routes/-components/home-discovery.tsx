@@ -4,26 +4,23 @@ import { PosterImage } from "@/components/PosterImage";
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
 
 interface DailySpotlightProps {
-  poster: Poster;
+  filmPosters: Poster[];
   totalPosters: number;
   totalArtists: number;
 }
 
-/** Manifesto-led hero — identity first, poster as proof. */
-export function DailySpotlight({ poster, totalPosters, totalArtists }: DailySpotlightProps) {
-  const artistName =
-    poster.artists && poster.artists.length > 0
-      ? (poster.artists[0]?.name ?? poster.artist)
-      : poster.artist;
-  const hasArtist = Boolean(artistName) && artistName !== "Unknown";
-  const slug = hasArtist ? slugifyArtist(artistName) : undefined;
+/** Manifesto-led hero — One Film, Many Visions proved by stacked interpretations. */
+export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: DailySpotlightProps) {
+  const representative = filmPosters[0];
+  const filmTitle = representative?.title ?? "Cinema";
+  const filmYear = representative?.year;
 
   return (
     <section
       aria-label="CinePrint manifesto"
       className="mx-auto grid max-w-[1280px] grid-cols-12 gap-6 border-b border-white/10 px-4 pb-8 pt-6 sm:gap-6 sm:px-6 sm:pt-8 lg:gap-6 lg:pb-10"
     >
-      {/* Left: manifesto — editorial, left-aligned */}
+      {/* Left: manifesto */}
       <div className="col-span-12 lg:col-span-7 lg:pr-2">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
           Independent Print Archive — Est. 2026
@@ -56,45 +53,109 @@ export function DailySpotlight({ poster, totalPosters, totalArtists }: DailySpot
         </p>
       </div>
 
-      {/* Right: featured poster as physical print — tucked into manifesto gutter */}
+      {/* Right: film interpretations — fanned stack proves the headline */}
       <div className="col-span-12 lg:col-span-5 lg:-ml-6 lg:pt-1 xl:-ml-8">
-        <Link
-          to="/poster/$id"
-          params={{ id: poster.id }}
-          aria-label={`${poster.title} by ${artistName} — view poster`}
-          className={`group mx-auto block max-w-[320px] rotate-[0.6deg] border border-white/10 bg-[#0A0A0A] p-2 pb-8 shadow-[0_20px_48px_rgba(0,0,0,0.8),0_4px_12px_rgba(0,0,0,0.5)] transition duration-200 hover:border-white/20 sm:max-w-[380px] lg:mx-0 lg:ml-2 ${focusRing} rounded-sm`}
-        >
-          <div className="aspect-[2/3] overflow-hidden bg-[#1E1E1E]">
-            <PosterImage
-              poster={poster}
-              purpose="gallery"
-              loading="eager"
-              alt={`${poster.title} (${poster.year}) by ${poster.artist}`}
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <div className="flex items-center justify-between pt-2 font-mono text-[10px] uppercase tracking-wide text-white/40">
-            <span>Featured</span>
-            <span className="tabular-nums">{poster.year}</span>
-          </div>
-        </Link>
-        <div className="mx-auto mt-3 flex max-w-[320px] items-center justify-between gap-3 border-t border-white/10 pt-3 sm:max-w-[380px] lg:mx-0 lg:ml-2">
-          <span className="min-w-0 truncate font-mono text-[11px] text-white/60">
-            {poster.title}
-          </span>
-          {hasArtist ? (
+        <div className="relative mx-auto flex h-[240px] max-w-[360px] items-end justify-center sm:h-[280px] sm:max-w-[380px] lg:mx-0 lg:ml-2 lg:h-[300px]">
+          {filmPosters.length === 1 ? (
             <Link
-              to="/artist/$slug"
-              params={{ slug: slug! }}
-              className={`shrink-0 font-mono text-[11px] uppercase tracking-wide text-white/45 transition-colors hover:text-[#FF6B6B] ${focusRing}`}
+              to="/poster/$id"
+              params={{ id: filmPosters[0].id }}
+              aria-label={`${filmTitle} — view poster`}
+              className={`relative h-[200px] w-[132px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-[0_16px_32px_rgba(0,0,0,0.6)] transition hover:border-white/20 sm:h-[228px] sm:w-[152px] ${focusRing}`}
             >
-              By {artistName} →
+              <PosterImage
+                poster={filmPosters[0]}
+                purpose="gallery"
+                loading="eager"
+                alt={`${filmPosters[0].title} (${filmPosters[0].year})`}
+                className="h-full w-full object-cover"
+              />
             </Link>
+          ) : filmPosters.length === 2 ? (
+            <div className="relative flex h-full w-full items-end justify-center">
+              <Link
+                to="/poster/$id"
+                params={{ id: filmPosters[0].id }}
+                aria-label={`${filmPosters[0].title} by ${filmPosters[0].artist} — view poster`}
+                className="absolute bottom-0 left-1/2 h-[176px] w-[116px] -translate-x-[72%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[208px] sm:w-[138px]"
+              >
+                <PosterImage
+                  poster={filmPosters[0]}
+                  purpose="gallery"
+                  loading="eager"
+                  alt={`${filmPosters[0].title} (${filmPosters[0].year})`}
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+              <Link
+                to="/poster/$id"
+                params={{ id: filmPosters[1].id }}
+                aria-label={`${filmPosters[1].title} by ${filmPosters[1].artist} — view poster`}
+                className="relative z-10 h-[200px] w-[132px] translate-x-[18%] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[232px] sm:w-[154px]"
+              >
+                <PosterImage
+                  poster={filmPosters[1]}
+                  purpose="gallery"
+                  loading="eager"
+                  alt={`${filmPosters[1].title} (${filmPosters[1].year})`}
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+            </div>
           ) : (
-            <span className="shrink-0 font-mono text-[11px] uppercase tracking-wide text-white/45">
-              {poster.artist}
-            </span>
+            <div className="relative flex h-full w-full items-end justify-center">
+              <Link
+                to="/poster/$id"
+                params={{ id: filmPosters[0].id }}
+                aria-label={`${filmPosters[0].title} by ${filmPosters[0].artist} — view poster`}
+                className="absolute bottom-0 left-1/2 h-[160px] w-[106px] -translate-x-[108%] -rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-lg transition hover:opacity-100 sm:h-[192px] sm:w-[128px]"
+              >
+                <PosterImage
+                  poster={filmPosters[0]}
+                  purpose="gallery"
+                  loading="eager"
+                  alt={`${filmPosters[0].title} (${filmPosters[0].year})`}
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+              <Link
+                to="/poster/$id"
+                params={{ id: filmPosters[1].id }}
+                aria-label={`${filmPosters[1].title} by ${filmPosters[1].artist} — view poster`}
+                className="relative z-10 h-[200px] w-[132px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[232px] sm:w-[154px]"
+              >
+                <PosterImage
+                  poster={filmPosters[1]}
+                  purpose="gallery"
+                  loading="eager"
+                  alt={`${filmPosters[1].title} (${filmPosters[1].year})`}
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+              <Link
+                to="/poster/$id"
+                params={{ id: filmPosters[2].id }}
+                aria-label={`${filmPosters[2].title} by ${filmPosters[2].artist} — view poster`}
+                className="absolute bottom-0 left-1/2 h-[160px] w-[106px] translate-x-[18%] rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[192px] sm:w-[128px]"
+              >
+                <PosterImage
+                  poster={filmPosters[2]}
+                  purpose="gallery"
+                  loading="eager"
+                  alt={`${filmPosters[2].title} (${filmPosters[2].year})`}
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+            </div>
           )}
+        </div>
+        <div className="mx-auto mt-4 flex max-w-[360px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[380px] lg:mx-0 lg:ml-2">
+          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/35">
+            {filmPosters.length} interpretation{filmPosters.length === 1 ? "" : "s"} · {filmYear}
+          </span>
+          <span className="max-w-[28ch] truncate font-heading text-sm font-medium text-white/80">
+            {filmTitle}
+          </span>
         </div>
       </div>
     </section>
