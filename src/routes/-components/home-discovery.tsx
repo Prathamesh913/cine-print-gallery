@@ -55,13 +55,13 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
 
       {/* Right: film interpretations — fanned stack proves the headline */}
       <div className="col-span-12 lg:col-span-5 lg:-ml-6 lg:pt-1 xl:-ml-8">
-        <div className="relative mx-auto flex h-[240px] max-w-[360px] items-end justify-center sm:h-[280px] sm:max-w-[380px] lg:mx-0 lg:ml-2 lg:h-[300px]">
+        <div className="relative mx-auto flex h-[300px] max-w-[400px] items-end justify-center sm:h-[360px] sm:max-w-[440px] lg:mx-0 lg:ml-2 lg:h-[380px]">
           {filmPosters.length === 1 ? (
             <Link
               to="/poster/$id"
               params={{ id: filmPosters[0].id }}
               aria-label={`${filmTitle} — view poster`}
-              className={`relative h-[200px] w-[132px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-[0_16px_32px_rgba(0,0,0,0.6)] transition hover:border-white/20 sm:h-[228px] sm:w-[152px] ${focusRing}`}
+              className={`relative h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-[0_16px_32px_rgba(0,0,0,0.6)] transition hover:border-white/20 sm:h-[300px] sm:w-[200px] ${focusRing}`}
             >
               <PosterImage
                 poster={filmPosters[0]}
@@ -77,7 +77,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[0].id }}
                 aria-label={`${filmPosters[0].title} by ${filmPosters[0].artist} — view poster`}
-                className="absolute bottom-0 left-1/2 h-[176px] w-[116px] -translate-x-[72%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[208px] sm:w-[138px]"
+                className="absolute bottom-0 left-1/2 h-[232px] w-[154px] -translate-x-[72%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[272px] sm:w-[181px]"
               >
                 <PosterImage
                   poster={filmPosters[0]}
@@ -91,7 +91,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[1].id }}
                 aria-label={`${filmPosters[1].title} by ${filmPosters[1].artist} — view poster`}
-                className="relative z-10 h-[200px] w-[132px] translate-x-[18%] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[232px] sm:w-[154px]"
+                className="relative z-10 h-[264px] w-[176px] translate-x-[18%] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[304px] sm:w-[202px]"
               >
                 <PosterImage
                   poster={filmPosters[1]}
@@ -108,7 +108,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[0].id }}
                 aria-label={`${filmPosters[0].title} by ${filmPosters[0].artist} — view poster`}
-                className="absolute bottom-0 left-1/2 h-[160px] w-[106px] -translate-x-[108%] -rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-lg transition hover:opacity-100 sm:h-[192px] sm:w-[128px]"
+                className="absolute bottom-0 left-1/2 h-[212px] w-[141px] -translate-x-[108%] -rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-lg transition hover:opacity-100 sm:h-[252px] sm:w-[168px]"
               >
                 <PosterImage
                   poster={filmPosters[0]}
@@ -122,7 +122,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[1].id }}
                 aria-label={`${filmPosters[1].title} by ${filmPosters[1].artist} — view poster`}
-                className="relative z-10 h-[200px] w-[132px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[232px] sm:w-[154px]"
+                className="relative z-10 h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[304px] sm:w-[202px]"
               >
                 <PosterImage
                   poster={filmPosters[1]}
@@ -136,7 +136,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[2].id }}
                 aria-label={`${filmPosters[2].title} by ${filmPosters[2].artist} — view poster`}
-                className="absolute bottom-0 left-1/2 h-[160px] w-[106px] translate-x-[18%] rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[192px] sm:w-[128px]"
+                className="absolute bottom-0 left-1/2 h-[212px] w-[141px] translate-x-[18%] rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[252px] sm:w-[168px]"
               >
                 <PosterImage
                   poster={filmPosters[2]}
@@ -149,7 +149,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
             </div>
           )}
         </div>
-        <div className="mx-auto mt-4 flex max-w-[360px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[380px] lg:mx-0 lg:ml-2">
+        <div className="mx-auto mt-4 flex max-w-[400px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[440px] lg:mx-0 lg:ml-2">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/35">
             {filmPosters.length} interpretation{filmPosters.length === 1 ? "" : "s"} · {filmYear}
           </span>
