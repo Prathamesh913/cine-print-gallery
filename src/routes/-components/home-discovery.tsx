@@ -178,88 +178,106 @@ export interface RailArtist {
   covers: Poster[];
 }
 
-/** Radically redesigned ArtistRail — poster work is the card identity. */
+/** ArtistRail — collection/folder card: artwork emerges from behind a substantial metadata panel. */
 export function ArtistRail({ artists }: { artists: RailArtist[] }) {
   if (artists.length < 4) return null;
 
   return (
     <section aria-label="Explore artists">
-      <div className="mb-3 flex items-baseline justify-between gap-4">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/55 sm:text-xs">
-          Explore Artists
-        </p>
-        <p className="font-mono text-[10px] tabular-nums tracking-widest text-white/45 sm:text-xs">
-          {artists.length}
-        </p>
-      </div>
-      <div className="-mx-1 flex gap-3.5 overflow-x-auto px-1 pb-2 scrollbar-hide">
+      <p className="mb-3 font-mono text-[10px] uppercase tracking-widest text-white/55 sm:text-xs">
+        Explore Artists
+      </p>
+      <div className="-mx-1 flex gap-4 overflow-x-auto px-1 pb-3 scrollbar-hide">
         {artists.map(({ name, count, covers }) => (
           <Link
             key={name}
             to="/artist/$slug"
             params={{ slug: slugifyArtist(name) }}
-            className={`group flex w-36 shrink-0 flex-col gap-2.5 sm:w-40 ${focusRing} rounded-xl`}
+            aria-label={`${name}, ${count} poster${count === 1 ? "" : "s"}`}
+            className={`group relative flex w-56 shrink-0 flex-col overflow-hidden rounded-xl border border-white/12 bg-white/[0.06] transition duration-150 ease-[var(--ease-out)] hover:border-white/20 hover:bg-white/[0.08] active:scale-[0.98] sm:w-64 ${focusRing}`}
           >
-            <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl border border-white/12 bg-[#1E1E1E] transition group-hover:border-white/22">
-              {covers.length === 1 ? (
-                <PosterImage
-                  poster={covers[0]}
-                  purpose="gallery"
-                  loading="lazy"
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              ) : covers.length === 2 ? (
-                <>
-                  <PosterImage
-                    poster={covers[0]}
-                    purpose="gallery"
-                    loading="lazy"
-                    alt=""
-                    className="absolute inset-0 h-full w-full -rotate-[4deg] scale-[0.94] object-cover opacity-90"
-                  />
-                  <PosterImage
-                    poster={covers[1]}
-                    purpose="gallery"
-                    loading="lazy"
-                    alt=""
-                    className="relative h-full w-full object-cover shadow-xl"
-                  />
-                </>
-              ) : (
-                <>
-                  <PosterImage
-                    poster={covers[0]}
-                    purpose="gallery"
-                    loading="lazy"
-                    alt=""
-                    className="absolute inset-0 h-full w-full -rotate-[5deg] scale-[0.96] object-cover opacity-90"
-                  />
-                  <PosterImage
-                    poster={covers[1]}
-                    purpose="gallery"
-                    loading="lazy"
-                    alt=""
-                    className="absolute inset-0 left-[6%] right-[6%] h-full w-[88%] rotate-0 object-cover shadow-xl"
-                  />
-                  <PosterImage
-                    poster={covers[2]}
-                    purpose="gallery"
-                    loading="lazy"
-                    alt=""
-                    className="absolute inset-0 left-[12%] h-full w-full rotate-[5deg] scale-[0.96] object-cover opacity-95"
-                  />
-                </>
-              )}
-              {count > 1 && (
-                <span className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-white/85 backdrop-blur">
-                  ×{count}
-                </span>
-              )}
+            {/* Artwork zone — fan rises from behind the lower card */}
+            <div className="relative flex h-[168px] items-end justify-center overflow-visible px-3 pt-4 sm:h-[184px]">
+              <div className="relative flex items-end justify-center">
+                {covers.length === 1 ? (
+                  <div className="relative h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-md sm:h-[144px] sm:w-[96px]">
+                    <PosterImage
+                      poster={covers[0]}
+                      purpose="gallery"
+                      loading="lazy"
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : covers.length === 2 ? (
+                  <>
+                    <div className="absolute bottom-0 left-1/2 h-[124px] w-[84px] -translate-x-[62%] -rotate-[5deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-md sm:h-[136px] sm:w-[92px]">
+                      <PosterImage
+                        poster={covers[0]}
+                        purpose="gallery"
+                        loading="lazy"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="relative z-10 h-[132px] w-[88px] translate-x-[14%] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-lg sm:h-[144px] sm:w-[96px]">
+                      <PosterImage
+                        poster={covers[1]}
+                        purpose="gallery"
+                        loading="lazy"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] -translate-x-[108%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-80 shadow-md sm:h-[132px] sm:w-[88px]">
+                      <PosterImage
+                        poster={covers[0]}
+                        purpose="gallery"
+                        loading="lazy"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="relative z-10 h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl sm:h-[144px] sm:w-[96px]">
+                      <PosterImage
+                        poster={covers[1]}
+                        purpose="gallery"
+                        loading="lazy"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] translate-x-[8%] rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-md sm:h-[132px] sm:w-[88px]">
+                      <PosterImage
+                        poster={covers[2]}
+                        purpose="gallery"
+                        loading="lazy"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-            <span className="line-clamp-2 min-h-[2.2em] text-pretty text-left text-[13px] font-medium leading-tight text-[#F5F5F5] group-hover:text-white">
-              {name}
-            </span>
+
+            {/* Lower collection panel — substantial, rounded top where it meets artwork */}
+            <div className="flex flex-1 flex-col rounded-t-xl border-t border-white/10 bg-[#0F0F0F] px-4 pb-4 pt-4">
+              <h3 className="line-clamp-2 min-h-[2.8em] text-left text-[15px] font-semibold leading-snug text-white">
+                {name}
+              </h3>
+              <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-3">
+                <span className="font-mono text-xs tabular-nums text-white/50">
+                  {count} poster{count === 1 ? "" : "s"}
+                </span>
+                <span className="inline-flex items-center gap-1 font-mono text-xs text-white/60 transition-colors group-hover:text-white">
+                  Explore <span aria-hidden>→</span>
+                </span>
+              </div>
+            </div>
           </Link>
         ))}
       </div>
