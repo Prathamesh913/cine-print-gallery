@@ -18,7 +18,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
   return (
     <section
       aria-label="CinePrint manifesto"
-      className="page-shell grid grid-cols-12 gap-6 border-b border-white/10 pb-8 pt-6 sm:gap-6 sm:pt-8 lg:gap-10 lg:pb-10"
+      className="page-shell grid grid-cols-12 gap-6 border-b border-white/10 pb-8 pt-6 sm:gap-6 sm:pt-8 lg:gap-10 xl:gap-20 lg:pb-10"
     >
       {/* Left: manifesto */}
       <div className="col-span-12 lg:col-span-7">
