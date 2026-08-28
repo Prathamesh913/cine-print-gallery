@@ -18,10 +18,10 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
   return (
     <section
       aria-label="CinePrint manifesto"
-      className="page-shell grid grid-cols-12 gap-6 border-b border-white/10 pb-8 pt-6 sm:gap-6 sm:pt-8 lg:gap-10 xl:gap-20 lg:pb-10"
+      className="page-shell flex flex-col gap-6 border-b border-white/10 pb-8 pt-6 sm:gap-8 sm:pt-8 lg:flex-row lg:items-start lg:justify-between lg:gap-10 xl:gap-20 lg:pb-10"
     >
       {/* Left: manifesto */}
-      <div className="col-span-12 lg:col-span-7">
+      <div className="shrink-0">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
           Independent Print Archive — Est. 2026
         </p>
@@ -54,8 +54,8 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
       </div>
 
       {/* Right: film interpretations — fanned stack proves the headline */}
-      <div className="col-span-12 lg:col-span-5 lg:pt-1">
-        <div className="group relative mx-auto flex h-[300px] max-w-[400px] items-end justify-center sm:h-[360px] sm:max-w-[470px] lg:mr-0 lg:ml-auto lg:max-w-[470px] lg:h-[380px]">
+      <div className="shrink-0 lg:pt-1">
+        <div className="group relative mx-auto flex h-[300px] max-w-[400px] items-end justify-center sm:h-[360px] sm:max-w-[470px] lg:mx-0 lg:max-w-[470px] lg:h-[380px]">
           {filmPosters.length === 1 ? (
             <Link
               to="/poster/$id"
@@ -149,7 +149,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
             </div>
           )}
         </div>
-        <div className="mx-auto mt-4 flex max-w-[400px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[470px] lg:mr-0 lg:ml-auto lg:max-w-[470px]">
+        <div className="mx-auto mt-4 flex max-w-[400px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[470px] lg:mx-0 lg:max-w-[470px]">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/35">
             {filmPosters.length} interpretation{filmPosters.length === 1 ? "" : "s"} · {filmYear}
           </span>
