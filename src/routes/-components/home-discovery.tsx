@@ -18,7 +18,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
   return (
     <section
       aria-label="CinePrint manifesto"
-      className="mx-auto grid max-w-[1280px] grid-cols-12 gap-6 border-b border-white/10 px-4 pb-8 pt-6 sm:gap-6 sm:px-6 sm:pt-8 lg:gap-10 lg:pb-10"
+      className="page-shell grid grid-cols-12 gap-6 border-b border-white/10 pb-8 pt-6 sm:gap-6 sm:pt-8 lg:gap-10 lg:pb-10"
     >
       {/* Left: manifesto */}
       <div className="col-span-12 lg:col-span-7">
@@ -55,13 +55,13 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
 
       {/* Right: film interpretations — fanned stack proves the headline */}
       <div className="col-span-12 lg:col-span-5 lg:pt-1">
-        <div className="relative mx-auto flex h-[300px] max-w-[400px] items-end justify-center sm:h-[360px] sm:max-w-[470px] lg:max-w-none lg:h-[380px]">
+        <div className="group relative mx-auto flex h-[300px] max-w-[400px] items-end justify-center sm:h-[360px] sm:max-w-[470px] lg:mr-0 lg:ml-auto lg:max-w-[470px] lg:h-[380px]">
           {filmPosters.length === 1 ? (
             <Link
               to="/poster/$id"
               params={{ id: filmPosters[0].id }}
               aria-label={`${filmTitle} — view poster`}
-              className={`relative h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-[0_16px_32px_rgba(0,0,0,0.6)] transition hover:border-white/20 sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px] ${focusRing}`}
+              className={`relative h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-[0_16px_32px_rgba(0,0,0,0.6)] transition duration-200 ease-[var(--ease-out)] hover:border-white/20 group-hover:-translate-y-[3px] group-hover:scale-[1.01] group-focus-visible:-translate-y-[3px] group-focus-visible:scale-[1.01] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px] ${focusRing}`}
             >
               <PosterImage
                 poster={filmPosters[0]}
@@ -77,7 +77,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[0].id }}
                 aria-label={`${filmPosters[0].title} by ${filmPosters[0].artist} — view poster`}
-                className="absolute bottom-0 left-1/2 h-[222px] w-[148px] -translate-x-[119%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[276px] sm:w-[184px] sm:-translate-x-[115%] lg:h-[255px] lg:w-[170px] lg:-translate-x-[121%] xl:h-[315px] xl:w-[210px] xl:-translate-x-[115%]"
+                className="absolute bottom-0 left-1/2 h-[222px] w-[148px] -translate-x-[119%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition duration-300 ease-[var(--ease-out)] hover:opacity-100 sm:group-hover:-translate-x-[124%] lg:group-hover:-translate-x-[130%] xl:group-hover:-translate-x-[123%] sm:group-hover:-rotate-[9deg] lg:group-hover:-rotate-[9deg] xl:group-hover:-rotate-[9deg] sm:group-focus-visible:-translate-x-[124%] lg:group-focus-visible:-translate-x-[130%] xl:group-focus-visible:-translate-x-[123%] sm:group-focus-visible:-rotate-[9deg] lg:group-focus-visible:-rotate-[9deg] xl:group-focus-visible:-rotate-[9deg] sm:h-[276px] sm:w-[184px] sm:-translate-x-[115%] lg:h-[255px] lg:w-[170px] lg:-translate-x-[121%] xl:h-[315px] xl:w-[210px] xl:-translate-x-[115%]"
               >
                 <PosterImage
                   poster={filmPosters[0]}
@@ -91,7 +91,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[1].id }}
                 aria-label={`${filmPosters[1].title} by ${filmPosters[1].artist} — view poster`}
-                className="relative z-10 h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
+                className="relative z-10 h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition duration-200 ease-[var(--ease-out)] hover:border-white/20 group-hover:-translate-y-[3px] group-hover:scale-[1.015] group-focus-visible:-translate-y-[3px] group-focus-visible:scale-[1.015] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
               >
                 <PosterImage
                   poster={filmPosters[1]}
@@ -108,7 +108,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[0].id }}
                 aria-label={`${filmPosters[0].title} by ${filmPosters[0].artist} — view poster`}
-                className="absolute bottom-0 left-1/2 h-[216px] w-[144px] -translate-x-[106%] -rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-lg transition hover:opacity-100 sm:h-[252px] sm:w-[168px] sm:-translate-x-[119%] lg:h-[240px] lg:w-[160px] lg:-translate-x-[108%] xl:h-[282px] xl:w-[188px] xl:-translate-x-[111%]"
+                className="absolute bottom-0 left-1/2 h-[216px] w-[144px] -translate-x-[106%] -rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-lg transition duration-300 ease-[var(--ease-out)] hover:opacity-100 sm:group-hover:-translate-x-[129%] lg:group-hover:-translate-x-[117%] xl:group-hover:-translate-x-[120%] sm:group-hover:-rotate-[10deg] lg:group-hover:-rotate-[10deg] xl:group-hover:-rotate-[10deg] sm:group-focus-visible:-translate-x-[129%] lg:group-focus-visible:-translate-x-[117%] xl:group-focus-visible:-translate-x-[120%] sm:group-focus-visible:-rotate-[10deg] lg:group-focus-visible:-rotate-[10deg] xl:group-focus-visible:-rotate-[10deg] sm:h-[252px] sm:w-[168px] sm:-translate-x-[119%] lg:h-[240px] lg:w-[160px] lg:-translate-x-[108%] xl:h-[282px] xl:w-[188px] xl:-translate-x-[111%]"
               >
                 <PosterImage
                   poster={filmPosters[0]}
@@ -122,7 +122,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[1].id }}
                 aria-label={`${filmPosters[1].title} by ${filmPosters[1].artist} — view poster`}
-                className="relative z-10 h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition hover:border-white/20 sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
+                className="relative z-10 h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition duration-200 ease-[var(--ease-out)] hover:border-white/20 group-hover:-translate-y-[3px] group-hover:scale-[1.015] group-focus-visible:-translate-y-[3px] group-focus-visible:scale-[1.015] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
               >
                 <PosterImage
                   poster={filmPosters[1]}
@@ -136,7 +136,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
                 to="/poster/$id"
                 params={{ id: filmPosters[2].id }}
                 aria-label={`${filmPosters[2].title} by ${filmPosters[2].artist} — view poster`}
-                className="absolute bottom-0 left-1/2 h-[216px] w-[144px] translate-x-[6%] rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition hover:opacity-100 sm:h-[252px] sm:w-[168px] sm:translate-x-[19%] lg:h-[240px] lg:w-[160px] lg:translate-x-[8%] xl:h-[282px] xl:w-[188px] xl:translate-x-[11%]"
+                className="absolute bottom-0 left-1/2 h-[216px] w-[144px] translate-x-[6%] rotate-[7deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-lg transition duration-300 ease-[var(--ease-out)] hover:opacity-100 sm:group-hover:translate-x-[29%] lg:group-hover:translate-x-[17%] xl:group-hover:translate-x-[19%] sm:group-hover:rotate-[10deg] lg:group-hover:rotate-[10deg] xl:group-hover:rotate-[10deg] sm:group-focus-visible:translate-x-[29%] lg:group-focus-visible:translate-x-[17%] xl:group-focus-visible:translate-x-[19%] sm:group-focus-visible:rotate-[10deg] lg:group-focus-visible:rotate-[10deg] xl:group-focus-visible:rotate-[10deg] sm:h-[252px] sm:w-[168px] sm:translate-x-[19%] lg:h-[240px] lg:w-[160px] lg:translate-x-[8%] xl:h-[282px] xl:w-[188px] xl:translate-x-[11%]"
               >
                 <PosterImage
                   poster={filmPosters[2]}
@@ -149,7 +149,7 @@ export function DailySpotlight({ filmPosters, totalPosters, totalArtists }: Dail
             </div>
           )}
         </div>
-        <div className="mx-auto mt-4 flex max-w-[400px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[470px]">
+        <div className="mx-auto mt-4 flex max-w-[400px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[470px] lg:mr-0 lg:ml-auto lg:max-w-[470px]">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/35">
             {filmPosters.length} interpretation{filmPosters.length === 1 ? "" : "s"} · {filmYear}
           </span>
