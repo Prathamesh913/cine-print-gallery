@@ -23,7 +23,7 @@ export function TabToggle<T extends string>({
   return (
     <div
       role="tablist"
-      className={`inline-flex items-center gap-1 rounded-xl border border-white/12 bg-white/[0.06] p-1 ${className ?? ""}`}
+      className={`inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/[0.06] p-1 ${className ?? ""}`}
     >
       {tabs.map((tab) => {
         const active = value === tab.id;
@@ -35,7 +35,7 @@ export function TabToggle<T extends string>({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(tab.id)}
-            className={`inline-flex h-11 items-center gap-2 rounded-lg px-4 text-sm font-medium transition-[background-color,color] duration-150 ease-[var(--ease-out)] focus-visible:relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]/70 ${
+            className={`inline-flex h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition-[background-color,color] duration-150 ease-[var(--ease-out)] focus-visible:relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]/70 ${
               active
                 ? "bg-[#FF6B6B] text-[#121212]"
                 : "text-white/55 hoverable:hover:bg-white/[0.08] hoverable:hover:text-white/85"

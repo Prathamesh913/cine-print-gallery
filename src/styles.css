@@ -123,10 +123,10 @@
     scroll-behavior: auto !important;
   }
 
+  /* Keep opacity fades for comprehension — only kill motion/transform */
   .animate-scroll-up,
   [class*="animate-spin"],
-  [class*="animate-bounce"],
-  [class*="animate-pulse"] {
+  [class*="animate-bounce"] {
     animation: none !important;
   }
 }

@@ -96,7 +96,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
-        className="relative block w-full overflow-hidden text-left transition-transform duration-200 ease-[var(--ease-out)] hoverable:hover:scale-[1.02] active:scale-[0.97] hoverable:hover:shadow-2xl"
+        className="relative block w-full overflow-hidden text-left transition-[transform,box-shadow] duration-[180ms] ease-[var(--ease-out)] hoverable:hover:scale-[1.02] active:scale-[0.97] hoverable:hover:shadow-2xl"
         style={{ backgroundColor: "#1E1E1E", ...cardSmoothing.style }}
       >
         <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
@@ -111,7 +111,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
             className={`h-full w-full object-cover transition-opacity duration-200 ease-[var(--ease-out)] ${loaded ? "opacity-100" : "opacity-0"}`}
           />
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/5 bg-black/70 p-3 opacity-100 backdrop-blur-md transition-opacity duration-200 ease-[var(--ease-out)] sm:opacity-0 hoverable:sm:group-hover:opacity-100">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-white/5 bg-black/70 p-3 opacity-100 backdrop-blur-md transition-opacity duration-[160ms] ease-[var(--ease-out)] sm:opacity-0 hoverable:sm:group-hover:opacity-100">
             <p className="truncate text-sm font-medium text-[#F5F5F5]">
               {poster.title} <span className="text-white/60">· {poster.year}</span>
             </p>

@@ -281,16 +281,10 @@ function Home() {
         />
       )}
       {railArtists.length >= 4 && showDiscovery && (
-        <div id="artists" className="page-shell scroll-mt-24 pt-8 pb-2">
+        <div id="artists" className="page-shell scroll-mt-24 pt-8 pb-8">
           <ArtistRail artists={railArtists} />
         </div>
       )}
-      <div className="page-shell pb-3 pt-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
-          The Archive · Browse
-        </p>
-        <h2 className="mt-1 font-heading text-xl font-semibold">Explore the full collection</h2>
-      </div>
       <FilterBar
         query={query}
         onQueryChange={setQuery}
@@ -309,11 +303,6 @@ function Home() {
       />
       <main className="page-shell w-full py-6 flex-grow flex flex-col justify-center">
         <p className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</p>
-        {filtered.length > 0 && (
-          <div className="mb-6 text-[10px] sm:text-xs tracking-widest font-mono text-white/55 uppercase tabular-nums">
-            Showing {filtered.length} poster{filtered.length !== 1 && "s"}
-          </div>
-        )}
         {filtered.length === 0 ? (
           <div className="flex w-full min-h-[50vh] items-center justify-center py-12">
             <EmptyState icon={SearchX} title="Plot Twist: No Matches Found!">

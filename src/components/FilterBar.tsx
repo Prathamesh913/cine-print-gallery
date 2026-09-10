@@ -69,7 +69,7 @@ export function FilterBar({
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search posters, artists, tags…"
-            className="w-full rounded-full border border-white/15 bg-white/5 py-2 pl-9 pr-4 text-xs text-[#F5F5F5] placeholder:text-white/55 focus:border-[#FF6B6B] focus:outline-none transition-colors"
+            className="w-full rounded-full border border-white/15 bg-white/5 py-2 pl-9 pr-4 text-xs text-[#F5F5F5] placeholder:text-white/55 focus:border-[#FF6B6B] focus:outline-none transition-[border-color,background-color,box-shadow] duration-150 ease-[var(--ease-out)] focus:shadow-[0_0_0_3px_rgba(255,107,107,0.15)]"
           />
         </div>
 
@@ -215,7 +215,7 @@ function Dropdown({
         <span>{value !== "All" ? `${label}: ${value}` : label}</span>
         <ChevronDown
           size={12}
-          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          className={`transition-transform duration-[160ms] ease-[var(--ease-out)] ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 
@@ -224,7 +224,7 @@ function Dropdown({
           {/* Desktop Overlay & Dropdown */}
           <div className="fixed inset-0 z-40 hidden sm:block" onClick={onToggle} />
           <div
-            className={`absolute ${align === "left" ? "left-0" : "right-0"} mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/15 bg-[#232323] p-1.5 shadow-2xl z-50 backdrop-blur-md hidden sm:block animate-in fade-in zoom-in-95 duration-150 ease-[var(--ease-out)] origin-[var(--dropdown-origin)]`}
+            className={`absolute ${align === "left" ? "left-0" : "right-0"} mt-2 max-h-60 w-48 overflow-y-auto rounded-xl border border-white/15 bg-[#232323] p-1.5 shadow-2xl z-50 backdrop-blur-md hidden sm:block animate-in fade-in zoom-in-95 duration-150 ease-[var(--ease-out)] ${align === "left" ? "origin-top-left" : "origin-top-right"}`}
           >
             {optionsList}
           </div>
@@ -238,7 +238,7 @@ function Dropdown({
                   className="fixed top-[152px] inset-x-0 bottom-0 z-40 bg-black/60 backdrop-blur-sm sm:hidden animate-in fade-in duration-150"
                   onClick={onToggle}
                 />
-                <div className="fixed top-[152px] inset-x-4 max-h-[60vh] overflow-y-auto rounded-2xl border border-white/15 bg-[#232323] p-2.5 shadow-2xl z-50 backdrop-blur-md sm:hidden animate-in fade-in zoom-in-95 duration-150 ease-[var(--ease-out)] origin-top">
+                <div className="fixed top-[152px] inset-x-4 max-h-[60vh] overflow-y-auto rounded-2xl border border-white/15 bg-[#232323] p-2.5 shadow-2xl z-50 backdrop-blur-md sm:hidden animate-in fade-in slide-in-from-top-1 zoom-in-95 duration-[220ms] ease-[var(--ease-drawer)] origin-top">
                   {optionsList}
                 </div>
               </>,

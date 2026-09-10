@@ -222,8 +222,8 @@ function About() {
           </div>
         </nav>
 
-        {/* Curator pass zone */}
-        <div className="mt-10 max-w-4xl">
+        {/* Curator pass zone — full page-shell width, same as Explore rail */}
+        <div className="mt-10">
           {/* Creator Cinema Ticket Pass */}
           <div className="relative flex flex-col overflow-hidden rounded-2xl border border-white/12 bg-white/[0.06] shadow-2xl sm:flex-row">
             {/* Left Pane: Main Curator Pass (70% on desktop) */}
@@ -383,7 +383,7 @@ function About() {
 
         {/* Fine print — wording preserved verbatim */}
         <div className="mt-12 border-t border-white/10 pt-4">
-          <p className="max-w-2xl text-[11px] leading-relaxed text-white/40 sm:text-xs">
+          <p className="text-[11px] leading-relaxed text-white/40 sm:text-xs">
             CinePrint is a non-commercial fan project. All poster art belongs to the respective
             artists/studios. If you are an artist and want your work removed, please contact me and
             it will be taken down immediately.

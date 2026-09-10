@@ -267,13 +267,12 @@ async function main() {
     const notionKey = getRequiredEnv("NOTION_KEY");
     const notionDatabaseId = getRequiredEnv("NOTION_DATABASE_ID");
 
-    const { oidcToken, storeId } = getBlobCredentials();
+    const { oidcToken, storeId, readWriteToken } = getBlobCredentials();
 
-    if (!oidcToken) {
-      throw new Error("VERCEL_OIDC_TOKEN is required");
-    }
-    if (!storeId) {
-      throw new Error("BLOB_STORE_ID is required");
+    if (!readWriteToken && (!oidcToken || !storeId)) {
+      throw new Error(
+        "Blob credentials missing: set BLOB_READ_WRITE_TOKEN, or both VERCEL_OIDC_TOKEN and BLOB_STORE_ID",
+      );
     }
 
     const { bookmarks, totalCount } = await fetchBookmarks(accessToken, collectionId);
@@ -295,7 +294,9 @@ async function main() {
     }
 
     const enrichmentService = createTMDBEnrichmentService();
-    const imageImporter = new BlobImageImporter(new BlobClient({ oidcToken, storeId }));
+    const imageImporter = new BlobImageImporter(
+      new BlobClient(readWriteToken ? { readWriteToken } : { oidcToken, storeId }),
+    );
     const enrichedDrafts: EnrichedDraft[] = [];
     const imageFailures: Array<{ raindropId: string; title: string; reason: string }> = [];
     let tmdbEnriched = 0;

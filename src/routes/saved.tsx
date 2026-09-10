@@ -179,7 +179,7 @@ function SavedPage() {
                 ) : (
                   <>
                     {colsLoading && collections.length === 0 ? (
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="flex flex-wrap gap-4">
                         {Array.from({ length: 3 }, (_, i) => (
                           <CollectionCardSkeleton key={i} />
                         ))}
@@ -193,7 +193,7 @@ function SavedPage() {
                         />
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="flex flex-wrap gap-4">
                         {collections.map((col) => {
                           const coverIds = Array.from(
                             new Set(

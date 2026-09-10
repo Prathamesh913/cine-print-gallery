@@ -444,7 +444,7 @@ function ProfilePage() {
                   </button>
                 </div>
               ) : colsLoading && collections.length === 0 ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="flex flex-wrap gap-4">
                   {[0, 1, 2].map((i) => (
                     <CollectionCardSkeleton key={i} />
                   ))}
@@ -458,7 +458,7 @@ function ProfilePage() {
                   />
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="flex flex-wrap gap-4">
                   {collections.map((col) => {
                     const coverIds = Array.from(
                       new Set([col.coverPosterId, ...col.posterIds].filter(Boolean) as string[]),

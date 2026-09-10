@@ -109,7 +109,7 @@ export function Header({
               <span>Lucky</span>
             </button>
           )}
-          <NavLink to="/constellation">Constellation</NavLink>
+          {/* <NavLink to="/constellation">Constellation</NavLink> — hidden until public release */}
           <NavLink to="/about">About</NavLink>
           <NavLink to="/submit">Submit</NavLink>
           <NavLink to="/saved">Saved</NavLink>
@@ -131,7 +131,7 @@ export function Header({
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <AlertDialogTrigger asChild>
-                    <DropdownMenuItem className="text-red-400 focus:text-red-400">
+                    <DropdownMenuItem variant="destructive" className="text-red-400 focus:bg-red-500 focus:text-white">
                       <LogOut size={14} />
                       Log out
                     </DropdownMenuItem>
@@ -179,9 +179,7 @@ export function Header({
                 Lucky
               </MobileAction>
             )}
-            <MobileNavLink to="/constellation" onClick={() => setMobileOpen(false)}>
-              Constellation
-            </MobileNavLink>
+            {/* <MobileNavLink to="/constellation" onClick={() => setMobileOpen(false)}>Constellation</MobileNavLink> — hidden until public release */}
             <MobileNavLink to="/about" onClick={() => setMobileOpen(false)}>
               About
             </MobileNavLink>
