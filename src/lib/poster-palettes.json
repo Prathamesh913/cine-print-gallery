@@ -1003,5 +1003,140 @@
       "s": 69,
       "l": 51
     }
+  },
+  "spider-man-brand-new-day-2026": {
+    "palette": [
+      "#0f2369",
+      "#c31a19",
+      "#0a0c1e",
+      "#691a2e",
+      "#caa28b"
+    ],
+    "primary": "#0f2369",
+    "hsl": {
+      "h": 227,
+      "s": 75,
+      "l": 24
+    }
+  },
+  "blackkklansman-2018": {
+    "palette": [
+      "#b84822",
+      "#ede7e5",
+      "#211411",
+      "#cea292",
+      "#625e5e"
+    ],
+    "primary": "#b84822",
+    "hsl": {
+      "h": 15,
+      "s": 69,
+      "l": 43
+    }
+  },
+  "dune-part-one": {
+    "palette": [
+      "#b95d33",
+      "#d9d1bb",
+      "#d68e57",
+      "#774128",
+      "#31241b"
+    ],
+    "primary": "#b95d33",
+    "hsl": {
+      "h": 19,
+      "s": 57,
+      "l": 46
+    }
+  },
+  "her": {
+    "palette": [
+      "#cb3527",
+      "#cead93",
+      "#872312",
+      "#8b745a",
+      "#f1dfe0"
+    ],
+    "primary": "#cb3527",
+    "hsl": {
+      "h": 5,
+      "s": 68,
+      "l": 47
+    }
+  },
+  "mullholland-drive": {
+    "palette": [
+      "#19373c",
+      "#bc5263",
+      "#78626a",
+      "#195a61",
+      "#ded5d7"
+    ],
+    "primary": "#19373c",
+    "hsl": {
+      "h": 189,
+      "s": 41,
+      "l": 17
+    }
+  },
+  "bugonia": {
+    "palette": [
+      "#e3b183",
+      "#925f4b",
+      "#bca696",
+      "#2d1b1b",
+      "#e8e5e0"
+    ],
+    "primary": "#e3b183",
+    "hsl": {
+      "h": 29,
+      "s": 63,
+      "l": 70
+    }
+  },
+  "the-way-of-seeing-life": {
+    "palette": [
+      "#ece1c8",
+      "#e0d3b8",
+      "#8f6c5d",
+      "#3f3633",
+      "#bfac96"
+    ],
+    "primary": "#ece1c8",
+    "hsl": {
+      "h": 42,
+      "s": 49,
+      "l": 85
+    }
+  },
+  "lady-vengeance": {
+    "palette": [
+      "#0b1012",
+      "#1b1a26",
+      "#45373f",
+      "#e5caa1",
+      "#af6669"
+    ],
+    "primary": "#0b1012",
+    "hsl": {
+      "h": 197,
+      "s": 24,
+      "l": 6
+    }
+  },
+  "project-hail-mary": {
+    "palette": [
+      "#140208",
+      "#910a33",
+      "#d32355",
+      "#47091e",
+      "#efbacc"
+    ],
+    "primary": "#140208",
+    "hsl": {
+      "h": 340,
+      "s": 82,
+      "l": 4
+    }
   }
 }

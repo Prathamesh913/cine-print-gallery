@@ -1,20 +1,21 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowLeft,
-  Copy,
   Globe,
   Link2,
   Lock,
   Loader2,
-  MoreHorizontal,
-  Trash2,
   Image as ImageIcon,
+  MoreHorizontal,
+  Star,
+  Trash2,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PosterGrid } from "@/components/PosterGrid";
 import { PosterImage } from "@/components/PosterImage";
+import { EditCollectionModal } from "@/components/EditCollectionModal";
+import { CollectionHero } from "@/routes/-components/collection-hero";
 import { getPosterImageUrl } from "@/lib/poster-images";
 import { type Poster } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
@@ -26,20 +27,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/c/$id")({
   loader: async ({ params }) => {
@@ -96,10 +85,7 @@ function CollectionPage() {
   const { update, remove, removePoster } = useCollections();
 
   const [collection, setCollection] = useState<UserCollection | null | undefined>(undefined);
-  const [editing, setEditing] = useState(false);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const load = async () => {
     try {
@@ -113,8 +99,6 @@ function CollectionPage() {
       const col = res.ok ? res.data : null;
       setCollection(col);
       if (col) {
-        setName(col.name);
-        setDescription(col.description);
         document.title = `${col.name} — CinePrint`;
       }
     } catch {
@@ -163,19 +147,20 @@ function CollectionPage() {
     }
   };
 
-  const saveMeta = async () => {
-    if (!collection || !isOwner || saving) return;
-    setSaving(true);
-    const updated = await update(collection.id, {
-      name,
-      description,
-    });
-    setSaving(false);
+  const handleUpdateCollection = async (input: {
+    name: string;
+    description?: string;
+    visibility: CollectionVisibility;
+  }) => {
+    if (!collection || !isOwner) return false;
+    const updated = await update(collection.id, input);
     if (updated) {
       setCollection(updated);
-      setEditing(false);
+      document.title = `${updated.name} — CinePrint`;
       toast.success("Collection updated");
+      return true;
     }
+    return false;
   };
 
   const setVisibility = async (visibility: CollectionVisibility) => {
@@ -224,7 +209,7 @@ function CollectionPage() {
       <div className="min-h-screen" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
         <Header showSearch={false} />
         <main className="mx-auto flex min-h-[50vh] max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
-          <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="text-xl font-semibold">
+          <h1  className="text-xl font-semibold font-heading">
             Collection unavailable
           </h1>
           <p className="text-sm text-white/65">
@@ -242,207 +227,64 @@ function CollectionPage() {
     );
   }
 
-  const VisIcon = visMeta[collection.visibility].icon;
-
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
+    <div
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: "#000000", color: "#F5F5F5" }}
+    >
       <Header showSearch={false} />
-      <main className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
-        <Link
-          to="/saved"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hoverable:hover:text-white/70"
-        >
-          <ArrowLeft size={14} />
-          Saved
-        </Link>
+      <main className="flex-grow flex flex-col">
+        <CollectionHero
+          collection={collection}
+          posters={posters}
+          cover={cover}
+          isOwner={isOwner}
+          copyShareLink={copyShareLink}
+          onEdit={() => setEditModalOpen(true)}
+          onSetVisibility={setVisibility}
+          onDelete={deleteCol}
+        />
 
-        <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex min-w-0 flex-1 gap-4">
-            <div className="h-28 w-20 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-white/5 sm:h-36 sm:w-24">
-              {cover ? (
-                <PosterImage
-                  poster={cover}
-                  purpose="gallery"
-                  alt=""
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="grid h-full place-items-center text-white/30">
-                  <ImageIcon size={20} />
-                </div>
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              {editing && isOwner ? (
-                <div className="space-y-2">
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xl font-semibold focus:border-[#FF6B6B] focus:outline-none"
-                    style={{ fontFamily: "Poppins, sans-serif" }}
-                    maxLength={80}
-                  />
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={2}
-                    placeholder="Optional description"
-                    className="w-full resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/80 focus:border-[#FF6B6B] focus:outline-none"
-                    maxLength={500}
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditing(false);
-                        setName(collection.name);
-                        setDescription(collection.description);
-                      }}
-                      className="rounded-full border border-white/15 px-3 py-1.5 text-xs"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={saveMeta}
-                      disabled={saving}
-                      className="rounded-full bg-[#FF6B6B] px-3 py-1.5 text-xs font-medium text-[#121212] disabled:opacity-50"
-                    >
-                      {saving ? "Saving…" : "Save"}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <h1
-                    style={{ fontFamily: "Poppins, sans-serif" }}
-                    className="break-words text-2xl font-semibold sm:text-3xl"
-                    title={collection.name}
-                  >
-                    {collection.name}
-                  </h1>
-                  {collection.description ? (
-                    <p className="mt-2 max-w-xl text-sm text-white/70">{collection.description}</p>
-                  ) : null}
-                  <div className="mt-3 flex flex-wrap items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-white/55">
-                    <span className="inline-flex items-center gap-1">
-                      <VisIcon size={11} />
-                      {visMeta[collection.visibility].label}
-                    </span>
-                    <span>·</span>
-                    <span>
-                      {posters.length} poster{posters.length === 1 ? "" : "s"}
-                    </span>
-                    {collection.ownerName ? (
-                      <>
-                        <span>·</span>
-                        <span className="min-w-0 break-words">by {collection.ownerName}</span>
-                      </>
-                    ) : null}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {(collection.visibility === "public" ||
-              collection.visibility === "unlisted" ||
-              isOwner) && (
-              <button
-                onClick={copyShareLink}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/15 px-3 text-sm transition-colors hoverable:hover:border-white/30"
-              >
-                <Copy size={14} />
-                Copy link
-              </button>
-            )}
-
-            {isOwner && (
-              <AlertDialog>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/15 px-3 text-sm hoverable:hover:border-white/30">
-                      <MoreHorizontal size={14} />
-                      Manage
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={8}>
-                    <DropdownMenuItem onClick={() => setEditing(true)}>
-                      Rename / edit
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setVisibility("private")}>
-                      <Lock size={14} /> Private
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setVisibility("unlisted")}>
-                      <Link2 size={14} /> Unlisted
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setVisibility("public")}>
-                      <Globe size={14} /> Public
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <AlertDialogTrigger asChild>
-                      <DropdownMenuItem className="text-red-400 focus:text-red-400">
-                        <Trash2 size={14} /> Delete collection
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete collection?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      “{collection.name}” will be permanently deleted. Posters stay in your Pins and
-                      other collections.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-full border border-white/15 px-4 py-2 text-sm">
-                      Cancel
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={deleteCol}
-                      className="rounded-full bg-red-500 px-4 py-2 text-sm font-medium text-white"
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-          </div>
-        </div>
-
-        {posters.length === 0 ? (
-          <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
-            <p className="text-white/65">This collection is empty.</p>
-            {isOwner && (
-              <Link
-                to="/"
-                className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
-              >
-                Browse gallery
-              </Link>
-            )}
-          </div>
-        ) : (
-          <>
-            {isOwner && (
-              <p className="mb-4 text-[10px] font-mono uppercase tracking-wider text-white/45">
-                Tip: open a poster and use “Add to collection”, or set cover via the menu on each
-                card below (long-press manage).
-              </p>
-            )}
-            <OwnerAwareGrid
-              posters={posters}
-              isOwner={isOwner}
-              onOpen={handleOpen}
-              onSetCover={setCover}
-              onRemove={removeFromCollection}
-            />
-          </>
+        {isOwner && collection && (
+          <EditCollectionModal
+            open={editModalOpen}
+            onOpenChange={setEditModalOpen}
+            collection={collection}
+            onSave={handleUpdateCollection}
+          />
         )}
+
+        <div className="page-shell flex-grow pb-16">
+          {posters.length === 0 ? (
+            <div className="flex min-h-[30vh] flex-col items-center justify-center gap-3 text-center">
+              <p className="text-white/65">This collection is empty.</p>
+              {isOwner && (
+                <Link
+                  to="/"
+                  className="rounded-full border border-white/15 px-4 py-2 text-sm hoverable:hover:border-[#FF6B6B] hoverable:hover:text-[#FF6B6B]"
+                >
+                  Browse gallery
+                </Link>
+              )}
+            </div>
+          ) : (
+            <>
+              {isOwner && (
+                <p className="mb-4 text-[10px] font-mono uppercase tracking-wider text-white/45">
+                  Tip: open a poster and use “Add to collection”, or set cover via the menu on each
+                  card below (long-press manage).
+                </p>
+              )}
+              <OwnerAwareGrid
+                posters={posters}
+                isOwner={isOwner}
+                onOpen={handleOpen}
+                onSetCover={setCover}
+                onRemove={removeFromCollection}
+              />
+            </>
+          )}
+        </div>
       </main>
       <Footer />
     </div>
@@ -530,7 +372,8 @@ function OwnerAwareGrid({
                   <ImageIcon size={14} /> Set as cover
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="text-red-400 focus:text-red-400"
+                  variant="destructive"
+                  className="text-red-400 focus:bg-red-500 focus:text-white"
                   onClick={() => onRemove(p.id)}
                 >
                   <Trash2 size={14} /> Remove from collection

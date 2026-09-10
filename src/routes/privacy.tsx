@@ -24,14 +24,12 @@ function PrivacyPage() {
       <Header showSearch={false} />
       <main className="mx-auto w-full max-w-2xl flex-grow px-6 py-16">
         <span
-          style={{ fontFamily: "Bebas Neue, sans-serif", color: "#FF6B6B" }}
-          className="text-sm uppercase tracking-[0.3em]"
+          className="text-sm uppercase tracking-[0.3em] font-display text-[#FF6B6B]"
         >
           Legal
         </span>
         <h1
-          style={{ fontFamily: "Poppins, sans-serif" }}
-          className="mt-2 text-3xl font-bold sm:text-4xl"
+          className="mt-2 text-3xl font-bold sm:text-4xl font-heading"
         >
           Privacy Policy
         </h1>

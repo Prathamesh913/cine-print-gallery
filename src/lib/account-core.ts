@@ -1,4 +1,4 @@
-import type { FirestoreApi } from "./firestore-db";
+import type { FirestoreApi } from "./firestore-shared";
 import { getUserProfileCore, getUserLikedIdsCore, type UserProfile } from "./user-likes-core";
 import {
   listMyCollectionsCore,
@@ -25,10 +25,7 @@ export interface AdminAuthApi {
 }
 
 /** Collects the authenticated user's profile, saved posters and collections. */
-export async function buildAccountExport(
-  api: FirestoreApi,
-  uid: string,
-): Promise<UserDataExport> {
+export async function buildAccountExport(api: FirestoreApi, uid: string): Promise<UserDataExport> {
   const [profile, savedPosterIds, collections] = await Promise.all([
     getUserProfileCore(api, uid),
     getUserLikedIdsCore(api, uid),

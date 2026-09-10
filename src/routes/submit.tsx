@@ -81,10 +81,10 @@ function Submit() {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#000000", color: "#F5F5F5" }}>
       <Header showSearch={false} />
       <main className="mx-auto w-full max-w-xl px-6 py-16 flex-grow flex flex-col justify-center">
-        <span style={{ fontFamily: "Bebas Neue, sans-serif", color: "#FF6B6B" }} className="text-sm tracking-[0.3em]">
+        <span className="text-sm tracking-[0.3em] font-display text-[#FF6B6B]">
           SUBMIT ALTERNATIVE ART
         </span>
-        <h1 style={{ fontFamily: "Poppins, sans-serif" }} className="mt-2 text-3xl font-semibold sm:text-4xl">
+        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl font-heading">
           {role === "fan" ? "Submit Custom Movie Poster Designs" : "Showcase Your Fan-Made Film Art"}
         </h1>
         <p className="mt-3 text-white/60 text-sm">
@@ -126,7 +126,7 @@ function Submit() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B] mb-4">
               <Check size={24} />
             </div>
-            <h3 style={{ fontFamily: "Poppins, sans-serif" }} className="text-lg font-semibold text-[#F5F5F5]">
+            <h3 className="text-lg font-semibold text-[#F5F5F5] font-heading">
               Submission Received!
             </h3>
             <p className="mt-2 text-sm text-white/65 leading-relaxed">

@@ -495,8 +495,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
             <div>
               <div className="flex items-start justify-between gap-4">
                 <h2
-                  style={{ fontFamily: "Poppins, sans-serif" }}
-                  className="text-3xl font-semibold leading-tight text-[#F5F5F5] sm:text-4xl flex-1"
+                  className="text-3xl font-semibold leading-tight text-[#F5F5F5] sm:text-4xl flex-1 font-heading"
                 >
                   {poster.title}
                 </h2>

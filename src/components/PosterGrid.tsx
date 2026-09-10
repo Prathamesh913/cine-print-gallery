@@ -31,7 +31,7 @@ export function PosterGrid({ posters, onOpen, pageSize = 24 }: Props) {
           setCount((c) => Math.min(c + pageSize, posters.length));
         }
       },
-      { rootMargin: "400px" }
+      { rootMargin: "200px" },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -54,8 +54,17 @@ export function PosterGrid({ posters, onOpen, pageSize = 24 }: Props) {
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {visible.map((p) => (
-          <div key={p.id}>
+        {visible.map((p, i) => (
+          <div
+            key={p.id}
+            className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-[var(--ease-out)]"
+            style={
+              {
+                animationDelay: `${Math.min(i, 8) * 35}ms`,
+                animationFillMode: "backwards",
+              } as React.CSSProperties
+            }
+          >
             <PosterCard poster={p} onOpen={onOpen} onContextMenu={handleContextMenu} />
           </div>
         ))}

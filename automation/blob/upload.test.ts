@@ -175,6 +175,22 @@ describe("ImageUploader", () => {
     );
   });
 
+  it("uses the read-write token instead of OIDC when provided", async () => {
+    mockPut.mockResolvedValue({
+      url: "https://public.blob.vercel-storage.com/cineprint/raindrop/1812274995.png",
+      pathname: "cineprint/raindrop/1812274995.png",
+    });
+    const uploader = new ImageUploader(new BlobClient({ readWriteToken: "test-rw-token" }));
+
+    await uploader.uploadImage(input());
+
+    expect(mockPut).toHaveBeenCalledTimes(1);
+    const [, , options] = mockPut.mock.calls[0];
+    expect(options).toMatchObject({ access: "public", token: "test-rw-token" });
+    expect(options.oidcToken).toBeUndefined();
+    expect(options.storeId).toBeUndefined();
+  });
+
   it("deletes through the official SDK for explicit cleanup", async () => {
     const client = new BlobClient({
       oidcToken: "test-oidc-token",

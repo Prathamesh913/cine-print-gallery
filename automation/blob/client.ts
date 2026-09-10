@@ -1,8 +1,9 @@
 import { BlobNotFoundError, del, head, put } from "@vercel/blob";
 
 export interface BlobClientOptions {
-  oidcToken: string;
-  storeId: string;
+  oidcToken?: string;
+  storeId?: string;
+  readWriteToken?: string;
 }
 
 export interface BlobPutResult {
@@ -12,27 +13,38 @@ export interface BlobPutResult {
 
 export class BlobAuthError extends Error {}
 
+type BlobAuth = { token: string } | { oidcToken: string; storeId: string };
+
 export class BlobClient {
-  private readonly oidcToken: string;
-  private readonly storeId: string;
+  private readonly auth: BlobAuth;
 
   constructor(options: BlobClientOptions) {
-    if (!options.oidcToken) {
-      throw new BlobAuthError("VERCEL_OIDC_TOKEN is required");
+    const readWriteToken = options.readWriteToken?.trim();
+    const oidcToken = options.oidcToken?.trim();
+    const storeId = options.storeId?.trim();
+
+    if (readWriteToken) {
+      this.auth = { token: readWriteToken };
+    } else {
+      if (!oidcToken) {
+        throw new BlobAuthError("VERCEL_OIDC_TOKEN is required");
+      }
+      if (!storeId) {
+        throw new BlobAuthError("BLOB_STORE_ID is required");
+      }
+      this.auth = { oidcToken, storeId };
     }
-    if (!options.storeId) {
-      throw new BlobAuthError("BLOB_STORE_ID is required");
-    }
-    this.oidcToken = options.oidcToken;
-    this.storeId = options.storeId;
+  }
+
+  private commandOptions(): BlobAuth {
+    return this.auth;
   }
 
   async put(pathname: string, buffer: Buffer, contentType: string): Promise<BlobPutResult> {
     const result = await put(pathname, buffer, {
       access: "public",
       contentType,
-      oidcToken: this.oidcToken,
-      storeId: this.storeId,
+      ...this.commandOptions(),
     });
 
     return { url: result.url, pathname: result.pathname };
@@ -40,10 +52,7 @@ export class BlobClient {
 
   async head(pathname: string): Promise<BlobPutResult | null> {
     try {
-      const result = await head(pathname, {
-        oidcToken: this.oidcToken,
-        storeId: this.storeId,
-      });
+      const result = await head(pathname, this.commandOptions());
 
       return { url: result.url, pathname: result.pathname };
     } catch (error) {
@@ -55,9 +64,6 @@ export class BlobClient {
   }
 
   async delete(pathnameOrUrl: string): Promise<void> {
-    await del(pathnameOrUrl, {
-      oidcToken: this.oidcToken,
-      storeId: this.storeId,
-    });
+    await del(pathnameOrUrl, this.commandOptions());
   }
 }

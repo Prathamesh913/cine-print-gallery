@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 export interface BlobCredentials {
   oidcToken: string;
   storeId: string;
+  readWriteToken: string;
 }
 
 export function loadBlobEnv() {
@@ -16,5 +17,6 @@ export function getBlobCredentials(): BlobCredentials {
   return {
     oidcToken: process.env.VERCEL_OIDC_TOKEN?.trim() ?? "",
     storeId: process.env.BLOB_STORE_ID?.trim() ?? "",
+    readWriteToken: process.env.BLOB_READ_WRITE_TOKEN?.trim() ?? "",
   };
 }

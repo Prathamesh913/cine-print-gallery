@@ -53,8 +53,7 @@ export function Header({
           <Link to="/" className="flex shrink-0 items-center gap-2" data-cuelume-hover="tick">
             <FrameIcon />
             <span
-              style={{ fontFamily: "Bebas Neue, sans-serif" }}
-              className="text-2xl tracking-[0.12em] sm:text-3xl"
+              className="text-2xl tracking-[0.12em] sm:text-3xl font-display"
             >
               CINEPRINT
             </span>
@@ -81,8 +80,7 @@ export function Header({
         <Link to="/" className="flex min-w-0 shrink items-center gap-2" data-cuelume-hover="tick">
           <FrameIcon />
           <span
-            style={{ fontFamily: "Bebas Neue, sans-serif" }}
-            className="truncate text-2xl tracking-[0.12em] sm:text-3xl"
+            className="truncate text-2xl tracking-[0.12em] sm:text-3xl font-display"
           >
             CINEPRINT
           </span>
@@ -111,6 +109,7 @@ export function Header({
               <span>Lucky</span>
             </button>
           )}
+          {/* <NavLink to="/constellation">Constellation</NavLink> — hidden until public release */}
           <NavLink to="/about">About</NavLink>
           <NavLink to="/submit">Submit</NavLink>
           <NavLink to="/saved">Saved</NavLink>
@@ -132,7 +131,7 @@ export function Header({
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <AlertDialogTrigger asChild>
-                    <DropdownMenuItem className="text-red-400 focus:text-red-400">
+                    <DropdownMenuItem variant="destructive" className="text-red-400 focus:bg-red-500 focus:text-white">
                       <LogOut size={14} />
                       Log out
                     </DropdownMenuItem>
@@ -180,6 +179,7 @@ export function Header({
                 Lucky
               </MobileAction>
             )}
+            {/* <MobileNavLink to="/constellation" onClick={() => setMobileOpen(false)}>Constellation</MobileNavLink> — hidden until public release */}
             <MobileNavLink to="/about" onClick={() => setMobileOpen(false)}>
               About
             </MobileNavLink>

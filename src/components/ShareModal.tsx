@@ -338,8 +338,7 @@ export function ShareModal({ poster, onClose }: Props) {
 
         <h3
           id="share-ticket-title"
-          style={{ fontFamily: "Poppins, sans-serif" }}
-          className="mb-1 text-lg font-semibold text-[#F5F5F5]"
+          className="mb-1 text-lg font-semibold text-[#F5F5F5] font-heading"
         >
           Poster Ticket
         </h3>

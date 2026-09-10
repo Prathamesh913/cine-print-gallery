@@ -846,8 +846,7 @@ function ConstellationMap() {
               </button>
 
               <h2
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-                className="text-3xl tracking-wider text-white pr-8 mb-4 border-b border-white/5 pb-2"
+                className="text-3xl tracking-wider text-white pr-8 mb-4 border-b border-white/5 pb-2 font-display"
               >
                 STAR CORE DETAILS
               </h2>
@@ -872,8 +871,7 @@ function ConstellationMap() {
 
                 <div className="flex flex-col justify-center min-w-0">
                   <h3
-                    style={{ fontFamily: "Poppins, sans-serif" }}
-                    className="text-md sm:text-lg font-bold text-white leading-tight truncate"
+                    className="text-md sm:text-lg font-bold text-white leading-tight truncate font-heading"
                   >
                     {selectedPoster.title}
                   </h3>
@@ -1007,8 +1005,7 @@ function ConstellationMap() {
           <div className="p-6 flex flex-col min-h-full">
             <div className="flex-grow">
               <h2
-                style={{ fontFamily: "Bebas Neue, sans-serif" }}
-                className="text-4xl tracking-widest text-white mb-2"
+                className="text-4xl tracking-widest text-white mb-2 font-display"
               >
                 COLOR CONSTELLATION
               </h2>
@@ -1021,8 +1018,7 @@ function ConstellationMap() {
               {/* Guide HUD */}
               <div className="mb-6 p-4 rounded-xl border border-white/15 bg-white/5">
                 <h3
-                  style={{ fontFamily: "Poppins, sans-serif" }}
-                  className="text-xs font-bold uppercase tracking-wider text-[#FF6B6B] mb-2.5"
+                  className="text-xs font-bold uppercase tracking-wider text-[#FF6B6B] mb-2.5 font-heading"
                 >
                   Navigation Instructions
                 </h3>
@@ -1049,8 +1045,7 @@ function ConstellationMap() {
               {/* Galaxy Clusters Stats breakdown */}
               <div className="space-y-3 mb-8">
                 <h3
-                  style={{ fontFamily: "Poppins, sans-serif" }}
-                  className="text-xs font-bold uppercase tracking-wider text-white/65"
+                  className="text-xs font-bold uppercase tracking-wider text-white/65 font-heading"
                 >
                   Nebula Sectors Count
                 </h3>

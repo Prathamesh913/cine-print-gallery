@@ -1,5 +1,4 @@
-import type { FirestoreApi } from "./firestore-db";
-import { tsToIso } from "./firestore-db";
+import { tsToIso, type FirestoreApi } from "./firestore-shared";
 
 export interface UserProfile {
   createdAt: string | null;

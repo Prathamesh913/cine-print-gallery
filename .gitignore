@@ -64,3 +64,6 @@ firebase-admin-key.json
 
 migrate-to-firebase.cjs
 .vercel
+
+# CodeAtlas
+.codeatlas
