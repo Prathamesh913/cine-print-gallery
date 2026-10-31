@@ -34,7 +34,7 @@ export function DailySpotlight({
   return (
     <section
       aria-label="CinePrint manifesto"
-      className="relative w-full flex flex-col gap-6 border-b border-white/10 pb-8 pt-6 px-4 sm:gap-8 sm:px-6 sm:pt-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10 xl:gap-20 lg:py-10"
+      className="relative w-full overflow-x-clip flex flex-col gap-6 border-b border-white/10 pb-8 pt-6 px-4 sm:gap-8 sm:px-6 sm:pt-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10 xl:gap-20 lg:py-10"
     >
       {/* Left: manifesto */}
       <div className="shrink-0">
