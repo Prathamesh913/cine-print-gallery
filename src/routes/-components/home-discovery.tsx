@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
+import { getPosterImageUrl } from "@/lib/poster-images";
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
 
 interface DailySpotlightProps {
@@ -10,16 +11,31 @@ interface DailySpotlightProps {
   totalArtists: number;
 }
 
-/** Manifesto-led hero — One Film, Many Visions proved by interactive stacked interpretations. */
+/**
+ * Hero where the print sits inside the sentence. The headline reads
+ * "One film. Many [print] visions." and the visitor flips the print to see
+ * another artist's take on the same film.
+ */
 export function DailySpotlight({
   filmPosters,
   totalPosters,
   totalArtists,
 }: DailySpotlightProps) {
-  const navigate = useNavigate();
   const [activePosterIdx, setActivePosterIdx] = useState(0);
-
   const activePoster = filmPosters[activePosterIdx] || filmPosters[0];
+
+  useEffect(() => {
+    if (!activePoster) return;
+    const timer = window.setTimeout(() => {
+      for (const poster of filmPosters) {
+        if (poster.id === activePoster.id) continue;
+        const image = new Image();
+        image.src = getPosterImageUrl(poster, "gallery");
+      }
+    }, 800);
+    return () => window.clearTimeout(timer);
+  }, [filmPosters, activePoster]);
+
   if (!activePoster || filmPosters.length === 0) return null;
 
   const filmTitle = activePoster.title ?? "Cinema";
@@ -30,203 +46,103 @@ export function DailySpotlight({
       : activePoster.artist;
   const artistName = rawArtist && rawArtist.trim() ? rawArtist.trim() : "Independent Artist";
   const totalCount = filmPosters.length;
+  const nextInterpretation = () =>
+    setActivePosterIdx((index) => (index + 1) % totalCount);
 
   return (
     <section
       aria-label="CinePrint manifesto"
-      className="relative w-full overflow-x-clip flex flex-col gap-6 border-b border-white/10 pb-8 pt-6 px-4 sm:gap-8 sm:px-6 sm:pt-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10 xl:gap-20 lg:py-10"
+      className="relative mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1600px] flex-col px-4 pb-8 pt-6 sm:px-6 lg:pb-10"
     >
-      {/* Left: manifesto */}
-      <div className="shrink-0">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
-          Independent Print Archive — Est. 2026
-        </p>
-        <h1 className="mt-3 font-display text-[clamp(44px,7vw,110px)] uppercase leading-[0.85] tracking-[0.01em]">
-          One Film.
-          <br />
-          <span className="text-[#FF6B6B]">Many Visions.</span>
-        </h1>
-        <p className="mt-5 max-w-[52ch] text-sm leading-relaxed text-white/60 sm:text-[15px]">
-          Discover cinema through the work of independent artists. Every poster is an independent
-          reinterpretation.
-        </p>
-        <a
-          href="#artists"
-          onClick={(e) => {
-            e.preventDefault();
-            const id = document.getElementById("artists");
-            if (!id) return;
-            const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            id.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-          }}
-          className={`mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-[#FF6B6B] px-7 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition-[transform,background-color,box-shadow] duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 ${focusRing}`}
+      <h1 className="my-auto flex flex-col items-start font-display uppercase leading-[0.9] tracking-[-0.01em] text-[clamp(46px,16vw,78px)] sm:flex-row sm:items-baseline sm:gap-x-[0.12em] sm:text-[clamp(56px,9vw,136px)]">
+        <span className="block sm:contents">
+          <span className="hero-rise inline-block">One film.</span>{" "}
+          <span className="hero-rise inline-block" style={{ animationDelay: "80ms" }}>
+            Many
+          </span>
+        </span>
+        <span
+          key={activePoster.id}
+          aria-hidden
+          className="hero-shutter my-[0.14em] block h-[35svh] min-h-[240px] max-h-[420px] shrink-0 overflow-hidden bg-[#1E1E1E] sm:my-0 sm:h-[3.15em] sm:min-h-0 sm:max-h-none"
+          style={{ aspectRatio: "2 / 3" }}
         >
-          Explore Artists
-        </a>
-        <p className="mt-4 font-mono text-[11px] tabular-nums tracking-wide text-white/35">
-          {totalPosters} prints · {totalArtists} artists
-        </p>
-      </div>
+          <PosterImage
+            poster={activePoster}
+            purpose="gallery"
+            loading="eager"
+            fetchPriority="high"
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </span>
+        <span className="block sm:contents">
+          <span className="hero-rise inline-block" style={{ animationDelay: "200ms" }}>
+            visions.
+          </span>
+        </span>
+      </h1>
 
-      {/* Center: ambient fill for negative space — absolute, no layout shift */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[380px] w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF6B6B]/[0.05] blur-[90px] lg:block"
-      />
-
-      {/* Right: film interpretations — interactive fanned stack */}
-      <div className="shrink-0 lg:mr-[clamp(7rem,12vw,16rem)]">
-        <div className="group relative mx-auto flex h-[400px] max-w-[600px] items-end justify-center sm:h-[360px] sm:max-w-[470px] lg:mx-0 lg:max-w-[470px] lg:h-[380px]">
-          {totalCount === 1 ? (
-            <Link
-              to="/poster/$id"
-              params={{ id: activePoster.id }}
-              aria-label={`${filmTitle} by ${artistName} — view poster`}
-              className={`relative h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/15 bg-[#1E1E1E] shadow-[0_16px_32px_rgba(0,0,0,0.6)] transition-[transform,opacity,border-color] duration-[180ms] ease-[var(--ease-out)] hover:border-[#FF6B6B]/40 hoverable:hover:-translate-y-[2px] active:scale-[0.98] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px] ${focusRing}`}
-            >
-              <PosterImage
-                poster={activePoster}
-                purpose="gallery"
-                loading="eager"
-                alt={`${activePoster.title} (${activePoster.year})`}
-                className="h-full w-full object-cover"
-              />
-            </Link>
-          ) : totalCount === 2 ? (
-            <div className="relative flex h-full w-full items-end justify-center">
-              {/* Back card (non-active) */}
-              {(() => {
-                const backIdx = (activePosterIdx + 1) % 2;
-                const backPoster = filmPosters[backIdx];
-                return (
-                  <button
-                    type="button"
-                    onClick={() => setActivePosterIdx(backIdx)}
-                    aria-label={`View poster by ${backPoster.artists?.[0]?.name || backPoster.artist}`}
-                    className="cursor-pointer absolute bottom-0 left-1/2 h-[222px] w-[148px] -translate-x-[119%] -rotate-[6deg] origin-bottom overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-75 shadow-lg transition-[transform,opacity,border-color] duration-[260ms] ease-[var(--ease-out)] hover:opacity-100 hover:border-white/30 hover:-translate-x-[124%] hover:-rotate-[8deg] sm:h-[276px] sm:w-[184px] sm:-translate-x-[115%] lg:h-[255px] lg:w-[170px] lg:-translate-x-[121%] xl:h-[315px] xl:w-[210px] xl:-translate-x-[115%]"
-                  >
-                    <PosterImage
-                      poster={backPoster}
-                      purpose="gallery"
-                      loading="eager"
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                );
-              })()}
-
-              {/* Front active card */}
-              <div
-                onClick={() => navigate({ to: "/poster/$id", params: { id: activePoster.id } })}
-                className="relative z-10 h-[264px] w-[176px] cursor-pointer overflow-hidden rounded-lg border border-white/20 bg-[#1E1E1E] shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-[transform,border-color] duration-[180ms] ease-[var(--ease-out)] hover:border-[#FF6B6B]/60 hover:-translate-y-[3px] active:scale-[0.98] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
-              >
-                <PosterImage
-                  poster={activePoster}
-                  purpose="gallery"
-                  loading="eager"
-                  alt={`${activePoster.title} (${activePoster.year})`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="relative flex h-full w-full items-end justify-center">
-              {/* Left back card */}
-              {(() => {
-                const leftIdx = (activePosterIdx - 1 + totalCount) % totalCount;
-                const leftPoster = filmPosters[leftIdx];
-                return (
-                  <button
-                    type="button"
-                    onClick={() => setActivePosterIdx(leftIdx)}
-                    aria-label={`View poster by ${leftPoster.artists?.[0]?.name || leftPoster.artist}`}
-                    className="cursor-pointer absolute bottom-0 left-1/2 h-[216px] w-[144px] -translate-x-[106%] -rotate-[7deg] origin-bottom overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-75 shadow-lg transition-[transform,opacity,border-color] duration-[240ms] ease-[var(--ease-out)] hover:opacity-100 hover:border-white/30 hover:-translate-x-[118%] hover:-rotate-[9deg] sm:h-[252px] sm:w-[168px] sm:-translate-x-[119%] lg:h-[240px] lg:w-[160px] lg:-translate-x-[108%] xl:h-[282px] xl:w-[188px] xl:-translate-x-[111%]"
-                  >
-                    <PosterImage
-                      poster={leftPoster}
-                      purpose="gallery"
-                      loading="eager"
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                );
-              })()}
-
-              {/* Center active card */}
-              <div
-                onClick={() => navigate({ to: "/poster/$id", params: { id: activePoster.id } })}
-                className="relative z-10 h-[264px] w-[176px] cursor-pointer overflow-hidden rounded-lg border border-white/20 bg-[#1E1E1E] shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-[transform,border-color] duration-[180ms] ease-[var(--ease-out)] hover:border-[#FF6B6B]/60 hover:-translate-y-[3px] active:scale-[0.98] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
-              >
-                <PosterImage
-                  poster={activePoster}
-                  purpose="gallery"
-                  loading="eager"
-                  alt={`${activePoster.title} (${activePoster.year})`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-
-              {/* Right back card */}
-              {(() => {
-                const rightIdx = (activePosterIdx + 1) % totalCount;
-                const rightPoster = filmPosters[rightIdx];
-                return (
-                  <button
-                    type="button"
-                    onClick={() => setActivePosterIdx(rightIdx)}
-                    aria-label={`View poster by ${rightPoster.artists?.[0]?.name || rightPoster.artist}`}
-                    className="cursor-pointer absolute bottom-0 left-1/2 h-[216px] w-[144px] translate-x-[6%] rotate-[7deg] origin-bottom overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-75 shadow-lg transition-[transform,opacity,border-color] duration-[240ms] ease-[var(--ease-out)] hover:opacity-100 hover:border-white/30 hover:translate-x-[18%] hover:rotate-[9deg] sm:h-[252px] sm:w-[168px] sm:translate-x-[19%] lg:h-[240px] lg:w-[160px] lg:translate-x-[8%] xl:h-[282px] xl:w-[188px] xl:translate-x-[11%]"
-                  >
-                    <PosterImage
-                      poster={rightPoster}
-                      purpose="gallery"
-                      loading="eager"
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                );
-              })()}
-            </div>
-          )}
+      <div className="mt-10 grid grid-cols-1 items-end gap-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-10">
+        <div className="order-2 sm:order-none">
+          <p
+            className="hero-rise max-w-[38ch] text-[17px] leading-relaxed text-white/65"
+            style={{ animationDelay: "300ms" }}
+          >
+            An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
+            artists.
+          </p>
+          <a
+            href="#gallery"
+            onClick={(event) => {
+              event.preventDefault();
+              const gallery = document.getElementById("gallery");
+              if (!gallery) return;
+              const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+              gallery.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+            }}
+            className={`hero-rise mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#FF6B6B] px-6 text-[15px] font-semibold text-[#121212] transition-[transform,background-color] duration-150 hover:bg-[#FF8585] active:scale-[0.98] sm:w-auto ${focusRing}`}
+            style={{ animationDelay: "360ms" }}
+          >
+            Browse the archive
+          </a>
         </div>
 
-        {/* Info panel under stack */}
-        <div className="mx-auto mt-4 flex max-w-[400px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[470px] lg:mx-0 lg:max-w-[470px]">
-          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/35">
-            {totalCount} interpretation{totalCount === 1 ? "" : "s"} · {filmYear}
-          </span>
-          <span className="max-w-[28ch] truncate font-heading text-sm font-semibold text-white">
-            {filmTitle}
-          </span>
-          <span className="text-xs text-white/60">
-            by{" "}
-            <Link
-              to="/artist/$slug"
-              params={{ slug: slugifyArtist(artistName) }}
-              className="text-[#FF6B6B] transition-colors hover:underline hover:text-[#FF8585]"
-            >
-              {artistName}
-            </Link>
-          </span>
-
+        <div
+          aria-live="polite"
+          className="order-1 flex flex-col items-start gap-1.5 sm:order-none sm:items-end sm:text-right"
+        >
+          <Link
+            to="/poster/$id"
+            params={{ id: activePoster.id }}
+            className={`hero-rise max-w-[30ch] text-[18px] font-semibold leading-tight text-white hover:underline underline-offset-[0.22em] ${focusRing}`}
+            style={{ animationDelay: "420ms" }}
+          >
+            {filmTitle}, {filmYear}
+          </Link>
+          <Link
+            to="/artist/$slug"
+            params={{ slug: slugifyArtist(artistName) }}
+            className={`hero-rise max-w-[30ch] text-[15px] leading-snug text-white/55 transition-colors hover:text-white ${focusRing}`}
+            style={{ animationDelay: "460ms" }}
+          >
+            {artistName}
+          </Link>
           {totalCount > 1 && (
-            <div className="mt-2 flex items-center justify-center gap-1.5">
-              {filmPosters.map((p, idx) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setActivePosterIdx(idx)}
-                  aria-label={`View poster by ${p.artists?.[0]?.name || p.artist}`}
-                  className={`cursor-pointer h-1.5 rounded-full transition-all duration-200 ${
-                    idx === activePosterIdx
-                      ? "w-5 bg-[#FF6B6B]"
-                      : "w-2 bg-white/25 hover:bg-white/50"
-                  }`}
-                />
-              ))}
+            <div
+              className="hero-rise mt-2 flex items-center gap-3"
+              style={{ animationDelay: "520ms" }}
+            >
+              <span className="text-[15px] tabular-nums text-white/55">
+                {activePosterIdx + 1} of {totalCount}
+              </span>
+              <button
+                type="button"
+                onClick={nextInterpretation}
+                className={`min-h-11 px-1 text-[15px] text-white/65 underline underline-offset-[0.22em] transition-colors hover:text-white ${focusRing}`}
+              >
+                Next interpretation
+              </button>
             </div>
           )}
         </div>
