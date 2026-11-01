@@ -180,11 +180,7 @@ function RootComponent() {
         <Outlet />
       </AuthProvider>
       <Toaster />
-      <Analytics
-        scriptSrc="/api/insights/script.js"
-        viewEndpoint="/api/insights/view"
-        eventEndpoint="/api/insights/event"
-      />
+      <Analytics />
     </QueryClientProvider>
   );
 }
