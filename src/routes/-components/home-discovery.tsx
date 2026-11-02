@@ -111,7 +111,7 @@ export function DailySpotlight({
       <div className="flex flex-1 flex-col gap-8 md:flex-row md:items-center md:gap-10 lg:gap-12">
         <div className="w-full shrink-0 md:w-[46%]">
           <div
-            className="hero-rise relative mx-auto aspect-[3/4] w-full max-w-[260px] md:mx-0 md:max-w-[420px] lg:max-w-[460px]"
+            className="hero-rise relative mx-auto aspect-[3/4] w-full max-w-[260px] md:mx-0 md:max-w-[420px] lg:max-w-[480px]"
             style={{ animationDelay: "80ms" }}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
@@ -146,7 +146,7 @@ export function DailySpotlight({
                     loading={isTop ? "eager" : "lazy"}
                     fetchPriority={isTop ? "high" : "auto"}
                     alt=""
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 </button>
               );
@@ -183,7 +183,7 @@ export function DailySpotlight({
 
           <div className="mt-6 lg:mt-0 lg:flex lg:flex-col lg:items-end lg:text-right">
             <p
-              className="hero-rise max-w-[46ch] text-[17px] leading-relaxed text-white/65"
+              className="hero-rise max-w-[46ch] text-[17px] leading-relaxed text-white/80"
               style={{ animationDelay: "160ms" }}
             >
               An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
