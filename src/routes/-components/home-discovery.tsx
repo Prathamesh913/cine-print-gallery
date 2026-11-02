@@ -108,7 +108,7 @@ export function DailySpotlight({
         <p className="hidden text-[15px] text-white/55 md:block">The daily film</p>
       </div>
 
-      <div className="flex flex-1 flex-col gap-8 md:flex-row md:items-center md:gap-10 lg:gap-12">
+      <div className="flex flex-1 flex-col gap-8 md:flex-row md:items-stretch md:gap-10 lg:gap-12">
         <div className="w-full shrink-0 md:w-[46%]">
           <div
             className="hero-rise relative mx-auto aspect-[3/4] w-full max-w-[260px] md:mx-0 md:max-w-[420px] lg:max-w-[460px]"
@@ -173,23 +173,24 @@ export function DailySpotlight({
           )}
         </div>
 
-        <div className="flex flex-1 flex-col justify-center">
+        <div className="flex flex-1 flex-col justify-between">
           <h1 className="hero-rise font-display uppercase leading-[0.88] tracking-[-0.01em] text-[clamp(48px,5.6vw,96px)]">
             One film.
             <br />
             Many visions.
           </h1>
 
-          <p
-            className="hero-rise mt-6 max-w-[46ch] text-[17px] leading-relaxed text-white/65"
-            style={{ animationDelay: "160ms" }}
-          >
-            An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
-            artists.
-          </p>
+          <div className="mt-6">
+            <p
+              className="hero-rise max-w-[46ch] text-[17px] leading-relaxed text-white/65"
+              style={{ animationDelay: "160ms" }}
+            >
+              An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
+              artists.
+            </p>
 
-          <a
-            href="#gallery"
+            <a
+              href="#gallery"
             onClick={(event) => {
               event.preventDefault();
               const gallery = document.getElementById("gallery");
@@ -200,27 +201,28 @@ export function DailySpotlight({
             className={`hero-rise mt-6 inline-flex min-h-12 w-fit items-center justify-center rounded-full bg-[#FF6B6B] px-6 text-[15px] font-semibold text-[#121212] transition-[transform,background-color] duration-150 hover:bg-[#FF8585] active:scale-[0.98] ${focusRing}`}
             style={{ animationDelay: "240ms" }}
           >
-            Browse the archive
-          </a>
+              Browse the archive
+            </a>
 
-          {totalCount > 1 && (
-            <div className="mt-5 flex items-center gap-4 md:hidden">
-              <button
-                type="button"
-                onClick={next}
-                className={`hero-rise min-h-11 px-1 text-[15px] text-white/65 underline underline-offset-[0.22em] transition-colors hover:text-white ${focusRing}`}
-                style={{ animationDelay: "300ms" }}
-              >
-                Lift the next print
-              </button>
-              <span
-                className="hero-rise text-[15px] tabular-nums text-white/55"
-                style={{ animationDelay: "320ms" }}
-              >
-                {activePosterIdx + 1} of {totalCount}
-              </span>
-            </div>
-          )}
+            {totalCount > 1 && (
+              <div className="mt-5 flex items-center gap-4 md:hidden">
+                <button
+                  type="button"
+                  onClick={next}
+                  className={`hero-rise min-h-11 px-1 text-[15px] text-white/65 underline underline-offset-[0.22em] transition-colors hover:text-white ${focusRing}`}
+                  style={{ animationDelay: "300ms" }}
+                >
+                  Lift the next print
+                </button>
+                <span
+                  className="hero-rise text-[15px] tabular-nums text-white/55"
+                  style={{ animationDelay: "320ms" }}
+                >
+                  {activePosterIdx + 1} of {totalCount}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
