@@ -108,7 +108,7 @@ export function DailySpotlight({
         <p className="hidden text-[15px] text-white/55 md:block">The daily film</p>
       </div>
 
-      <div className="flex flex-1 flex-col gap-8 md:flex-row md:items-stretch md:gap-10 lg:gap-12">
+      <div className="flex flex-1 flex-col gap-8 md:flex-row md:items-center md:gap-10 lg:gap-12">
         <div className="w-full shrink-0 md:w-[46%]">
           <div
             className="hero-rise relative mx-auto aspect-[3/4] w-full max-w-[260px] md:mx-0 md:max-w-[420px] lg:max-w-[460px]"
@@ -173,14 +173,15 @@ export function DailySpotlight({
           )}
         </div>
 
-        <div className="flex flex-1 flex-col justify-between">
+        <div className="flex flex-1 flex-col justify-center">
+          <div className="lg:grid lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] lg:items-start lg:gap-8">
           <h1 className="hero-rise font-display uppercase leading-[0.88] tracking-[-0.01em] text-[clamp(48px,5.6vw,96px)]">
             One film.
             <br />
             Many visions.
           </h1>
 
-          <div className="mt-6">
+          <div className="mt-6 lg:mt-0 lg:flex lg:flex-col lg:items-end lg:text-right">
             <p
               className="hero-rise max-w-[46ch] text-[17px] leading-relaxed text-white/65"
               style={{ animationDelay: "160ms" }}
@@ -222,6 +223,7 @@ export function DailySpotlight({
                 </span>
               </div>
             )}
+          </div>
           </div>
         </div>
       </div>
