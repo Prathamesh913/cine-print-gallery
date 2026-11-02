@@ -11,10 +11,16 @@ interface DailySpotlightProps {
   totalArtists: number;
 }
 
+const stackOffsets = [
+  { x: 0, y: 0, rotate: 0, opacity: 1 },
+  { x: 34, y: 30, rotate: 3, opacity: 0.7 },
+  { x: -34, y: 46, rotate: -2, opacity: 0.45 },
+];
+
 /**
- * Hero where the print sits inside the sentence. The headline reads
- * "One film. Many [print] visions." and the visitor flips the print to see
- * another artist's take on the same film.
+ * The daily film's prints as a physical stack. The film and artist sit together
+ * as the print label, the lift control sits with the prints, and the stack
+ * cycles the interpretations when the visitor is not interacting with it.
  */
 export function DailySpotlight({
   filmPosters,
@@ -22,7 +28,19 @@ export function DailySpotlight({
   totalArtists,
 }: DailySpotlightProps) {
   const [activePosterIdx, setActivePosterIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const activePoster = filmPosters[activePosterIdx] || filmPosters[0];
+  const totalCount = filmPosters.length;
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduceMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (!activePoster) return;
@@ -36,6 +54,21 @@ export function DailySpotlight({
     return () => window.clearTimeout(timer);
   }, [filmPosters, activePoster]);
 
+  useEffect(() => {
+    if (totalCount < 2 || reduceMotion || paused) return;
+    let interval: number | undefined;
+    const start = window.setTimeout(() => {
+      setActivePosterIdx((current) => (current + 1) % totalCount);
+      interval = window.setInterval(() => {
+        setActivePosterIdx((current) => (current + 1) % totalCount);
+      }, 3000);
+    }, 1500);
+    return () => {
+      window.clearTimeout(start);
+      if (interval) window.clearInterval(interval);
+    };
+  }, [totalCount, reduceMotion, paused, resetKey]);
+
   if (!activePoster || filmPosters.length === 0) return null;
 
   const filmTitle = activePoster.title ?? "Cinema";
@@ -45,53 +78,116 @@ export function DailySpotlight({
       ? activePoster.artists[0].name
       : activePoster.artist;
   const artistName = rawArtist && rawArtist.trim() ? rawArtist.trim() : "Independent Artist";
-  const totalCount = filmPosters.length;
-  const nextInterpretation = () =>
-    setActivePosterIdx((index) => (index + 1) % totalCount);
+
+  const choose = (index: number) => {
+    setActivePosterIdx(index);
+    setResetKey((key) => key + 1);
+  };
+  const next = () => choose((activePosterIdx + 1) % totalCount);
 
   return (
-    <section
-      aria-label="CinePrint manifesto"
-      className="relative mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1600px] flex-col px-4 pb-8 pt-6 sm:px-6 lg:pb-10"
-    >
-      <h1 className="my-auto flex flex-col items-start font-display uppercase leading-[0.9] tracking-[-0.01em] text-[clamp(46px,16vw,78px)] sm:flex-row sm:items-baseline sm:gap-x-[0.12em] sm:text-[clamp(56px,9vw,136px)]">
-        <span className="block sm:contents">
-          <span className="hero-rise inline-block">One film.</span>{" "}
-          <span className="hero-rise inline-block" style={{ animationDelay: "80ms" }}>
-            Many
-          </span>
-        </span>
-        <span
-          key={activePoster.id}
-          aria-hidden
-          className="hero-shutter my-[0.14em] block h-[35svh] min-h-[240px] max-h-[420px] shrink-0 overflow-hidden bg-[#1E1E1E] sm:my-0 sm:h-[3.15em] sm:min-h-0 sm:max-h-none"
-          style={{ aspectRatio: "2 / 3" }}
-        >
-          <PosterImage
-            poster={activePoster}
-            purpose="gallery"
-            loading="eager"
-            fetchPriority="high"
-            alt=""
-            className="h-full w-full object-cover"
-          />
-        </span>
-        <span className="block sm:contents">
-          <span className="hero-rise inline-block" style={{ animationDelay: "200ms" }}>
-            visions.
-          </span>
-        </span>
-      </h1>
+    <section className="relative mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1600px] flex-col px-4 pb-8 pt-6 sm:px-6 lg:pb-10">
+      <div className="flex items-start justify-between gap-6 pb-4 md:pb-6">
+        <div>
+          <Link
+            to="/poster/$id"
+            params={{ id: activePoster.id }}
+            className={`hero-rise font-display text-2xl uppercase tracking-wide hover:underline underline-offset-[0.14em] md:text-3xl ${focusRing}`}
+          >
+            {filmTitle}, {filmYear}
+          </Link>
+          <Link
+            to="/artist/$slug"
+            params={{ slug: slugifyArtist(artistName) }}
+            className={`hero-rise mt-1 block w-fit text-[15px] text-white/60 transition-colors hover:text-white md:text-[16px] ${focusRing}`}
+            style={{ animationDelay: "40ms" }}
+          >
+            {artistName}
+          </Link>
+        </div>
+        <p className="hidden text-[15px] text-white/55 md:block">The daily film</p>
+      </div>
 
-      <div className="mt-10 grid grid-cols-1 items-end gap-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-10">
-        <div className="order-2 sm:order-none">
+      <div className="flex flex-1 flex-col gap-8 md:flex-row md:items-center md:gap-10 lg:gap-12">
+        <div className="w-full shrink-0 md:w-[46%]">
+          <div
+            className="hero-rise relative mx-auto aspect-[3/4] w-full max-w-[260px] md:mx-0 md:max-w-[420px] lg:max-w-[460px]"
+            style={{ animationDelay: "80ms" }}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocus={() => setPaused(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                setPaused(false);
+              }
+            }}
+          >
+            {filmPosters.map((poster, index) => {
+              const relative = (index - activePosterIdx + totalCount) % totalCount;
+              const offset = stackOffsets[relative] ?? stackOffsets[0];
+              const isTop = relative === 0;
+              return (
+                <button
+                  key={poster.id}
+                  type="button"
+                  onClick={() => (isTop ? next() : choose(index))}
+                  aria-label={isTop ? "Lift the next print" : `Bring print ${index + 1} to the top`}
+                  aria-pressed={isTop}
+                  className="absolute left-1/2 top-1/2 aspect-[2/3] w-[78%] overflow-hidden bg-[#1E1E1E] transition-[transform,opacity] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+                  style={{
+                    transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) rotate(${offset.rotate}deg)`,
+                    zIndex: totalCount - relative,
+                    opacity: offset.opacity,
+                  }}
+                >
+                  <PosterImage
+                    poster={poster}
+                    purpose="gallery"
+                    loading={isTop ? "eager" : "lazy"}
+                    fetchPriority={isTop ? "high" : "auto"}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          {totalCount > 1 && (
+            <div className="mt-5 hidden items-center gap-4 md:flex">
+              <button
+                type="button"
+                onClick={next}
+                className={`hero-rise min-h-11 px-1 text-[15px] text-white/65 underline underline-offset-[0.22em] transition-colors hover:text-white ${focusRing}`}
+                style={{ animationDelay: "140ms" }}
+              >
+                Lift the next print
+              </button>
+              <span
+                className="hero-rise text-[15px] tabular-nums text-white/55"
+                style={{ animationDelay: "160ms" }}
+              >
+                {activePosterIdx + 1} of {totalCount}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-1 flex-col justify-center">
+          <h1 className="hero-rise font-display uppercase leading-[0.88] tracking-[-0.01em] text-[clamp(48px,5.6vw,96px)]">
+            One film.
+            <br />
+            Many visions.
+          </h1>
+
           <p
-            className="hero-rise max-w-[38ch] text-[17px] leading-relaxed text-white/65"
-            style={{ animationDelay: "300ms" }}
+            className="hero-rise mt-6 max-w-[46ch] text-[17px] leading-relaxed text-white/65"
+            style={{ animationDelay: "160ms" }}
           >
             An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
             artists.
           </p>
+
           <a
             href="#gallery"
             onClick={(event) => {
@@ -101,48 +197,28 @@ export function DailySpotlight({
               const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
               gallery.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
             }}
-            className={`hero-rise mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#FF6B6B] px-6 text-[15px] font-semibold text-[#121212] transition-[transform,background-color] duration-150 hover:bg-[#FF8585] active:scale-[0.98] sm:w-auto ${focusRing}`}
-            style={{ animationDelay: "360ms" }}
+            className={`hero-rise mt-6 inline-flex min-h-12 w-fit items-center justify-center rounded-full bg-[#FF6B6B] px-6 text-[15px] font-semibold text-[#121212] transition-[transform,background-color] duration-150 hover:bg-[#FF8585] active:scale-[0.98] ${focusRing}`}
+            style={{ animationDelay: "240ms" }}
           >
             Browse the archive
           </a>
-        </div>
 
-        <div
-          aria-live="polite"
-          className="order-1 flex flex-col items-start gap-1.5 sm:order-none sm:items-end sm:text-right"
-        >
-          <Link
-            to="/poster/$id"
-            params={{ id: activePoster.id }}
-            className={`hero-rise max-w-[30ch] text-[18px] font-semibold leading-tight text-white hover:underline underline-offset-[0.22em] ${focusRing}`}
-            style={{ animationDelay: "420ms" }}
-          >
-            {filmTitle}, {filmYear}
-          </Link>
-          <Link
-            to="/artist/$slug"
-            params={{ slug: slugifyArtist(artistName) }}
-            className={`hero-rise max-w-[30ch] text-[15px] leading-snug text-white/55 transition-colors hover:text-white ${focusRing}`}
-            style={{ animationDelay: "460ms" }}
-          >
-            {artistName}
-          </Link>
           {totalCount > 1 && (
-            <div
-              className="hero-rise mt-2 flex items-center gap-3"
-              style={{ animationDelay: "520ms" }}
-            >
-              <span className="text-[15px] tabular-nums text-white/55">
-                {activePosterIdx + 1} of {totalCount}
-              </span>
+            <div className="mt-5 flex items-center gap-4 md:hidden">
               <button
                 type="button"
-                onClick={nextInterpretation}
-                className={`min-h-11 px-1 text-[15px] text-white/65 underline underline-offset-[0.22em] transition-colors hover:text-white ${focusRing}`}
+                onClick={next}
+                className={`hero-rise min-h-11 px-1 text-[15px] text-white/65 underline underline-offset-[0.22em] transition-colors hover:text-white ${focusRing}`}
+                style={{ animationDelay: "300ms" }}
               >
-                Next interpretation
+                Lift the next print
               </button>
+              <span
+                className="hero-rise text-[15px] tabular-nums text-white/55"
+                style={{ animationDelay: "320ms" }}
+              >
+                {activePosterIdx + 1} of {totalCount}
+              </span>
             </div>
           )}
         </div>
