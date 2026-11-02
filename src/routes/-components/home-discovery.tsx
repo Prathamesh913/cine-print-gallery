@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
@@ -7,6 +7,7 @@ const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible
 
 interface DailySpotlightProps {
   filmPosters: Poster[];
+  wallPosters: Poster[];
   totalPosters: number;
   totalArtists: number;
 }
@@ -24,6 +25,7 @@ const stackOffsets = [
  */
 export function DailySpotlight({
   filmPosters,
+  wallPosters,
   totalPosters,
   totalArtists,
 }: DailySpotlightProps) {
@@ -33,6 +35,7 @@ export function DailySpotlight({
   const [reduceMotion, setReduceMotion] = useState(false);
   const activePoster = filmPosters[activePosterIdx] || filmPosters[0];
   const totalCount = filmPosters.length;
+  const wallRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -69,6 +72,57 @@ export function DailySpotlight({
     };
   }, [totalCount, reduceMotion, paused, resetKey]);
 
+  useEffect(() => {
+    const el = wallRef.current;
+    if (!el || wallPosters.length === 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const anim = el.animate([{ transform: "translateY(0)" }, { transform: "translateY(-50%)" }], {
+      duration: 60000,
+      iterations: Infinity,
+      easing: "linear",
+    });
+
+    const section = el.closest(".hero-wall") as HTMLElement | null;
+    if (!section) return () => anim.cancel();
+
+    let rafId: number | null = null;
+    let current = 1;
+    let target = 1;
+
+    function tick() {
+      const diff = target - current;
+      if (Math.abs(diff) < 0.003) {
+        anim.playbackRate = target;
+        current = target;
+        rafId = null;
+        return;
+      }
+      current += diff * 0.07;
+      anim.playbackRate = current;
+      rafId = requestAnimationFrame(tick);
+    }
+
+    const onEnter = () => {
+      target = 0.25;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    };
+    const onLeave = () => {
+      target = 1;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    };
+
+    section.addEventListener("mouseenter", onEnter);
+    section.addEventListener("mouseleave", onLeave);
+
+    return () => {
+      anim.cancel();
+      if (rafId) cancelAnimationFrame(rafId);
+      section.removeEventListener("mouseenter", onEnter);
+      section.removeEventListener("mouseleave", onLeave);
+    };
+  }, [wallPosters.length]);
+
   if (!activePoster || filmPosters.length === 0) return null;
 
   const filmTitle = activePoster.title ?? "Cinema";
@@ -80,7 +134,44 @@ export function DailySpotlight({
   const next = () => choose((activePosterIdx + 1) % totalCount);
 
   return (
-    <section className="mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1600px] flex-col items-center justify-center px-4 pb-10 pt-6 text-center sm:px-6">
+    <section className="relative mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1600px] flex-col items-center justify-center overflow-hidden px-4 pb-10 pt-6 text-center sm:px-6">
+      <div
+        aria-hidden
+        className="hero-wall pointer-events-none absolute inset-0 overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%)",
+        }}
+      >
+        <div ref={wallRef} className="will-change-transform opacity-30">
+          {[0, 1].map((copy) => (
+            <div
+              key={copy}
+              className="grid grid-cols-3 gap-3 p-3 sm:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8"
+            >
+              {wallPosters.map((poster) => (
+                <div
+                  key={`${copy}-${poster.id}`}
+                  className="relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-[#1E1E1E]"
+                >
+                  <PosterImage
+                    poster={poster}
+                    purpose="gallery"
+                    loading="lazy"
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center">
       <h1 className="hero-rise whitespace-nowrap font-display uppercase leading-[0.9] tracking-[-0.01em] text-[clamp(26px,5.6vw,96px)]">
         One film. Many visions.
       </h1>
@@ -150,6 +241,7 @@ export function DailySpotlight({
       >
         Browse the archive
       </a>
+      </div>
     </section>
   );
 }

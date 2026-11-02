@@ -276,6 +276,7 @@ function Home() {
       {heroFilmPosters && showDiscovery && (
         <DailySpotlight
           filmPosters={heroFilmPosters}
+          wallPosters={posters.slice(0, 32)}
           totalPosters={posters.length}
           totalArtists={artistCounts.size}
         />
