@@ -1,235 +1,246 @@
-import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
+import { getPosterImageUrl } from "@/lib/poster-images";
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
 
 interface DailySpotlightProps {
   filmPosters: Poster[];
+  wallPosters: Poster[];
   totalPosters: number;
   totalArtists: number;
 }
 
-/** Manifesto-led hero — One Film, Many Visions proved by interactive stacked interpretations. */
+const stackOffsets = [
+  { x: 0, y: 0, rotate: 0, opacity: 1 },
+  { x: 34, y: 30, rotate: 3, opacity: 0.7 },
+  { x: -34, y: 46, rotate: -2, opacity: 0.45 },
+];
+
+/**
+ * The daily film's prints as a physical stack. The film and artist sit together
+ * as the print label, the lift control sits with the prints, and the stack
+ * cycles the interpretations when the visitor is not interacting with it.
+ */
 export function DailySpotlight({
   filmPosters,
+  wallPosters,
   totalPosters,
   totalArtists,
 }: DailySpotlightProps) {
-  const navigate = useNavigate();
   const [activePosterIdx, setActivePosterIdx] = useState(0);
-
+  const [paused, setPaused] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const activePoster = filmPosters[activePosterIdx] || filmPosters[0];
+  const totalCount = filmPosters.length;
+  const wallRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduceMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!activePoster) return;
+    const timer = window.setTimeout(() => {
+      for (const poster of filmPosters) {
+        if (poster.id === activePoster.id) continue;
+        const image = new Image();
+        image.src = getPosterImageUrl(poster, "gallery");
+      }
+    }, 800);
+    return () => window.clearTimeout(timer);
+  }, [filmPosters, activePoster]);
+
+  useEffect(() => {
+    if (totalCount < 2 || reduceMotion || paused) return;
+    let interval: number | undefined;
+    const start = window.setTimeout(() => {
+      setActivePosterIdx((current) => (current + 1) % totalCount);
+      interval = window.setInterval(() => {
+        setActivePosterIdx((current) => (current + 1) % totalCount);
+      }, 3000);
+    }, 1500);
+    return () => {
+      window.clearTimeout(start);
+      if (interval) window.clearInterval(interval);
+    };
+  }, [totalCount, reduceMotion, paused, resetKey]);
+
+  useEffect(() => {
+    const el = wallRef.current;
+    if (!el || wallPosters.length === 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const anim = el.animate([{ transform: "translateY(0)" }, { transform: "translateY(-50%)" }], {
+      duration: 60000,
+      iterations: Infinity,
+      easing: "linear",
+    });
+
+    const section = el.closest(".hero-wall") as HTMLElement | null;
+    if (!section) return () => anim.cancel();
+
+    let rafId: number | null = null;
+    let current = 1;
+    let target = 1;
+
+    function tick() {
+      const diff = target - current;
+      if (Math.abs(diff) < 0.003) {
+        anim.playbackRate = target;
+        current = target;
+        rafId = null;
+        return;
+      }
+      current += diff * 0.07;
+      anim.playbackRate = current;
+      rafId = requestAnimationFrame(tick);
+    }
+
+    const onEnter = () => {
+      target = 0.25;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    };
+    const onLeave = () => {
+      target = 1;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    };
+
+    section.addEventListener("mouseenter", onEnter);
+    section.addEventListener("mouseleave", onLeave);
+
+    return () => {
+      anim.cancel();
+      if (rafId) cancelAnimationFrame(rafId);
+      section.removeEventListener("mouseenter", onEnter);
+      section.removeEventListener("mouseleave", onLeave);
+    };
+  }, [wallPosters.length]);
+
   if (!activePoster || filmPosters.length === 0) return null;
 
   const filmTitle = activePoster.title ?? "Cinema";
   const filmYear = activePoster.year;
-  const rawArtist =
-    activePoster.artists && activePoster.artists.length > 0
-      ? activePoster.artists[0].name
-      : activePoster.artist;
-  const artistName = rawArtist && rawArtist.trim() ? rawArtist.trim() : "Independent Artist";
-  const totalCount = filmPosters.length;
+  const choose = (index: number) => {
+    setActivePosterIdx(index);
+    setResetKey((key) => key + 1);
+  };
+  const next = () => choose((activePosterIdx + 1) % totalCount);
 
   return (
-    <section
-      aria-label="CinePrint manifesto"
-      className="relative w-full overflow-x-clip flex flex-col gap-6 border-b border-white/10 pb-8 pt-6 px-4 sm:gap-8 sm:px-6 sm:pt-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10 xl:gap-20 lg:py-10"
-    >
-      {/* Left: manifesto */}
-      <div className="shrink-0">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
-          Independent Print Archive — Est. 2026
-        </p>
-        <h1 className="mt-3 font-display text-[clamp(44px,7vw,110px)] uppercase leading-[0.85] tracking-[0.01em]">
-          One Film.
-          <br />
-          <span className="text-[#FF6B6B]">Many Visions.</span>
-        </h1>
-        <p className="mt-5 max-w-[52ch] text-sm leading-relaxed text-white/60 sm:text-[15px]">
-          Discover cinema through the work of independent artists. Every poster is an independent
-          reinterpretation.
-        </p>
-        <a
-          href="#artists"
-          onClick={(e) => {
-            e.preventDefault();
-            const id = document.getElementById("artists");
-            if (!id) return;
-            const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            id.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-          }}
-          className={`mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-[#FF6B6B] px-7 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition-[transform,background-color,box-shadow] duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 ${focusRing}`}
-        >
-          Explore Artists
-        </a>
-        <p className="mt-4 font-mono text-[11px] tabular-nums tracking-wide text-white/35">
-          {totalPosters} prints · {totalArtists} artists
-        </p>
-      </div>
-
-      {/* Center: ambient fill for negative space — absolute, no layout shift */}
+    <section className="relative mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1600px] flex-col items-center justify-center overflow-hidden px-4 pb-10 pt-6 text-center sm:px-6">
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[380px] w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF6B6B]/[0.05] blur-[90px] lg:block"
-      />
-
-      {/* Right: film interpretations — interactive fanned stack */}
-      <div className="shrink-0 lg:mr-[clamp(7rem,12vw,16rem)]">
-        <div className="group relative mx-auto flex h-[400px] max-w-[600px] items-end justify-center sm:h-[360px] sm:max-w-[470px] lg:mx-0 lg:max-w-[470px] lg:h-[380px]">
-          {totalCount === 1 ? (
-            <Link
-              to="/poster/$id"
-              params={{ id: activePoster.id }}
-              aria-label={`${filmTitle} by ${artistName} — view poster`}
-              className={`relative h-[264px] w-[176px] overflow-hidden rounded-lg border border-white/15 bg-[#1E1E1E] shadow-[0_16px_32px_rgba(0,0,0,0.6)] transition-[transform,opacity,border-color] duration-[180ms] ease-[var(--ease-out)] hover:border-[#FF6B6B]/40 hoverable:hover:-translate-y-[2px] active:scale-[0.98] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px] ${focusRing}`}
+        className="hero-wall pointer-events-none absolute inset-0 overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%)",
+        }}
+      >
+        <div ref={wallRef} className="will-change-transform opacity-30">
+          {[0, 1].map((copy) => (
+            <div
+              key={copy}
+              className="grid grid-cols-3 gap-3 p-3 sm:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8"
             >
-              <PosterImage
-                poster={activePoster}
-                purpose="gallery"
-                loading="eager"
-                alt={`${activePoster.title} (${activePoster.year})`}
-                className="h-full w-full object-cover"
-              />
-            </Link>
-          ) : totalCount === 2 ? (
-            <div className="relative flex h-full w-full items-end justify-center">
-              {/* Back card (non-active) */}
-              {(() => {
-                const backIdx = (activePosterIdx + 1) % 2;
-                const backPoster = filmPosters[backIdx];
-                return (
-                  <button
-                    type="button"
-                    onClick={() => setActivePosterIdx(backIdx)}
-                    aria-label={`View poster by ${backPoster.artists?.[0]?.name || backPoster.artist}`}
-                    className="cursor-pointer absolute bottom-0 left-1/2 h-[222px] w-[148px] -translate-x-[119%] -rotate-[6deg] origin-bottom overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-75 shadow-lg transition-[transform,opacity,border-color] duration-[260ms] ease-[var(--ease-out)] hover:opacity-100 hover:border-white/30 hover:-translate-x-[124%] hover:-rotate-[8deg] sm:h-[276px] sm:w-[184px] sm:-translate-x-[115%] lg:h-[255px] lg:w-[170px] lg:-translate-x-[121%] xl:h-[315px] xl:w-[210px] xl:-translate-x-[115%]"
-                  >
-                    <PosterImage
-                      poster={backPoster}
-                      purpose="gallery"
-                      loading="eager"
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                );
-              })()}
-
-              {/* Front active card */}
-              <div
-                onClick={() => navigate({ to: "/poster/$id", params: { id: activePoster.id } })}
-                className="relative z-10 h-[264px] w-[176px] cursor-pointer overflow-hidden rounded-lg border border-white/20 bg-[#1E1E1E] shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-[transform,border-color] duration-[180ms] ease-[var(--ease-out)] hover:border-[#FF6B6B]/60 hover:-translate-y-[3px] active:scale-[0.98] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
-              >
-                <PosterImage
-                  poster={activePoster}
-                  purpose="gallery"
-                  loading="eager"
-                  alt={`${activePoster.title} (${activePoster.year})`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="relative flex h-full w-full items-end justify-center">
-              {/* Left back card */}
-              {(() => {
-                const leftIdx = (activePosterIdx - 1 + totalCount) % totalCount;
-                const leftPoster = filmPosters[leftIdx];
-                return (
-                  <button
-                    type="button"
-                    onClick={() => setActivePosterIdx(leftIdx)}
-                    aria-label={`View poster by ${leftPoster.artists?.[0]?.name || leftPoster.artist}`}
-                    className="cursor-pointer absolute bottom-0 left-1/2 h-[216px] w-[144px] -translate-x-[106%] -rotate-[7deg] origin-bottom overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-75 shadow-lg transition-[transform,opacity,border-color] duration-[240ms] ease-[var(--ease-out)] hover:opacity-100 hover:border-white/30 hover:-translate-x-[118%] hover:-rotate-[9deg] sm:h-[252px] sm:w-[168px] sm:-translate-x-[119%] lg:h-[240px] lg:w-[160px] lg:-translate-x-[108%] xl:h-[282px] xl:w-[188px] xl:-translate-x-[111%]"
-                  >
-                    <PosterImage
-                      poster={leftPoster}
-                      purpose="gallery"
-                      loading="eager"
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                );
-              })()}
-
-              {/* Center active card */}
-              <div
-                onClick={() => navigate({ to: "/poster/$id", params: { id: activePoster.id } })}
-                className="relative z-10 h-[264px] w-[176px] cursor-pointer overflow-hidden rounded-lg border border-white/20 bg-[#1E1E1E] shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-[transform,border-color] duration-[180ms] ease-[var(--ease-out)] hover:border-[#FF6B6B]/60 hover:-translate-y-[3px] active:scale-[0.98] sm:h-[304px] sm:w-[202px] lg:h-[312px] lg:w-[208px] xl:h-[348px] xl:w-[232px]"
-              >
-                <PosterImage
-                  poster={activePoster}
-                  purpose="gallery"
-                  loading="eager"
-                  alt={`${activePoster.title} (${activePoster.year})`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-
-              {/* Right back card */}
-              {(() => {
-                const rightIdx = (activePosterIdx + 1) % totalCount;
-                const rightPoster = filmPosters[rightIdx];
-                return (
-                  <button
-                    type="button"
-                    onClick={() => setActivePosterIdx(rightIdx)}
-                    aria-label={`View poster by ${rightPoster.artists?.[0]?.name || rightPoster.artist}`}
-                    className="cursor-pointer absolute bottom-0 left-1/2 h-[216px] w-[144px] translate-x-[6%] rotate-[7deg] origin-bottom overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-75 shadow-lg transition-[transform,opacity,border-color] duration-[240ms] ease-[var(--ease-out)] hover:opacity-100 hover:border-white/30 hover:translate-x-[18%] hover:rotate-[9deg] sm:h-[252px] sm:w-[168px] sm:translate-x-[19%] lg:h-[240px] lg:w-[160px] lg:translate-x-[8%] xl:h-[282px] xl:w-[188px] xl:translate-x-[11%]"
-                  >
-                    <PosterImage
-                      poster={rightPoster}
-                      purpose="gallery"
-                      loading="eager"
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                );
-              })()}
-            </div>
-          )}
-        </div>
-
-        {/* Info panel under stack */}
-        <div className="mx-auto mt-4 flex max-w-[400px] flex-col items-center gap-1 border-t border-white/10 pt-3 text-center sm:max-w-[470px] lg:mx-0 lg:max-w-[470px]">
-          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/35">
-            {totalCount} interpretation{totalCount === 1 ? "" : "s"} · {filmYear}
-          </span>
-          <span className="max-w-[28ch] truncate font-heading text-sm font-semibold text-white">
-            {filmTitle}
-          </span>
-          <span className="text-xs text-white/60">
-            by{" "}
-            <Link
-              to="/artist/$slug"
-              params={{ slug: slugifyArtist(artistName) }}
-              className="text-[#FF6B6B] transition-colors hover:underline hover:text-[#FF8585]"
-            >
-              {artistName}
-            </Link>
-          </span>
-
-          {totalCount > 1 && (
-            <div className="mt-2 flex items-center justify-center gap-1.5">
-              {filmPosters.map((p, idx) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setActivePosterIdx(idx)}
-                  aria-label={`View poster by ${p.artists?.[0]?.name || p.artist}`}
-                  className={`cursor-pointer h-1.5 rounded-full transition-all duration-200 ${
-                    idx === activePosterIdx
-                      ? "w-5 bg-[#FF6B6B]"
-                      : "w-2 bg-white/25 hover:bg-white/50"
-                  }`}
-                />
+              {wallPosters.map((poster) => (
+                <div
+                  key={`${copy}-${poster.id}`}
+                  className="relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-[#1E1E1E]"
+                >
+                  <PosterImage
+                    poster={poster}
+                    purpose="gallery"
+                    loading="lazy"
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
               ))}
             </div>
-          )}
+          ))}
         </div>
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center">
+      <h1 className="hero-rise whitespace-nowrap font-display uppercase leading-[0.9] tracking-[-0.01em] text-[clamp(26px,5.6vw,96px)]">
+        One film. Many visions.
+      </h1>
+
+      <div
+        className="hero-rise relative mt-8 aspect-[3/4] w-full max-w-[300px] md:max-w-[400px]"
+        style={{ animationDelay: "80ms" }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            setPaused(false);
+          }
+        }}
+      >
+        {filmPosters.map((poster, index) => {
+          const relative = (index - activePosterIdx + totalCount) % totalCount;
+          const offset = stackOffsets[relative] ?? stackOffsets[0];
+          const isTop = relative === 0;
+          return (
+            <button
+              key={poster.id}
+              type="button"
+              onClick={() => (isTop ? next() : choose(index))}
+              aria-label={isTop ? "Lift the next print" : `Bring print ${index + 1} to the top`}
+              aria-pressed={isTop}
+              className="absolute left-1/2 top-1/2 aspect-[2/3] w-[78%] overflow-hidden bg-[#1E1E1E] transition-[transform,opacity] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+              style={{
+                transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) rotate(${offset.rotate}deg)`,
+                zIndex: totalCount - relative,
+                opacity: offset.opacity,
+              }}
+            >
+              <PosterImage
+                poster={poster}
+                purpose="gallery"
+                loading={isTop ? "eager" : "lazy"}
+                fetchPriority={isTop ? "high" : "auto"}
+                alt={isTop ? `${filmTitle} (${filmYear})` : ""}
+                className="h-full w-full object-contain"
+              />
+            </button>
+          );
+        })}
+      </div>
+
+      <p
+        className="hero-rise mx-auto mt-8 max-w-[46ch] text-[17px] leading-relaxed text-white/80"
+        style={{ animationDelay: "160ms" }}
+      >
+        An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
+        artists.
+      </p>
+
+      <a
+        href="#gallery"
+        onClick={(event) => {
+          event.preventDefault();
+          const gallery = document.getElementById("gallery");
+          if (!gallery) return;
+          const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          gallery.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+        }}
+        className={`hero-rise mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#FF6B6B] px-6 text-[15px] font-semibold text-[#121212] transition-[transform,background-color] duration-150 hover:bg-[#FF8585] active:scale-[0.98] ${focusRing}`}
+        style={{ animationDelay: "240ms" }}
+      >
+        Browse the archive
+      </a>
       </div>
     </section>
   );

@@ -276,6 +276,7 @@ function Home() {
       {heroFilmPosters && showDiscovery && (
         <DailySpotlight
           filmPosters={heroFilmPosters}
+          wallPosters={posters.slice(0, 32)}
           totalPosters={posters.length}
           totalArtists={artistCounts.size}
         />
@@ -301,7 +302,10 @@ function Home() {
         onDecade={setDecade}
         onArtist={setArtist}
       />
-      <main className="page-shell w-full py-6 flex-grow flex flex-col justify-center">
+      <main
+        id="gallery"
+        className="page-shell w-full scroll-mt-24 py-6 flex-grow flex flex-col justify-center"
+      >
         <p className="sr-only">CinePrint — Curated Alternative Movie & TV Posters Gallery</p>
         {filtered.length === 0 ? (
           <div className="flex w-full min-h-[50vh] items-center justify-center py-12">
