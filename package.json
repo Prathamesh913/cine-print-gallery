@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "prebuild": "node scripts/extract-palettes.js && node scripts/generate-sitemap.js",
+    "prebuild": "node scripts/extract-palettes.js && tsx scripts/generate-sitemap.ts",
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
