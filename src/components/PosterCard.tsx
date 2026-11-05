@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import type { Poster } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
@@ -8,21 +9,20 @@ import { PosterImage } from "./PosterImage";
 
 interface Props {
   poster: Poster;
-  onOpen: (p: Poster) => void;
   onContextMenu: (x: number, y: number, poster: Poster) => void;
 }
 
 // Global cache to track which image URLs have already finished loading
 const loadedImages = new Set<string>();
 
-export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
+export function PosterCard({ poster, onContextMenu }: Props) {
   const [loaded, setLoaded] = useState(() => loadedImages.has(poster.image));
   const { isSaved, toggle } = useSaved();
   const saved = isSaved(poster.id);
   const imgRef = useRef<HTMLImageElement>(null);
   const touchTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [longPressActive, setLongPressActive] = useState(false);
-  const cardSmoothing = useCornerSmoothing<HTMLButtonElement>(16, 60);
+  const cardSmoothing = useCornerSmoothing<HTMLAnchorElement>(16, 60);
 
   useEffect(() => {
     // If image is already complete in DOM (e.g. from browser cache), set loaded immediately
@@ -77,20 +77,23 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
     onContextMenu(e.clientX, e.clientY, poster);
   };
 
-  const handleCardClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  // After a long-press the browser still fires click: suppress it so the
+  // context-menu gesture never also follows the poster link. Plain clicks are
+  // left alone — native anchor navigation handles them (no JS navigation).
+  const handleCardClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (longPressActive) {
       e.preventDefault();
       e.stopPropagation();
       setLongPressActive(false);
-      return;
     }
-    onOpen(poster);
   };
 
   return (
     <div className="group relative w-full">
-      <button
+      <Link
         ref={cardSmoothing.ref}
+        to="/poster/$id"
+        params={{ id: poster.id }}
         onClick={handleCardClick}
         onContextMenu={handleRightClick}
         onTouchStart={handleTouchStart}
@@ -118,7 +121,7 @@ export function PosterCard({ poster, onOpen, onContextMenu }: Props) {
             <p className="truncate text-xs text-white/60">by {poster.artist}</p>
           </div>
         </div>
-      </button>
+      </Link>
 
       <button
         type="button"

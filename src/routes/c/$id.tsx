@@ -328,7 +328,7 @@ function OwnerAwareGrid({
   }, [posters.length]);
 
   if (!isOwner) {
-    return <PosterGrid posters={posters} onOpen={onOpen} />;
+    return <PosterGrid posters={posters} />;
   }
 
   const visible = posters.slice(0, count);
