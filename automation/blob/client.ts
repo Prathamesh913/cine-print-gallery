@@ -44,6 +44,15 @@ export class BlobClient {
     const result = await put(pathname, buffer, {
       access: "public",
       contentType,
+      // Explicit long cache for new uploads. Applies only to objects written
+      // after this change. Staleness note: pathnames are deterministic, not
+      // content-addressed, so replacing artwork at the same path serves stale
+      // bytes until TTL expiry. Replacements must mint a versioned path.
+      cacheControlMaxAge: 31536000,
+      // Preserve the deterministic pathname contract. The SDK default is
+      // suffix-free, but pin it so a server default flip cannot silently fork
+      // URLs and break head() dedup.
+      addRandomSuffix: false,
       ...this.commandOptions(),
     });
 
