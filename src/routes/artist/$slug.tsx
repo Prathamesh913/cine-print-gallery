@@ -8,8 +8,10 @@ import { Footer } from "@/components/Footer";
 import { EmptyState } from "@/components/states";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
-import { getPosterImageUrl } from "@/lib/poster-images";
+import { artistHeadMeta } from "@/lib/seo";
+import { artistPageEntities, withJsonLd } from "@/lib/structured-data";
 import { ArtistHero } from "@/routes/-components/artist-hero";
+import { ArtistBreadcrumb } from "@/routes/-components/artist-breadcrumb";
 
 const primaryPill =
   "inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-[#FF6B6B] px-5 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
@@ -34,29 +36,10 @@ export const Route = createFileRoute("/artist/$slug")({
         ],
       };
     }
-    const { posters, slug } = loaderData;
-    const matchingPoster = posters.find((p: Poster) => {
-      const names = p.artists && p.artists.length > 0 ? p.artists.map((a) => a.name) : [p.artist];
-      return names.some((n: string) => slugifyArtist(n) === slug);
-    });
-    const artistName = matchingPoster
-      ? matchingPoster.artists?.find((a) => slugifyArtist(a.name) === slug)?.name ||
-        matchingPoster.artist
-      : "Artist";
-
-    return {
-      meta: [
-        { title: `${artistName} — CinePrint Gallery` },
-        {
-          name: "description",
-          content: `Explore the alternative movie posters and minimalist film art curated for ${artistName} on CinePrint.`,
-        },
-        // poster.image is an absolute blob URL (same source as the /poster/$id og:image).
-        ...(matchingPoster
-          ? [{ property: "og:image", content: getPosterImageUrl(matchingPoster, "detail") }]
-          : []),
-      ],
-    };
+    return withJsonLd(
+      artistHeadMeta(loaderData.posters, loaderData.slug),
+      artistPageEntities(loaderData.posters, loaderData.slug),
+    );
   },
   component: ArtistPage,
 });
@@ -113,6 +96,9 @@ function ArtistPage() {
       <Header showSearch={false} onFeelingLucky={handleFeelingLucky} />
 
       <main className="flex-grow flex flex-col">
+        <div className="page-shell w-full max-w-6xl pt-10">
+          <ArtistBreadcrumb slug={slug} name={artistName} />
+        </div>
         <ArtistHero
           slug={slug}
           artistName={artistName}
@@ -134,7 +120,7 @@ function ArtistPage() {
             </EmptyState>
           ) : (
             <GalleryErrorBoundary>
-              <PosterGrid posters={artistPosters} onOpen={handleOpen} />
+              <PosterGrid posters={artistPosters} />
             </GalleryErrorBoundary>
           )}
         </div>
