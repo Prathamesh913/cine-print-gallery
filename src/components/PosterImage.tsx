@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState, type ImgHTMLAttributes } from "react";
+import { forwardRef, useEffect, useRef, useState, type ImgHTMLAttributes } from "react";
 import type { Poster } from "@/lib/posters";
 import {
   getPosterImageFallbackUrl,
@@ -18,9 +18,11 @@ export const PosterImage = forwardRef<HTMLImageElement, Props>(function PosterIm
   const optimizedUrl = getPosterImageUrl(poster, purpose);
   const fallbackUrl = getPosterImageFallbackUrl(poster);
   const [src, setSrc] = useState(optimizedUrl);
+  const fallbackAttemptedRef = useRef<string | null>(null);
 
   useEffect(() => {
     setSrc(optimizedUrl);
+    fallbackAttemptedRef.current = null;
   }, [optimizedUrl]);
 
   return (
@@ -30,7 +32,8 @@ export const PosterImage = forwardRef<HTMLImageElement, Props>(function PosterIm
       src={src}
       decoding={decoding ?? "async"}
       onError={(event) => {
-        if (src !== fallbackUrl) {
+        if (src !== fallbackUrl && fallbackAttemptedRef.current !== fallbackUrl) {
+          fallbackAttemptedRef.current = fallbackUrl;
           setSrc(fallbackUrl);
           return;
         }

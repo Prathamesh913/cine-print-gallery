@@ -121,6 +121,23 @@ describe("ImageUploader", () => {
     expect(mockPut.mock.calls[0][2]).toMatchObject({ contentType: "image/webp" });
   });
 
+  it("sets explicit cache and suffix options on every upload", async () => {
+    mockPut.mockResolvedValue({
+      url: "https://public.blob.vercel-storage.com/cineprint/raindrop/1812274995.jpg",
+      pathname: "cineprint/raindrop/1812274995.jpg",
+    });
+    const uploader = makeUploader();
+
+    await uploader.uploadImage(input());
+
+    const [, , options] = mockPut.mock.calls[0];
+    expect(options).toMatchObject({
+      access: "public",
+      cacheControlMaxAge: 31536000,
+      addRandomSuffix: false,
+    });
+  });
+
   it("rejects an empty buffer", async () => {
     const uploader = makeUploader();
 

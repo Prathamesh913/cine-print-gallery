@@ -42,3 +42,9 @@ export function slugifyArtist(name: string): string {
   return slug || "unknown";
 }
 
+/** True for real artist names; false for missing/blank/"unknown" placeholders. */
+export function isKnownArtistName(value: unknown): value is string {
+  return (
+    typeof value === "string" && value.trim() !== "" && value.trim().toLowerCase() !== "unknown"
+  );
+}

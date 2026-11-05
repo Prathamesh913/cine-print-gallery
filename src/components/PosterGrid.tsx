@@ -5,11 +5,10 @@ import { ContextMenu } from "./ContextMenu";
 
 interface Props {
   posters: Poster[];
-  onOpen: (p: Poster) => void;
   pageSize?: number;
 }
 
-export function PosterGrid({ posters, onOpen, pageSize = 24 }: Props) {
+export function PosterGrid({ posters, pageSize = 24 }: Props) {
   const [count, setCount] = useState(pageSize);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = useState<{
@@ -65,7 +64,7 @@ export function PosterGrid({ posters, onOpen, pageSize = 24 }: Props) {
               } as React.CSSProperties
             }
           >
-            <PosterCard poster={p} onOpen={onOpen} onContextMenu={handleContextMenu} />
+            <PosterCard poster={p} onContextMenu={handleContextMenu} />
           </div>
         ))}
       </div>

@@ -13,6 +13,7 @@ import {
 import { optimizedPathFor, optimizedUrlFor } from "./blob/optimized-path";
 
 const dryRun = process.argv.includes("--dry-run");
+const verifyReusedCli = process.argv.includes("--verify-reused");
 
 export interface BlobPoster {
   id: string;
@@ -29,6 +30,7 @@ export type OptimizeOutcome =
       optimizedBytes: number;
       width: number;
       height: number;
+      verified: boolean;
     }
   | { kind: "failed"; id: string; reason: string };
 
@@ -50,10 +52,15 @@ async function verifyOptimizedUrl(url: string, expectedWidth: number, expectedHe
   return { bytes: downloaded.buffer.length, width: metadata.width, height: metadata.height };
 }
 
+export interface OptimizeOneOptions {
+  dryRun?: boolean;
+  verifyReused?: boolean;
+}
+
 export async function optimizeOne(
   client: Pick<BlobClient, "head" | "put">,
   poster: BlobPoster,
-  options: { dryRun?: boolean } = {},
+  options: OptimizeOneOptions = {},
 ): Promise<OptimizeOutcome> {
   const path = optimizedPathFor(poster.id, poster.image);
 
@@ -62,14 +69,28 @@ export async function optimizeOne(
   }
 
   try {
-    const original = await downloadImage(poster.image);
-    const optimized = await optimizeImage(original.buffer, {
-      maxWidth: DEFAULT_OPTIMIZE_WIDTH,
-      quality: DEFAULT_WEBP_QUALITY,
-    });
     const existing = await client.head(path);
 
     if (existing) {
+      const verifyReused = options.verifyReused ?? verifyReusedCli;
+      if (!verifyReused) {
+        return {
+          kind: "reused",
+          id: poster.id,
+          path,
+          url: existing.url,
+          originalBytes: 0,
+          optimizedBytes: 0,
+          width: 0,
+          height: 0,
+          verified: false,
+        };
+      }
+      const original = await downloadImage(poster.image);
+      const optimized = await optimizeImage(original.buffer, {
+        maxWidth: DEFAULT_OPTIMIZE_WIDTH,
+        quality: DEFAULT_WEBP_QUALITY,
+      });
       const verified = await verifyOptimizedUrl(existing.url, optimized.width, optimized.height);
       return {
         kind: "reused",
@@ -80,10 +101,16 @@ export async function optimizeOne(
         optimizedBytes: verified.bytes,
         width: verified.width,
         height: verified.height,
+        verified: true,
       };
     }
 
     if (options.dryRun ?? dryRun) {
+      const original = await downloadImage(poster.image);
+      const optimized = await optimizeImage(original.buffer, {
+        maxWidth: DEFAULT_OPTIMIZE_WIDTH,
+        quality: DEFAULT_WEBP_QUALITY,
+      });
       const url = optimizedUrlFor(poster.id, poster.image);
       if (!url) {
         return { kind: "failed", id: poster.id, reason: "could not derive optimized URL" };
@@ -97,9 +124,15 @@ export async function optimizeOne(
         optimizedBytes: optimized.buffer.length,
         width: optimized.width,
         height: optimized.height,
+        verified: false,
       };
     }
 
+    const original = await downloadImage(poster.image);
+    const optimized = await optimizeImage(original.buffer, {
+      maxWidth: DEFAULT_OPTIMIZE_WIDTH,
+      quality: DEFAULT_WEBP_QUALITY,
+    });
     const uploaded = await client.put(path, optimized.buffer, optimized.contentType);
     const verified = await verifyOptimizedUrl(uploaded.url, optimized.width, optimized.height);
 
@@ -112,6 +145,7 @@ export async function optimizeOne(
       optimizedBytes: verified.bytes,
       width: verified.width,
       height: verified.height,
+      verified: true,
     };
   } catch (error) {
     return {
@@ -151,7 +185,9 @@ async function main() {
     }
 
     console.log(
-      `✓ ${outcome.id} ${outcome.kind.toUpperCase()} ${outcome.path} ${(outcome.originalBytes / 1024 / 1024).toFixed(2)}MB → ${(outcome.optimizedBytes / 1024).toFixed(0)}KB ${outcome.width}x${outcome.height}`,
+      outcome.kind === "reused" && !outcome.verified
+        ? `✓ ${outcome.id} REUSED ${outcome.path} (unverified, skipped downloads)`
+        : `✓ ${outcome.id} ${outcome.kind.toUpperCase()} ${outcome.path} ${(outcome.originalBytes / 1024 / 1024).toFixed(2)}MB → ${(outcome.optimizedBytes / 1024).toFixed(0)}KB ${outcome.width}x${outcome.height}`,
     );
   }
 

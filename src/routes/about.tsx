@@ -15,21 +15,20 @@ import {
 } from "lucide-react";
 import { fetchNotionPosters } from "@/lib/notion";
 import { PosterImage } from "@/components/PosterImage";
+import { pageHead, SITE_DEFAULT_IMAGE } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
   // Same 2-min-cached server fn every discovery route uses — powers the stat
   // row and archive filmstrip with real catalog data.
   loader: () => fetchNotionPosters(),
-  head: () => ({
-    meta: [
-      { title: "About CinePrint — Curated Alternative Film & TV Art Gallery" },
-      {
-        name: "description",
-        content:
-          "Learn about CinePrint, a curated digital archive of custom alternative movie posters, minimalist film art, and television key designs created by independent designers.",
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      path: "/about",
+      title: "About CinePrint — Curated Alternative Film & TV Art Gallery",
+      description:
+        "Learn about CinePrint, a curated digital archive of custom alternative movie posters, minimalist film art, and television key designs created by independent designers.",
+      image: SITE_DEFAULT_IMAGE,
+    }),
   component: About,
 });
 

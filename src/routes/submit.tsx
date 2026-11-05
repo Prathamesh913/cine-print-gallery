@@ -4,14 +4,27 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Sparkles, Palette, Check, ArrowRight } from "lucide-react";
 import { submitPosterToNotion } from "@/lib/notion";
+import { pageHead, SITE_DEFAULT_IMAGE } from "@/lib/seo";
+import { webpageEntity, withJsonLd } from "@/lib/structured-data";
 
 export const Route = createFileRoute("/submit")({
-  head: () => ({
-    meta: [
-      { title: "Submit Poster Artwork — CinePrint Gallery" },
-      { name: "description", content: "Submit your custom alternative movie poster illustrations or recommend fan-made movie designs to the CinePrint archive." },
-    ],
-  }),
+  head: () =>
+    withJsonLd(
+      pageHead({
+        path: "/submit",
+        title: "Submit Poster Artwork — CinePrint Gallery",
+        description:
+          "Submit your custom alternative movie poster illustrations or recommend fan-made movie designs to the CinePrint archive.",
+        image: SITE_DEFAULT_IMAGE,
+      }),
+      [
+        webpageEntity(
+          "/submit",
+          "Submit Poster Artwork — CinePrint Gallery",
+          "Submit your custom alternative movie poster illustrations or recommend fan-made movie designs to the CinePrint archive.",
+        ),
+      ],
+    ),
   component: Submit,
 });
 
@@ -31,12 +44,12 @@ function Submit() {
     isCopyrightConfirmed: false,
   });
 
-  const update = (k: keyof typeof form) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const val = e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value;
-    setForm((f) => ({ ...f, [k]: val }));
-  };
+  const update =
+    (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const val =
+        e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value;
+      setForm((f) => ({ ...f, [k]: val }));
+    };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((f) => ({ ...f, isCopyrightConfirmed: e.target.checked }));
@@ -85,7 +98,9 @@ function Submit() {
           SUBMIT ALTERNATIVE ART
         </span>
         <h1 className="mt-2 text-3xl font-semibold sm:text-4xl font-heading">
-          {role === "fan" ? "Submit Custom Movie Poster Designs" : "Showcase Your Fan-Made Film Art"}
+          {role === "fan"
+            ? "Submit Custom Movie Poster Designs"
+            : "Showcase Your Fan-Made Film Art"}
         </h1>
         <p className="mt-3 text-white/60 text-sm">
           {role === "fan"
@@ -130,7 +145,8 @@ function Submit() {
               Submission Received!
             </h3>
             <p className="mt-2 text-sm text-white/65 leading-relaxed">
-              Thanks for sharing! Our team reviews every submission for styling, resolution, and credit details before publishing.
+              Thanks for sharing! Our team reviews every submission for styling, resolution, and
+              credit details before publishing.
             </p>
             <button
               onClick={resetForm}
@@ -205,7 +221,7 @@ function Submit() {
                   onChange={update("image")}
                   required
                 />
-                
+
                 {/* Copyright Confirmation Checkbox */}
                 <div className="flex items-start gap-3 rounded-xl border border-white/5 bg-white/5 px-4 py-3">
                   <input
@@ -216,15 +232,22 @@ function Submit() {
                     className="mt-1 h-4 w-4 rounded border-white/15 bg-white/5 text-[#FF6B6B] focus:ring-[#FF6B6B]"
                     required
                   />
-                  <label htmlFor="isCopyrightConfirmed" className="text-xs text-white/65 leading-relaxed cursor-pointer select-none">
-                    I confirm that <strong className="text-white/80">I am the original creator</strong> of this artwork, and grant CinePrint permission to display it in the gallery.
+                  <label
+                    htmlFor="isCopyrightConfirmed"
+                    className="text-xs text-white/65 leading-relaxed cursor-pointer select-none"
+                  >
+                    I confirm that{" "}
+                    <strong className="text-white/80">I am the original creator</strong> of this
+                    artwork, and grant CinePrint permission to display it in the gallery.
                   </label>
                 </div>
               </>
             )}
 
             <div>
-              <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/55">Additional Notes</label>
+              <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/55">
+                Additional Notes
+              </label>
               <textarea
                 value={form.note}
                 onChange={update("note")}
@@ -256,10 +279,15 @@ function Submit() {
   );
 }
 
-function Field({ label, ...rest }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({
+  label,
+  ...rest
+}: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/55">{label}</label>
+      <label className="mb-1.5 block text-xs uppercase tracking-widest text-white/55">
+        {label}
+      </label>
       <input
         {...rest}
         className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-[#F5F5F5] placeholder:text-white/45 focus:border-[#FF6B6B] focus:outline-none transition-colors"

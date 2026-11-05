@@ -12,6 +12,7 @@ import { Film, WifiOff, RotateCw, Home } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { bind } from "cuelume";
@@ -109,11 +110,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#000000" },
-      { title: "CinePrint — Curated Alternative Movie & TV Posters Gallery" },
+      { title: SITE_TITLE },
       {
         name: "description",
-        content:
-          "Explore a curated gallery of custom alternative movie posters, minimalist film art, and television key designs created by talented designers globally.",
+        content: SITE_DESCRIPTION,
       },
       { property: "og:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
       {

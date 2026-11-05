@@ -42,18 +42,15 @@ import { useAuth } from "@/lib/auth";
 import { useCollections } from "@/hooks/use-collections";
 import { useUserProfile } from "@/lib/user-profile";
 import { CollectionCardSkeleton, EmptyState } from "@/components/states";
+import { utilityHeadMeta } from "@/lib/seo";
 
 const primaryPill =
   "inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-[#FF6B6B] px-5 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
 
 export const Route = createFileRoute("/profile")({
   loader: () => fetchNotionPosters(),
-  head: () => ({
-    meta: [
-      { title: "Profile — CinePrint" },
-      { name: "description", content: "Your profile and liked posters on CinePrint." },
-    ],
-  }),
+  head: () =>
+    utilityHeadMeta("Profile — CinePrint", "Your profile and liked posters on CinePrint."),
   component: ProfilePage,
 });
 
@@ -100,10 +97,6 @@ function ProfilePage() {
   );
 
   const posterMap = useMemo(() => new Map(postersList.map((p) => [p.id, p])), [postersList]);
-
-  const handleOpen = (p: Poster) => {
-    navigate({ to: "/poster/$id", params: { id: p.id } });
-  };
 
   const startEditing = () => {
     dispatch({ type: "START_EDIT", persisted: profileData?.bio || "" });
@@ -428,7 +421,7 @@ function ProfilePage() {
                   </Link>
                 </EmptyState>
               ) : (
-                <PosterGrid posters={posters} onOpen={handleOpen} />
+                <PosterGrid posters={posters} />
               )}
             </>
           ) : (

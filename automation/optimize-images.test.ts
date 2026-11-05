@@ -138,21 +138,11 @@ describe("optimizeOne Blob behavior", () => {
     expect(client.put.mock.calls[0][0]).toBe("cineprint/optimized/legacy/backrooms-1.webp");
   });
 
-  it("reuses an existing optimized asset", async () => {
-    const original = await makePng();
-    const optimized = await optimizeImage(original);
+  it("reuses an existing optimized asset without downloading the original", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
     const optimizedUrl =
       "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/optimized/legacy/backrooms-1.webp";
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockImplementation(async (url: string) => {
-        const body = url === optimizedUrl ? optimized.buffer : original;
-        return new Response(body, {
-          status: 200,
-          headers: { "content-type": url === optimizedUrl ? "image/webp" : "image/png" },
-        });
-      }),
-    );
     const client = {
       head: vi.fn().mockResolvedValue({
         url: optimizedUrl,
@@ -168,6 +158,45 @@ describe("optimizeOne Blob behavior", () => {
     });
 
     expect(result.kind).toBe("reused");
+    expect(client.put).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ verified: false, originalBytes: 0 });
+  });
+
+  it("verifies a reused asset only in explicit verification mode", async () => {
+    const original = await makePng();
+    const optimized = await optimizeImage(original);
+    const optimizedUrl =
+      "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/optimized/legacy/backrooms-1.webp";
+    const fetchMock = vi.fn().mockImplementation(async (url: string) => {
+      const body = url === optimizedUrl ? optimized.buffer : original;
+      return new Response(body, {
+        status: 200,
+        headers: { "content-type": url === optimizedUrl ? "image/webp" : "image/png" },
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const client = {
+      head: vi.fn().mockResolvedValue({
+        url: optimizedUrl,
+        pathname: "cineprint/optimized/legacy/backrooms-1.webp",
+      }),
+      put: vi.fn(),
+    };
+
+    const result = await optimizeOne(
+      client,
+      {
+        id: "backrooms-1",
+        image:
+          "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1779301125.png",
+      },
+      { verifyReused: true },
+    );
+
+    expect(result.kind).toBe("reused");
+    expect(result).toMatchObject({ verified: true });
+    expect(fetchMock).toHaveBeenCalled();
     expect(client.put).not.toHaveBeenCalled();
   });
 

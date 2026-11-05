@@ -9,7 +9,7 @@ import {
   FolderPlus,
   MoreHorizontal,
 } from "lucide-react";
-import { type Poster, slugifyArtist } from "@/lib/posters";
+import { type Poster, slugifyArtist, isKnownArtistName } from "@/lib/posters";
 import { useSaved } from "@/lib/saved";
 import { Link } from "@tanstack/react-router";
 import { ShareModal } from "./ShareModal";
@@ -558,17 +558,21 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                     poster.artists.map((art, idx) => (
                       <span key={idx} className="inline-flex items-center flex-wrap">
                         {idx > 0 && <span className="mx-1 text-white/55">&</span>}
-                        <Link
-                          to="/artist/$slug"
-                          params={{ slug: slugifyArtist(art.name) }}
-                          preload="intent"
-                          className="font-medium text-[#F5F5F5] underline underline-offset-4 hoverable:hover:text-[#FF6B6B] transition-colors duration-150"
-                        >
-                          {art.name}
-                        </Link>
+                        {isKnownArtistName(art.name) ? (
+                          <Link
+                            to="/artist/$slug"
+                            params={{ slug: slugifyArtist(art.name) }}
+                            preload="intent"
+                            className="font-medium text-[#F5F5F5] underline underline-offset-4 hoverable:hover:text-[#FF6B6B] transition-colors duration-150"
+                          >
+                            {art.name}
+                          </Link>
+                        ) : (
+                          <span className="font-medium text-white/60">{art.name || "Unknown"}</span>
+                        )}
                       </span>
                     ))
-                  ) : (
+                  ) : isKnownArtistName(poster.artist) ? (
                     <span className="inline-flex items-center flex-wrap">
                       <Link
                         to="/artist/$slug"
@@ -578,6 +582,10 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                       >
                         {poster.artist}
                       </Link>
+                    </span>
+                  ) : (
+                    <span className="font-medium text-white/60">
+                      {(poster.artist as string | undefined)?.trim() || "Unknown"}
                     </span>
                   )}
                 </div>

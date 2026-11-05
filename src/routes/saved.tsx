@@ -14,6 +14,7 @@ import { fetchNotionPosters } from "@/lib/notion";
 import { useSaved } from "@/lib/saved";
 import { useAuth } from "@/lib/auth";
 import { useCollections } from "@/hooks/use-collections";
+import { utilityHeadMeta } from "@/lib/seo";
 
 const primaryPill =
   "inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-[#FF6B6B] px-5 text-sm font-semibold text-[#121212] shadow-md shadow-[#FF6B6B]/15 transition duration-150 ease-[var(--ease-out)] hover:bg-[#FF8585] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
@@ -22,12 +23,8 @@ const outlinePill =
 
 export const Route = createFileRoute("/saved")({
   loader: () => fetchNotionPosters(),
-  head: () => ({
-    meta: [
-      { title: "Saved — CinePrint" },
-      { name: "description", content: "Your pinned posters and collections on CinePrint." },
-    ],
-  }),
+  head: () =>
+    utilityHeadMeta("Saved — CinePrint", "Your pinned posters and collections on CinePrint."),
   component: SavedPage,
 });
 
@@ -133,7 +130,7 @@ function SavedPage() {
                   </div>
                 ) : (
                   <GalleryErrorBoundary>
-                    <PosterGrid posters={posters} onOpen={handleOpen} />
+                    <PosterGrid posters={posters} />
                   </GalleryErrorBoundary>
                 )}
               </>

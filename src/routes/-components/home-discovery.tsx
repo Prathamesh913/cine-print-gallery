@@ -131,7 +131,6 @@ export function DailySpotlight({
     setActivePosterIdx(index);
     setResetKey((key) => key + 1);
   };
-  const next = () => choose((activePosterIdx + 1) % totalCount);
 
   return (
     <section className="relative mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1600px] flex-col items-center justify-center overflow-hidden px-4 pb-10 pt-6 text-center sm:px-6">
@@ -172,75 +171,98 @@ export function DailySpotlight({
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-      <h1 className="hero-rise whitespace-nowrap font-display uppercase leading-[0.9] tracking-[-0.01em] text-[clamp(26px,5.6vw,96px)]">
-        One film. Many visions.
-      </h1>
+        <h1 className="hero-rise whitespace-nowrap font-display uppercase leading-[0.9] tracking-[-0.01em] text-[clamp(26px,5.6vw,96px)]">
+          One film. Many visions.
+        </h1>
 
-      <div
-        className="hero-rise relative mt-8 aspect-[3/4] w-full max-w-[300px] md:max-w-[400px]"
-        style={{ animationDelay: "80ms" }}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocus={() => setPaused(true)}
-        onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-            setPaused(false);
-          }
-        }}
-      >
-        {filmPosters.map((poster, index) => {
-          const relative = (index - activePosterIdx + totalCount) % totalCount;
-          const offset = stackOffsets[relative] ?? stackOffsets[0];
-          const isTop = relative === 0;
-          return (
-            <button
-              key={poster.id}
-              type="button"
-              onClick={() => (isTop ? next() : choose(index))}
-              aria-label={isTop ? "Lift the next print" : `Bring print ${index + 1} to the top`}
-              aria-pressed={isTop}
-              className="absolute left-1/2 top-1/2 aspect-[2/3] w-[78%] overflow-hidden bg-[#1E1E1E] transition-[transform,opacity] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
-              style={{
-                transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) rotate(${offset.rotate}deg)`,
-                zIndex: totalCount - relative,
-                opacity: offset.opacity,
-              }}
-            >
-              <PosterImage
-                poster={poster}
-                purpose="gallery"
-                loading={isTop ? "eager" : "lazy"}
-                fetchPriority={isTop ? "high" : "auto"}
-                alt={isTop ? `${filmTitle} (${filmYear})` : ""}
-                className="h-full w-full object-contain"
-              />
-            </button>
-          );
-        })}
-      </div>
+        <div
+          className="hero-rise relative mt-8 aspect-[3/4] w-full max-w-[300px] md:max-w-[400px]"
+          style={{ animationDelay: "80ms" }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+              setPaused(false);
+            }
+          }}
+        >
+          {filmPosters.map((poster, index) => {
+            const relative = (index - activePosterIdx + totalCount) % totalCount;
+            const offset = stackOffsets[relative] ?? stackOffsets[0];
+            const isTop = relative === 0;
+            const stackStyle = {
+              transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) rotate(${offset.rotate}deg)`,
+              zIndex: totalCount - relative,
+              opacity: offset.opacity,
+            };
+            // The top print is the crawlable destination; prints behind it stay
+            // buttons so the stack can still be reordered without nesting controls.
+            if (isTop) {
+              return (
+                <Link
+                  key={poster.id}
+                  to="/poster/$id"
+                  params={{ id: poster.id }}
+                  preload="intent"
+                  aria-label={`${filmTitle} (${filmYear}) — open poster by ${poster.artist}`}
+                  className="absolute left-1/2 top-1/2 aspect-[2/3] w-[78%] overflow-hidden bg-[#1E1E1E] transition-[transform,opacity] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+                  style={stackStyle}
+                >
+                  <PosterImage
+                    poster={poster}
+                    purpose="gallery"
+                    loading="eager"
+                    fetchPriority="high"
+                    alt={`${filmTitle} (${filmYear}) by ${poster.artist}`}
+                    className="h-full w-full object-contain"
+                  />
+                </Link>
+              );
+            }
+            return (
+              <button
+                key={poster.id}
+                type="button"
+                onClick={() => choose(index)}
+                aria-label={`Bring print ${index + 1} to the top`}
+                className="absolute left-1/2 top-1/2 aspect-[2/3] w-[78%] overflow-hidden bg-[#1E1E1E] transition-[transform,opacity] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+                style={stackStyle}
+              >
+                <PosterImage
+                  poster={poster}
+                  purpose="gallery"
+                  loading="lazy"
+                  alt=""
+                  className="h-full w-full object-contain"
+                />
+              </button>
+            );
+          })}
+        </div>
 
-      <p
-        className="hero-rise mx-auto mt-8 max-w-[46ch] text-[17px] leading-relaxed text-white/80"
-        style={{ animationDelay: "160ms" }}
-      >
-        An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
-        artists.
-      </p>
+        <p
+          className="hero-rise mx-auto mt-8 max-w-[46ch] text-[17px] leading-relaxed text-white/80"
+          style={{ animationDelay: "160ms" }}
+        >
+          An independent archive of {totalPosters} alternative movie posters by {totalArtists}{" "}
+          artists.
+        </p>
 
-      <a
-        href="#gallery"
-        onClick={(event) => {
-          event.preventDefault();
-          const gallery = document.getElementById("gallery");
-          if (!gallery) return;
-          const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          gallery.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-        }}
-        className={`hero-rise mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#FF6B6B] px-6 text-[15px] font-semibold text-[#121212] transition-[transform,background-color] duration-150 hover:bg-[#FF8585] active:scale-[0.98] ${focusRing}`}
-        style={{ animationDelay: "240ms" }}
-      >
-        Browse the archive
-      </a>
+        <a
+          href="#gallery"
+          onClick={(event) => {
+            event.preventDefault();
+            const gallery = document.getElementById("gallery");
+            if (!gallery) return;
+            const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            gallery.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+          }}
+          className={`hero-rise mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#FF6B6B] px-6 text-[15px] font-semibold text-[#121212] transition-[transform,background-color] duration-150 hover:bg-[#FF8585] active:scale-[0.98] ${focusRing}`}
+          style={{ animationDelay: "240ms" }}
+        >
+          Browse the archive
+        </a>
       </div>
     </section>
   );
