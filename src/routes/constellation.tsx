@@ -21,6 +21,7 @@ import { Header } from "@/components/Header";
 import { Lightbox } from "@/components/Lightbox";
 import { fetchNotionPosters } from "@/lib/notion";
 import { type Poster } from "@/lib/posters";
+import { pageHead, SITE_DEFAULT_IMAGE } from "@/lib/seo";
 import { getPosterImageUrl } from "@/lib/poster-images";
 import { PosterImage } from "@/components/PosterImage";
 import posterPalettesRaw from "@/lib/poster-palettes.json";
@@ -138,16 +139,14 @@ function calculateHarmonies(h: number, s: number, l: number) {
 
 export const Route = createFileRoute("/constellation")({
   loader: () => fetchNotionPosters(),
-  head: () => ({
-    meta: [
-      { title: "Color Constellation Map — CinePrint" },
-      {
-        name: "description",
-        content:
-          "Explore a galaxy of movie poster colors. Posters with similar color palettes gravitate together in an interactive galaxy space map.",
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      path: "/constellation",
+      title: "Color Constellation Map — CinePrint",
+      description:
+        "Explore a galaxy of movie poster colors. Posters with similar color palettes gravitate together in an interactive galaxy space map.",
+      image: SITE_DEFAULT_IMAGE,
+    }),
   component: ConstellationMap,
 });
 
@@ -1004,11 +1003,11 @@ function ConstellationMap() {
         >
           <div className="p-6 flex flex-col min-h-full">
             <div className="flex-grow">
-              <h2
+              <h1
                 className="text-4xl tracking-widest text-white mb-2 font-display"
               >
                 COLOR CONSTELLATION
-              </h2>
+              </h1>
               <p className="text-xs text-white/65 leading-relaxed mb-6 font-mono">
                 Explore an alternate visual coordinate plane where film poster designs are
                 mathematically grouped by color hues. Clusters form gravity points in a deep galaxy

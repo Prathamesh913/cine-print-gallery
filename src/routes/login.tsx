@@ -7,6 +7,7 @@ import { Save, MonitorSmartphone, Heart, Loader2 } from "lucide-react";
 import { fetchNotionPosters } from "@/lib/notion";
 import type { Poster } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
+import { utilityHeadMeta } from "@/lib/seo";
 
 interface LoginSearch {
   redirect?: string;
@@ -21,12 +22,8 @@ export const Route = createFileRoute("/login")({
     redirect: typeof input.redirect === "string" ? input.redirect : undefined,
   }),
   loader: () => fetchNotionPosters(),
-  head: () => ({
-    meta: [
-      { title: "Sign In — CinePrint" },
-      { name: "description", content: "Sign in to CinePrint to save your favorite posters." },
-    ],
-  }),
+  head: () =>
+    utilityHeadMeta("Sign In — CinePrint", "Sign in to CinePrint to save your favorite posters."),
   component: LoginPage,
 });
 

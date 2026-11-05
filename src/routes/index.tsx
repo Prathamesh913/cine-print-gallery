@@ -9,6 +9,8 @@ import { EmptyState } from "@/components/states";
 import { Footer } from "@/components/Footer";
 import { type Poster, type PosterStyle, type PosterGenre } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
+import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
+import { organizationEntity, websiteEntity, withJsonLd } from "@/lib/structured-data";
 import { DailySpotlight, ArtistRail, type RailArtist } from "./-components/home-discovery";
 
 /**
@@ -63,29 +65,37 @@ export const Route = createFileRoute("/")({
       posters: deterministicShuffle(list, mulberry32(hashString(getUtcDateString()))),
     };
   },
-  head: () => ({
-    meta: [
-      { property: "og:url", content: "https://cineprint.click/" },
-      { property: "og:image", content: "https://cineprint.click/og-image.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
+  head: () =>
+    withJsonLd(
       {
-        property: "og:image:alt",
-        content: "CinePrint curated alternative movie and TV poster gallery",
+        meta: [
+          { property: "og:url", content: "https://cineprint.click/" },
+          { property: "og:title", content: SITE_TITLE },
+          { property: "og:description", content: SITE_DESCRIPTION },
+          { property: "og:type", content: "website" },
+          { property: "og:site_name", content: "CinePrint" },
+          { property: "og:image", content: "https://cineprint.click/og-image.png" },
+          { property: "og:image:width", content: "1200" },
+          { property: "og:image:height", content: "630" },
+          {
+            property: "og:image:alt",
+            content: "CinePrint curated alternative movie and TV poster gallery",
+          },
+          { name: "twitter:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
+          {
+            name: "twitter:description",
+            content: "Curated gallery of custom alternative movie posters and minimalist film art.",
+          },
+          { name: "twitter:image", content: "https://cineprint.click/og-image.png" },
+          {
+            name: "twitter:image:alt",
+            content: "CinePrint curated alternative movie and TV poster gallery",
+          },
+        ],
+        links: [{ rel: "canonical", href: "https://cineprint.click/" }],
       },
-      { name: "twitter:title", content: "CinePrint — Alternative Movie & TV Posters Gallery" },
-      {
-        name: "twitter:description",
-        content: "Curated gallery of custom alternative movie posters and minimalist film art.",
-      },
-      { name: "twitter:image", content: "https://cineprint.click/og-image.png" },
-      {
-        name: "twitter:image:alt",
-        content: "CinePrint curated alternative movie and TV poster gallery",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://cineprint.click/" }],
-  }),
+      [websiteEntity(), organizationEntity()],
+    ),
   component: Home,
 });
 
@@ -342,7 +352,7 @@ function Home() {
           </div>
         ) : (
           <GalleryErrorBoundary>
-            <PosterGrid posters={filtered} onOpen={handleOpen} />
+            <PosterGrid posters={filtered} />
           </GalleryErrorBoundary>
         )}
       </main>
