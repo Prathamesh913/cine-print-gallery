@@ -10,20 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as StylesRouteImport } from './routes/styles'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as GenresRouteImport } from './routes/genres'
 import { Route as ConstellationRouteImport } from './routes/constellation'
+import { Route as ArtistsRouteImport } from './routes/artists'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StyleSlugRouteImport } from './routes/style/$slug'
 import { Route as PosterIdRouteImport } from './routes/poster/$id'
+import { Route as GenreSlugRouteImport } from './routes/genre/$slug'
+import { Route as FilmSlugRouteImport } from './routes/film/$slug'
 import { Route as CIdRouteImport } from './routes/c/$id'
 import { Route as ArtistSlugRouteImport } from './routes/artist/$slug'
 
 const SubmitRoute = SubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StylesRoute = StylesRouteImport.update({
+  id: '/styles',
+  path: '/styles',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SavedRoute = SavedRouteImport.update({
@@ -46,9 +57,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenresRoute = GenresRouteImport.update({
+  id: '/genres',
+  path: '/genres',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConstellationRoute = ConstellationRouteImport.update({
   id: '/constellation',
   path: '/constellation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtistsRoute = ArtistsRouteImport.update({
+  id: '/artists',
+  path: '/artists',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -61,9 +82,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StyleSlugRoute = StyleSlugRouteImport.update({
+  id: '/style/$slug',
+  path: '/style/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PosterIdRoute = PosterIdRouteImport.update({
   id: '/poster/$id',
   path: '/poster/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenreSlugRoute = GenreSlugRouteImport.update({
+  id: '/genre/$slug',
+  path: '/genre/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilmSlugRoute = FilmSlugRouteImport.update({
+  id: '/film/$slug',
+  path: '/film/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CIdRoute = CIdRouteImport.update({
@@ -80,97 +116,139 @@ const ArtistSlugRoute = ArtistSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/artists': typeof ArtistsRoute
   '/constellation': typeof ConstellationRoute
+  '/genres': typeof GenresRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/styles': typeof StylesRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
   '/c/$id': typeof CIdRoute
+  '/film/$slug': typeof FilmSlugRoute
+  '/genre/$slug': typeof GenreSlugRoute
   '/poster/$id': typeof PosterIdRoute
+  '/style/$slug': typeof StyleSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/artists': typeof ArtistsRoute
   '/constellation': typeof ConstellationRoute
+  '/genres': typeof GenresRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/styles': typeof StylesRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
   '/c/$id': typeof CIdRoute
+  '/film/$slug': typeof FilmSlugRoute
+  '/genre/$slug': typeof GenreSlugRoute
   '/poster/$id': typeof PosterIdRoute
+  '/style/$slug': typeof StyleSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/artists': typeof ArtistsRoute
   '/constellation': typeof ConstellationRoute
+  '/genres': typeof GenresRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/styles': typeof StylesRoute
   '/submit': typeof SubmitRoute
   '/artist/$slug': typeof ArtistSlugRoute
   '/c/$id': typeof CIdRoute
+  '/film/$slug': typeof FilmSlugRoute
+  '/genre/$slug': typeof GenreSlugRoute
   '/poster/$id': typeof PosterIdRoute
+  '/style/$slug': typeof StyleSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/artists'
     | '/constellation'
+    | '/genres'
     | '/login'
     | '/privacy'
     | '/profile'
     | '/saved'
+    | '/styles'
     | '/submit'
     | '/artist/$slug'
     | '/c/$id'
+    | '/film/$slug'
+    | '/genre/$slug'
     | '/poster/$id'
+    | '/style/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/artists'
     | '/constellation'
+    | '/genres'
     | '/login'
     | '/privacy'
     | '/profile'
     | '/saved'
+    | '/styles'
     | '/submit'
     | '/artist/$slug'
     | '/c/$id'
+    | '/film/$slug'
+    | '/genre/$slug'
     | '/poster/$id'
+    | '/style/$slug'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/artists'
     | '/constellation'
+    | '/genres'
     | '/login'
     | '/privacy'
     | '/profile'
     | '/saved'
+    | '/styles'
     | '/submit'
     | '/artist/$slug'
     | '/c/$id'
+    | '/film/$slug'
+    | '/genre/$slug'
     | '/poster/$id'
+    | '/style/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ArtistsRoute: typeof ArtistsRoute
   ConstellationRoute: typeof ConstellationRoute
+  GenresRoute: typeof GenresRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
+  StylesRoute: typeof StylesRoute
   SubmitRoute: typeof SubmitRoute
   ArtistSlugRoute: typeof ArtistSlugRoute
   CIdRoute: typeof CIdRoute
+  FilmSlugRoute: typeof FilmSlugRoute
+  GenreSlugRoute: typeof GenreSlugRoute
   PosterIdRoute: typeof PosterIdRoute
+  StyleSlugRoute: typeof StyleSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -180,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/submit'
       fullPath: '/submit'
       preLoaderRoute: typeof SubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/styles': {
+      id: '/styles'
+      path: '/styles'
+      fullPath: '/styles'
+      preLoaderRoute: typeof StylesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/saved': {
@@ -210,11 +295,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/genres': {
+      id: '/genres'
+      path: '/genres'
+      fullPath: '/genres'
+      preLoaderRoute: typeof GenresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/constellation': {
       id: '/constellation'
       path: '/constellation'
       fullPath: '/constellation'
       preLoaderRoute: typeof ConstellationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artists': {
+      id: '/artists'
+      path: '/artists'
+      fullPath: '/artists'
+      preLoaderRoute: typeof ArtistsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -231,11 +330,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/style/$slug': {
+      id: '/style/$slug'
+      path: '/style/$slug'
+      fullPath: '/style/$slug'
+      preLoaderRoute: typeof StyleSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/poster/$id': {
       id: '/poster/$id'
       path: '/poster/$id'
       fullPath: '/poster/$id'
       preLoaderRoute: typeof PosterIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/genre/$slug': {
+      id: '/genre/$slug'
+      path: '/genre/$slug'
+      fullPath: '/genre/$slug'
+      preLoaderRoute: typeof GenreSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/film/$slug': {
+      id: '/film/$slug'
+      path: '/film/$slug'
+      fullPath: '/film/$slug'
+      preLoaderRoute: typeof FilmSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/c/$id': {
@@ -258,15 +378,21 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ArtistsRoute: ArtistsRoute,
   ConstellationRoute: ConstellationRoute,
+  GenresRoute: GenresRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
+  StylesRoute: StylesRoute,
   SubmitRoute: SubmitRoute,
   ArtistSlugRoute: ArtistSlugRoute,
   CIdRoute: CIdRoute,
+  FilmSlugRoute: FilmSlugRoute,
+  GenreSlugRoute: GenreSlugRoute,
   PosterIdRoute: PosterIdRoute,
+  StyleSlugRoute: StyleSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
