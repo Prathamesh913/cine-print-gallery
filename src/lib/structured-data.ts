@@ -1,5 +1,5 @@
 import { slugifyArtist, type Poster } from "./posters";
-import { getPosterImageUrl } from "./poster-images";
+import { getPosterSeoImageUrl } from "./poster-images";
 import {
   SITE_DEFAULT_IMAGE,
   SITE_DESCRIPTION,
@@ -127,7 +127,10 @@ export function collectionPageEntity(input: {
  * VisualArtwork for a valid poster. Creator is a stable Person reference by
  * artist-page @id, omitted entirely when the artist is unknown.
  */
-export function visualArtworkEntity(poster: Poster): JsonLdEntity {
+export function visualArtworkEntity(
+  poster: Poster,
+  resolveImage: (poster: Poster) => string = getPosterSeoImageUrl,
+): JsonLdEntity {
   const isShow = poster.mediaType === "show";
   const canonical = `${SITE_ORIGIN}/poster/${poster.id}`;
   const artist =
@@ -139,7 +142,7 @@ export function visualArtworkEntity(poster: Poster): JsonLdEntity {
       : isKnown(poster.artist)
         ? poster.artist.trim()
         : undefined;
-  const image = getPosterImageUrl(poster, "detail").trim();
+  const image = resolveImage(poster).trim();
   return {
     "@type": "VisualArtwork",
     "@id": canonical,
@@ -191,11 +194,12 @@ export function personEntity(name: string, slug: string, image?: string): JsonLd
 export function artistPageEntities(
   posters: readonly Poster[] | undefined,
   slug: string,
+  resolveImage: (poster: Poster) => string = getPosterSeoImageUrl,
 ): JsonLdEntity[] {
   const { name, matchingPoster } = resolveArtist(posters, slug);
   const entities: JsonLdEntity[] = [];
   if (matchingPoster && isKnown(name)) {
-    entities.push(personEntity(name, slug, getPosterImageUrl(matchingPoster, "detail")));
+    entities.push(personEntity(name, slug, resolveImage(matchingPoster)));
   }
   entities.push(
     breadcrumbEntity([
@@ -215,9 +219,10 @@ export function artistPageEntities(
 export function posterPageEntities(
   poster: Poster,
   film?: { slug: string; title: string } | null,
+  resolveImage: (poster: Poster) => string = getPosterSeoImageUrl,
 ): JsonLdEntity[] {
   return [
-    visualArtworkEntity(poster),
+    visualArtworkEntity(poster, resolveImage),
     breadcrumbEntity(
       film
         ? [

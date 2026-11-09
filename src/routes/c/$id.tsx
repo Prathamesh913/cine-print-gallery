@@ -16,7 +16,7 @@ import { PosterGrid } from "@/components/PosterGrid";
 import { PosterImage } from "@/components/PosterImage";
 import { EditCollectionModal } from "@/components/EditCollectionModal";
 import { CollectionHero } from "@/routes/-components/collection-hero";
-import { getPosterImageUrl } from "@/lib/poster-images";
+import { getPosterSeoImageUrl } from "@/lib/poster-images";
 import { type Poster } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
 import { getCollection, type UserCollection, type CollectionVisibility } from "@/lib/collections";
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/c/$id")({
         { property: "og:title", content: `${col.name} — CinePrint` },
         { property: "og:description", content: desc },
         ...(cover?.image
-          ? [{ property: "og:image", content: getPosterImageUrl(cover, "detail") }]
+          ? [{ property: "og:image", content: getPosterSeoImageUrl(cover) }]
           : []),
         { property: "og:type", content: "website" },
         ...(col.visibility === "private" ? [{ name: "robots", content: "noindex" }] : []),

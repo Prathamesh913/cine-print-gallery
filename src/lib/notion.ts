@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type Poster } from "./posters";
+import { fetchImageDataUrl } from "./image-data-url";
 // Public path: reads go through the CLIENT Firestore SDK. Firestore rules grant
 // public read on /posters/* (`allow read: if true`), so no Admin privileges are
 // needed — keeping firebase-admin off the homepage request graph entirely.
 import { db } from "./firebase";
-import { getAdminDb } from "../server/firebase/admin";
 
 let cachedPosters: Poster[] | null = null;
 let lastFetchTime = 0;
@@ -137,33 +137,7 @@ export const getBase64Image = createServerFn({ method: "POST" })
   .validator((url: string) => url)
   .handler(async ({ data: url }): Promise<string> => {
     try {
-      const parsed = new URL(url);
-      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-        throw new Error("Invalid protocol. Only http/https images are permitted.");
-      }
-
-      const host = parsed.hostname.toLowerCase();
-      const isPrivateOrLoopback =
-        host === "localhost" ||
-        host === "127.0.0.1" ||
-        host === "::1" ||
-        host.startsWith("192.168.") ||
-        host.startsWith("10.") ||
-        host.startsWith("172.16.") ||
-        host.startsWith("169.254.");
-
-      if (isPrivateOrLoopback) {
-        throw new Error("Invalid request host.");
-      }
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
-      }
-      const arrayBuffer = await response.arrayBuffer();
-      const base64 = Buffer.from(arrayBuffer).toString("base64");
-      const contentType = response.headers.get("content-type") || "image/jpeg";
-      return `data:${contentType};base64,${base64}`;
+      return await fetchImageDataUrl(url);
     } catch (error) {
       console.error("Failed to proxy image:", error);
       throw new Error("Unable to load specified image path.");
@@ -186,6 +160,9 @@ export const submitPosterToNotion = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }): Promise<{ success: boolean; pageId: string }> => {
     try {
+      // Load Admin only when a submission is actually handled. A static import
+      // here would put firebase-admin on every public route's module graph.
+      const { getAdminDb } = await import("../server/firebase/admin");
       const { db: adminDb, isAdmin } = await getAdminDb();
       const cleanSlug = data.title.toLowerCase().trim().replace(/\s+/g, "-");
       const payload = {

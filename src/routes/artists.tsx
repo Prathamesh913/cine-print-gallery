@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { fetchNotionPosters } from "@/lib/notion";
 import { pageHead, SITE_DEFAULT_IMAGE } from "@/lib/seo";
 import { buildArtistDirectory } from "@/lib/artists";
-import { getPosterImageUrl } from "@/lib/poster-images";
+import { getPosterSeoImageUrl } from "@/lib/poster-images";
 import { breadcrumbEntity, webpageEntity, withJsonLd } from "@/lib/structured-data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/artists")({
   head: ({ loaderData }) => {
     const entries = buildArtistDirectory(loaderData?.posters ?? []);
     const image = entries[0]
-      ? getPosterImageUrl(entries[0].representative, "detail")
+      ? getPosterSeoImageUrl(entries[0].representative)
       : SITE_DEFAULT_IMAGE;
     return withJsonLd(
       pageHead({ path: "/artists", title: TITLE, description: DESCRIPTION, image }),

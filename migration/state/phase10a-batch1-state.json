@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "manifestHash": "6e5a648341f5a4cd4a97c76da25e02441fdc64b2ccc7bd1bce6225972371c11a",
+  "createdAt": "2026-11-08T17:53:30.526Z",
+  "updatedAt": "2026-11-08T17:54:56.239Z",
+  "entries": {
+    "art-of-a-hit-2024": {
+      "posterId": "art-of-a-hit-2024",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T17:53:53.682Z",
+      "sourceSha256": "ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d",
+      "originalSha256": "ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d",
+      "optimizedSha256": "a0e5547368ecefca5a22bfcaa923920d88dd0e37458bcad2c5d8feda023c535e",
+      "originalKey": "cineprint/versions/original/art-of-a-hit-2024/ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d.png",
+      "optimizedKey": "cineprint/versions/optimized/art-of-a-hit-2024/a0e5547368ecefca5a22bfcaa923920d88dd0e37458bcad2c5d8feda023c535e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2950361,
+      "optimizedSizeBytes": 116278,
+      "originalDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1187
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T17:53:53.682Z",
+      "incrementAttempts": true
+    },
+    "artwork-1812274995": {
+      "posterId": "artwork-1812274995",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T17:54:21.661Z",
+      "sourceSha256": "d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327",
+      "originalSha256": "d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327",
+      "optimizedSha256": "27d085597b93b9e964762e9a4c3f12d5516fd29dcae0be9b2e41c2ba7fe0d0ca",
+      "originalKey": "cineprint/versions/original/artwork-1812274995/d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327.png",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1812274995/27d085597b93b9e964762e9a4c3f12d5516fd29dcae0be9b2e41c2ba7fe0d0ca-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3251321,
+      "optimizedSizeBytes": 86718,
+      "originalDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1187
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T17:54:21.661Z",
+      "incrementAttempts": true
+    },
+    "artwork-1813721087": {
+      "posterId": "artwork-1813721087",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T17:54:26.734Z",
+      "sourceSha256": "b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc",
+      "originalSha256": "b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc",
+      "optimizedSha256": "a0ea2b38f7578268f3f9942a21a87c99fc4642843910b9d01e2a8b0fb60392d6",
+      "originalKey": "cineprint/versions/original/artwork-1813721087/b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1813721087/a0ea2b38f7578268f3f9942a21a87c99fc4642843910b9d01e2a8b0fb60392d6-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 225616,
+      "optimizedSizeBytes": 60452,
+      "originalDimensions": {
+        "width": 1400,
+        "height": 1850
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1057
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T17:54:26.734Z",
+      "incrementAttempts": true
+    },
+    "artwork-1824628665": {
+      "posterId": "artwork-1824628665",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T17:54:39.360Z",
+      "sourceSha256": "c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb",
+      "originalSha256": "c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb",
+      "optimizedSha256": "e2df9cedf9f604c927daefdce565c409ebef39b00138d679807a25ab2380259e",
+      "originalKey": "cineprint/versions/original/artwork-1824628665/c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1824628665/e2df9cedf9f604c927daefdce565c409ebef39b00138d679807a25ab2380259e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1414161,
+      "optimizedSizeBytes": 119172,
+      "originalDimensions": {
+        "width": 2000,
+        "height": 2963
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T17:54:39.360Z",
+      "incrementAttempts": true
+    },
+    "artwork-1824637521": {
+      "posterId": "artwork-1824637521",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T17:54:56.239Z",
+      "sourceSha256": "635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af",
+      "originalSha256": "635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af",
+      "optimizedSha256": "1ee2d695fcc80ae87bbe1333a010fe533e6618e682f4e03b81ccaf4185f1fb58",
+      "originalKey": "cineprint/versions/original/artwork-1824637521/635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1824637521/1ee2d695fcc80ae87bbe1333a010fe533e6618e682f4e03b81ccaf4185f1fb58-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1905871,
+      "optimizedSizeBytes": 279194,
+      "originalDimensions": {
+        "width": 1836,
+        "height": 2596
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1131
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T17:54:56.239Z",
+      "incrementAttempts": true
+    }
+  }
+}

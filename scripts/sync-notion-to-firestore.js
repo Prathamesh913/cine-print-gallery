@@ -5,16 +5,21 @@ import { Client } from "@notionhq/client";
 import dotenv from "dotenv";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import {
+  IDENTITY_MODES,
+  applySyncPlan,
+  buildSyncPlan,
+  identityRecordsFromNotion,
+} from "./poster-identity.js";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
 
 const notionKey = process.env.NOTION_KEY || process.env.NOTION_API_KEY || "";
 const databaseId = process.env.NOTION_DATABASE_ID || "";
-const dryRun = process.argv.includes("--dry-run");
-const prune = process.argv.includes("--prune");
+const identityDataSourceId = process.env.NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID?.trim() || "";
 
 function textProp(prop) {
   if (!prop) return "";
@@ -89,7 +94,14 @@ function normalizeStatus(raw) {
   return s;
 }
 
-export function parsePage(page) {
+/**
+ * Legacy parser retained for the read-only migration manifest builder and
+ * legacy dry-runs. Its generated `id` is NOT authoritative for writes; the
+ * canonical sync path resolves identity through scripts/poster-identity.js and
+ * uses `parsePageData`, which omits legacy ID generation entirely.
+ */
+export function parsePage(page, options = {}) {
+  const generateLegacyIds = options.generateLegacyIds !== false;
   const props = page.properties || {};
   const imageUrls = imageUrlsFromProp(props["Image URL"]);
   if (imageUrls.length === 0) return [];
@@ -168,17 +180,17 @@ export function parsePage(page) {
 
     const artistNamesJoined = artistNames.join(" & ") || "Unknown";
 
-    let id;
+    let legacyId;
     if (isAutomatedArtwork) {
-      id = `artwork-${raindropId}`;
+      legacyId = `artwork-${raindropId}`;
     } else if (baseSlug) {
-      id = imageUrls.length > 1 ? `${baseSlug}-${index + 1}` : baseSlug;
+      legacyId = imageUrls.length > 1 ? `${baseSlug}-${index + 1}` : baseSlug;
     } else {
-      id = index === 0 ? page.id : `${page.id}-${index}`;
+      legacyId = index === 0 ? page.id : `${page.id}-${index}`;
     }
 
     return {
-      id,
+      id: generateLegacyIds ? legacyId : null,
       notionPageId: page.id,
       artworkId: isAutomatedArtwork ? raindropId : null,
       raindropId: isAutomatedArtwork ? raindropId : null,
@@ -204,9 +216,17 @@ export function parsePage(page) {
       collectionName,
       backgroundUrl,
       libraryNames,
-      slug: isAutomatedArtwork ? baseSlug : id,
+      slug: isAutomatedArtwork ? baseSlug : legacyId,
     };
   });
+}
+
+/**
+ * Data-only parser for the canonical write path. It deliberately does not
+ * generate a positional legacy ID; buildSyncPlan supplies the canonical ID.
+ */
+export function parsePageData(page) {
+  return parsePage(page, { generateLegacyIds: false });
 }
 
 async function fetchAllNotionPages(notion) {
@@ -286,10 +306,199 @@ export function computeConflicts(posters) {
   return { uniquePosters, conflicts };
 }
 
+export function parseSyncFlags(argv) {
+  const flags = {
+    dryRun: false,
+    prune: false,
+    allowPrune: false,
+    allowLegacy: null,
+    identityMode: "transition",
+    json: false,
+  };
+
+  for (let index = 0; index < argv.length; index++) {
+    const arg = argv[index];
+    if (arg === "--dry-run") {
+      flags.dryRun = true;
+    } else if (arg === "--prune") {
+      flags.prune = true;
+    } else if (arg === "--allow-prune") {
+      flags.allowPrune = true;
+    } else if (arg === "--allow-legacy") {
+      flags.allowLegacy = true;
+    } else if (arg === "--no-legacy") {
+      flags.allowLegacy = false;
+    } else if (arg === "--json") {
+      flags.json = true;
+    } else if (arg === "--identity-mode") {
+      const value = argv[++index];
+      if (!value) throw new Error("--identity-mode requires a value");
+      flags.identityMode = value;
+    } else if (arg.startsWith("--identity-mode=")) {
+      flags.identityMode = arg.slice("--identity-mode=".length);
+    } else {
+      throw new Error(`Unknown argument: ${arg}`);
+    }
+  }
+
+  if (!IDENTITY_MODES.includes(flags.identityMode)) {
+    throw new Error(
+      `--identity-mode must be one of ${IDENTITY_MODES.join(", ")}; received ${flags.identityMode}`,
+    );
+  }
+  if (flags.allowLegacy === null) {
+    flags.allowLegacy = flags.identityMode !== "canonical";
+  }
+  if (flags.identityMode === "canonical" && flags.allowLegacy) {
+    throw new Error("canonical identity mode cannot enable --allow-legacy");
+  }
+  if (flags.identityMode === "legacy" && !flags.dryRun) {
+    throw new Error("legacy identity mode is dry-run only; use transition or canonical for writes");
+  }
+  return flags;
+}
+
+function hasAdminCredentials() {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) return true;
+  return fs.existsSync(path.join(ROOT, "firebase-admin-key.json"));
+}
+
+async function readFirestoreDocuments(col) {
+  const snap = await col.get();
+  return snap.docs.map((doc) => {
+    const data = doc.data() || {};
+    return {
+      id: doc.id,
+      notionPageId: data.notionPageId ?? null,
+      image: data.image ?? null,
+      status: data.status ?? null,
+      data,
+    };
+  });
+}
+
+function loadKnownPosterIds() {
+  const snapshotPath = path.join(ROOT, "migration", "firestore-identities.json");
+  if (!fs.existsSync(snapshotPath)) return null;
+  const snapshot = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
+  return (snapshot.documents || []).map((doc) => doc.id);
+}
+
+function loadSnapshotDocuments() {
+  const snapshotPath = path.join(ROOT, "migration", "firestore-identities.json");
+  const snapshot = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
+  return {
+    source: `snapshot:${path.relative(ROOT, snapshotPath)}`,
+    documents: (snapshot.documents || []).map((doc) => ({
+      id: doc.id,
+      notionPageId: doc.notionPageId ?? null,
+      image: doc.image ?? null,
+      status: doc.status ?? null,
+      data: doc,
+    })),
+  };
+}
+
+async function fetchIdentityRecords(notion) {
+  if (!identityDataSourceId) {
+    return { configured: false, records: [], rawCount: 0 };
+  }
+  const rows = [];
+  let cursor;
+  do {
+    const response = await notion.dataSources.query({
+      data_source_id: identityDataSourceId,
+      start_cursor: cursor,
+      page_size: 100,
+    });
+    rows.push(...(response.results || []));
+    cursor = response.has_more ? response.next_cursor : undefined;
+  } while (cursor);
+  return {
+    configured: true,
+    records: identityRecordsFromNotion(rows),
+    rawCount: rows.length,
+  };
+}
+
+function printPlan(plan, flags) {
+  if (flags.json) {
+    console.log(JSON.stringify(plan, null, 2));
+    return;
+  }
+  console.log("Identity resolution summary:");
+  console.log(JSON.stringify(plan.summary, null, 2));
+
+  const sections = [
+    ["Unresolved", plan.unresolved],
+    ["Conflicts", plan.conflicts],
+    ["Orphaned identities", plan.orphaned],
+    ["Orphaned Firestore documents", plan.orphanedFirestoreDocuments],
+    ["Warnings", plan.warnings],
+  ];
+  for (const [label, entries] of sections) {
+    if (!entries || entries.length === 0) continue;
+    console.log(`${label}:`);
+    for (const entry of entries) {
+      console.log(`- ${typeof entry === "string" ? entry : JSON.stringify(entry)}`);
+    }
+  }
+}
+
+export async function writeRecords(db, col, records) {
+  const BATCH_LIMIT = 400;
+  let written = 0;
+  for (let index = 0; index < records.length; index += BATCH_LIMIT) {
+    const chunk = records.slice(index, index + BATCH_LIMIT);
+    const batch = db.batch();
+    for (const record of chunk) {
+      const { id, data } = record;
+      // update() (not set/merge) is a second line of defense: if a document
+      // disappeared after validation, the batch fails instead of recreating it.
+      batch.update(col.doc(id), {
+        ...data,
+        syncedAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    }
+    await batch.commit();
+    written += chunk.length;
+    console.log(`Upserted ${written}/${records.length}`);
+  }
+  return written;
+}
+
+export async function pruneRecords(db, col, candidates) {
+  const BATCH_LIMIT = 400;
+  let pruned = 0;
+  for (let index = 0; index < candidates.length; index += BATCH_LIMIT) {
+    const chunk = candidates.slice(index, index + BATCH_LIMIT);
+    const batch = db.batch();
+    for (const candidate of chunk) {
+      batch.update(col.doc(candidate.posterId), {
+        status: "archived",
+        syncedAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    }
+    await batch.commit();
+    pruned += chunk.length;
+  }
+  return pruned;
+}
+
 async function main() {
+  const flags = parseSyncFlags(process.argv.slice(2));
   console.log("--- Notion → Firestore poster sync ---");
-  if (dryRun) console.log("Mode: dry-run (no writes)");
-  if (prune) console.log("Mode: prune unpublished Notion-sourced docs");
+  console.log(
+    `Identity mode: ${flags.identityMode}${flags.allowLegacy ? " (legacy fallback enabled)" : ""}`,
+  );
+  if (flags.dryRun) console.log("Mode: dry-run (no writes)");
+  if (flags.prune) {
+    console.log(
+      `Mode: prune requested${flags.allowPrune ? "" : " (blocked: --allow-prune required)"}`,
+    );
+  }
 
   if (!notionKey || !databaseId) {
     throw new Error("NOTION_KEY and NOTION_DATABASE_ID are required");
@@ -300,123 +509,68 @@ async function main() {
   const pages = await fetchAllNotionPages(notion);
   console.log(`Fetched ${pages.length} Notion pages`);
 
-  const posters = pages.flatMap(parsePage);
-  console.log(`Parsed ${posters.length} poster records`);
+  const identityData = await fetchIdentityRecords(notion);
+  console.log(
+    `Identity records: ${identityData.records.length}${identityData.configured ? "" : " (identity data source not configured)"}`,
+  );
 
-  const { uniquePosters, conflicts } = computeConflicts(posters);
-
-  for (const conflict of conflicts) {
-    console.error(
-      `CONFLICT: Firebase ID "${conflict.id}" (${conflict.title}) is produced by multiple Notion pages: ${conflict.notionPageIds.join(", ")}. Skipping to avoid overwriting one artwork with another.`,
-    );
+  let db = null;
+  let col = null;
+  let firestoreDocuments;
+  let firestoreSource;
+  if (!flags.dryRun || hasAdminCredentials()) {
+    db = initAdmin();
+    col = db.collection("posters");
+    firestoreDocuments = await readFirestoreDocuments(col);
+    firestoreSource = "live";
+  } else {
+    const snapshot = loadSnapshotDocuments();
+    firestoreDocuments = snapshot.documents;
+    firestoreSource = snapshot.source;
   }
+  console.log(`Firestore documents: ${firestoreDocuments.length} (${firestoreSource})`);
 
-  const byStatus = uniquePosters.reduce((acc, p) => {
-    acc[p.status] = (acc[p.status] || 0) + 1;
-    return acc;
-  }, {});
-  console.log("By status:", byStatus);
+  const plan = buildSyncPlan({
+    pages,
+    firestoreDocuments,
+    identityRecords: identityData.records,
+    knownPosterIds: loadKnownPosterIds() || firestoreDocuments.map((doc) => doc.id),
+    mode: flags.identityMode,
+    allowLegacy: flags.allowLegacy,
+    prune: flags.prune,
+    pruneAllowed: flags.allowPrune,
+    parsePage: parsePageData,
+  });
+  printPlan(plan, flags);
 
-  if (dryRun) {
-    const automated = uniquePosters.filter((p) => p.artworkId);
-    const legacy = uniquePosters.filter((p) => !p.artworkId);
-
-    for (const poster of automated) {
-      console.log("NEW ARTWORK:");
-      console.log(poster.title);
-      console.log(`Raindrop ID: ${poster.artworkId}`);
-      console.log(`Firebase ID: ${poster.id}`);
-      console.log("");
-    }
-
-    const legacyByPage = new Map();
-    for (const poster of legacy) {
-      if (!legacyByPage.has(poster.notionPageId)) {
-        legacyByPage.set(poster.notionPageId, []);
-      }
-      legacyByPage.get(poster.notionPageId).push(poster.id);
-    }
-
-    for (const [pageId, ids] of legacyByPage) {
-      console.log("LEGACY:");
-      console.log(`Notion page: ${pageId}`);
-      console.log("Firebase IDs:");
-      for (const id of ids) {
-        console.log(id);
-      }
-      console.log("");
-    }
-
-    if (conflicts.length > 0) {
-      console.log("CONFLICTS (skipped):");
-      for (const conflict of conflicts) {
-        console.log(`- ${conflict.id} (${conflict.title})`);
-      }
-      console.log("");
-    }
-
+  if (!plan.ok) {
+    console.error("Identity validation failed; no Firestore writes performed.");
+    process.exitCode = 1;
     return;
   }
-
-  const db = initAdmin();
-  const col = db.collection("posters");
-  const BATCH_LIMIT = 400;
-
-  let written = 0;
-  for (let i = 0; i < uniquePosters.length; i += BATCH_LIMIT) {
-    const chunk = uniquePosters.slice(i, i + BATCH_LIMIT);
-    const batch = db.batch();
-    for (const poster of chunk) {
-      const { id, ...data } = poster;
-      const ref = col.doc(id);
-      batch.set(
-        ref,
-        {
-          ...data,
-          syncedAt: FieldValue.serverTimestamp(),
-          updatedAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true },
-      );
-    }
-    await batch.commit();
-    written += chunk.length;
-    console.log(`Upserted ${written}/${uniquePosters.length}`);
+  if (flags.prune && !plan.prune.allowed) {
+    console.error("Prune requested but not allowed; no Firestore writes performed.");
+    process.exitCode = 1;
+    return;
+  }
+  if (flags.dryRun) {
+    console.log("Dry-run complete. No Firestore writes performed.");
+    return;
+  }
+  if (!db || !col) {
+    throw new Error("Firestore admin context is unavailable for a write run");
   }
 
-  if (prune) {
-    const notionIds = new Set(uniquePosters.map((p) => p.id));
-    const snap = await col.where("notionPageId", "!=", null).get();
-    let pruned = 0;
-    let batch = db.batch();
-    let ops = 0;
-
-    for (const doc of snap.docs) {
-      if (notionIds.has(doc.id)) continue;
-      const status = doc.data().status;
-      if (status === "archived") continue;
-      batch.set(
-        doc.ref,
-        {
-          status: "archived",
-          syncedAt: FieldValue.serverTimestamp(),
-          updatedAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true },
-      );
-      pruned++;
-      ops++;
-      if (ops >= BATCH_LIMIT) {
-        await batch.commit();
-        batch = db.batch();
-        ops = 0;
-      }
-    }
-    if (ops > 0) await batch.commit();
-    console.log(`Pruned (archived) ${pruned} stale Notion-sourced docs`);
+  const result = await applySyncPlan(plan, {
+    write: (records) => writeRecords(db, col, records),
+    prune: (candidates) => pruneRecords(db, col, candidates),
+  });
+  if (!result.ok) {
+    console.error(`Sync blocked: ${result.reason}`);
+    process.exitCode = 1;
+    return;
   }
-
-  console.log("Done.");
+  console.log(`Done. Upserted ${result.wrote} poster document(s); pruned ${result.pruned}.`);
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);

@@ -1,5 +1,5 @@
 import { slugifyArtist, type Poster } from "./posters";
-import { getPosterImageUrl } from "./poster-images";
+import { getPosterSeoImageUrl } from "./poster-images";
 
 /**
  * Shared SEO helpers for route `head` metadata and poster-route resolution.
@@ -151,7 +151,10 @@ export function utilityHeadMeta(title: string, description: string): SeoHead {
  * - Missing poster: `noindex` with no canonical and no social tags, so
  *   soft-404 responses are never indexed or shared as real content.
  */
-export function posterHeadMeta(poster: Poster | null): SeoHead {
+export function posterHeadMeta(
+  poster: Poster | null,
+  resolveImage: (poster: Poster) => string = getPosterSeoImageUrl,
+): SeoHead {
   if (!poster) {
     return {
       meta: [{ title: "Poster Not Found — CinePrint" }, robotsMeta(ROBOTS_NOINDEX)],
@@ -163,7 +166,7 @@ export function posterHeadMeta(poster: Poster | null): SeoHead {
     description: `Minimalist alternative movie poster for ${poster.title} (${poster.year}) by ${poster.artist}.`,
     socialTitle: `${poster.title} by ${poster.artist} — CinePrint`,
     socialDescription: `Alternative movie poster for ${poster.title}.`,
-    image: getPosterImageUrl(poster, "detail"),
+    image: resolveImage(poster),
   });
 }
 
@@ -195,19 +198,22 @@ export function resolveArtist(
  * Uses the artist's own poster artwork when one matches, otherwise the
  * site-level fallback image. Existing title/description strings preserved.
  */
-export function artistHeadMeta(posters: Poster[] | undefined, slug: string): SeoHead {
+export function artistHeadMeta(
+  posters: Poster[] | undefined,
+  slug: string,
+  resolveImage: (poster: Poster) => string = getPosterSeoImageUrl,
+): SeoHead {
   const { name: artistName, matchingPoster } = resolveArtist(posters, slug);
   return pageHead({
     path: `/artist/${slug}`,
     title: `${artistName} — CinePrint Gallery`,
     description: `Explore the alternative movie posters and minimalist film art curated for ${artistName} on CinePrint.`,
-    image: matchingPoster ? getPosterImageUrl(matchingPoster, "detail") : SITE_DEFAULT_IMAGE,
+    image: matchingPoster ? resolveImage(matchingPoster) : SITE_DEFAULT_IMAGE,
   });
 }
 
 export type PosterRouteResolution =
-  | { status: "ok"; poster: Poster; posters: Poster[] }
-  | { status: "not-found" };
+  { status: "ok"; poster: Poster; posters: Poster[] } | { status: "not-found" };
 /**
  * Resolve a `/poster/$id` request against the published catalogue.
  *

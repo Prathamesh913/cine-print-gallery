@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { fetchNotionPosters } from "@/lib/notion";
 import { pageHead, robotsMeta } from "@/lib/seo";
 import { resolveFilmSlug } from "@/lib/films";
-import { getPosterImageUrl } from "@/lib/poster-images";
+import { getPosterSeoImageUrl } from "@/lib/poster-images";
 import { breadcrumbEntity, collectionPageEntity, withJsonLd } from "@/lib/structured-data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -43,14 +43,14 @@ export const Route = createFileRoute("/film/$slug")({
         path: `/film/${group.slug}`,
         title: copy.title,
         description: copy.description,
-        image: getPosterImageUrl(group.representative, "detail"),
+        image: getPosterSeoImageUrl(group.representative),
       }),
       [
         collectionPageEntity({
           slug: group.slug,
           name: copy.heading,
           description: copy.description,
-          image: getPosterImageUrl(group.representative, "detail"),
+          image: getPosterSeoImageUrl(group.representative),
           aboutType: group.isShow ? "TVSeries" : "Movie",
           aboutName: group.title,
         }),

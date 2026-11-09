@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { fetchNotionPosters } from "@/lib/notion";
 import { pageHead, robotsMeta } from "@/lib/seo";
 import { STYLE_DIMENSION, resolveTaxonomySlug } from "@/lib/taxonomy";
-import { getPosterImageUrl } from "@/lib/poster-images";
+import { getPosterSeoImageUrl } from "@/lib/poster-images";
 import { breadcrumbEntity, webpageEntity, withJsonLd } from "@/lib/structured-data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/style/$slug")({
         path: `/style/${group.slug}`,
         title: copy.title,
         description: copy.description,
-        image: getPosterImageUrl(group.representative, "detail"),
+        image: getPosterSeoImageUrl(group.representative),
       }),
       [
         webpageEntity(`/style/${group.slug}`, copy.title, copy.description),

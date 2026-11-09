@@ -18,9 +18,22 @@
     "sync:notion": "node scripts/sync-notion-to-firestore.js",
     "sync:notion:dry": "node scripts/sync-notion-to-firestore.js --dry-run",
     "optimize:images:dry": "tsx automation/optimize-images.ts --dry-run",
-    "optimize:images": "tsx automation/optimize-images.ts"
+    "optimize:images": "tsx automation/optimize-images.ts",
+    "migration:dry-run": "tsx automation/migration/cli.ts dry-run",
+    "migration:canary": "tsx automation/migration/cli.ts canary",
+    "migration:run": "tsx automation/migration/cli.ts run",
+    "migration:verify": "tsx automation/migration/cli.ts verify",
+    "r2:map:export": "tsx scripts/export-versioned-r2-map.ts",
+    "r2:map:generate": "tsx scripts/generate-r2-image-map.ts",
+    "r2:map:check": "tsx scripts/generate-r2-image-map.ts --check",
+    "migration:preflight": "tsx scripts/preflight-versioned-migration.ts",
+    "r2:map:export:legacy": "tsx scripts/export-r2-verified-mappings.ts",
+    "preview:r2": "tsx scripts/preview-r2-runtime.tsx",
+    "preview:r2:browser": "node scripts/browser-r2-preview.mjs",
+    "health:production": "tsx scripts/production-health-check.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1163.0",
     "@hookform/resolvers": "^5.2.2",
     "@notionhq/client": "^5.22.0",
     "@radix-ui/react-accordion": "^1.2.12",

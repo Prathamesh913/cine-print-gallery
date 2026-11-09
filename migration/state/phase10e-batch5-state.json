@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "manifestHash": "6e5a648341f5a4cd4a97c76da25e02441fdc64b2ccc7bd1bce6225972371c11a",
+  "createdAt": "2026-11-08T18:51:58.790Z",
+  "updatedAt": "2026-11-08T18:54:32.277Z",
+  "entries": {
+    "the-handmaiden": {
+      "posterId": "the-handmaiden",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:52:31.244Z",
+      "sourceSha256": "3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d",
+      "originalSha256": "3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d",
+      "optimizedSha256": "82adbeb8cd3a3586595bd5ae76e1999c6405a88428fba3204e384e6cd0f9aea3",
+      "originalKey": "cineprint/versions/original/the-handmaiden/3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d.png",
+      "optimizedKey": "cineprint/versions/optimized/the-handmaiden/82adbeb8cd3a3586595bd5ae76e1999c6405a88428fba3204e384e6cd0f9aea3-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 4275302,
+      "optimizedSizeBytes": 261412,
+      "originalDimensions": {
+        "width": 1175,
+        "height": 1750
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1191
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:52:31.244Z",
+      "incrementAttempts": true
+    },
+    "the-killer-2023": {
+      "posterId": "the-killer-2023",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:53:04.342Z",
+      "sourceSha256": "a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7",
+      "originalSha256": "a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7",
+      "optimizedSha256": "b7714fe751d233ca751f25f39a99f0235a3320bcdf1074a6dfb93eee5a969a76",
+      "originalKey": "cineprint/versions/original/the-killer-2023/a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7.png",
+      "optimizedKey": "cineprint/versions/optimized/the-killer-2023/b7714fe751d233ca751f25f39a99f0235a3320bcdf1074a6dfb93eee5a969a76-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 4040005,
+      "optimizedSizeBytes": 176836,
+      "originalDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1187
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:53:04.342Z",
+      "incrementAttempts": true
+    },
+    "the-mummy-1999": {
+      "posterId": "the-mummy-1999",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:53:09.119Z",
+      "sourceSha256": "2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57",
+      "originalSha256": "2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57",
+      "optimizedSha256": "ed9b96ad39704066ae8afc561b25224cb99c77415ee8c02dded3a63ec997ec73",
+      "originalKey": "cineprint/versions/original/the-mummy-1999/2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57.jpg",
+      "optimizedKey": "cineprint/versions/optimized/the-mummy-1999/ed9b96ad39704066ae8afc561b25224cb99c77415ee8c02dded3a63ec997ec73-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 492450,
+      "optimizedSizeBytes": 135946,
+      "originalDimensions": {
+        "width": 1374,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1192
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:53:09.119Z",
+      "incrementAttempts": true
+    },
+    "the-platform": {
+      "posterId": "the-platform",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:53:35.758Z",
+      "sourceSha256": "b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb",
+      "originalSha256": "b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb",
+      "optimizedSha256": "b3da126e9f5832aa143e1963db9ee61a75d79b438fd216cf11bc9590d1f523b3",
+      "originalKey": "cineprint/versions/original/the-platform/b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb.png",
+      "optimizedKey": "cineprint/versions/optimized/the-platform/b3da126e9f5832aa143e1963db9ee61a75d79b438fd216cf11bc9590d1f523b3-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2390581,
+      "optimizedSizeBytes": 31102,
+      "originalDimensions": {
+        "width": 1200,
+        "height": 1754
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1169
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:53:35.758Z",
+      "incrementAttempts": true
+    },
+    "the-shape-of-water": {
+      "posterId": "the-shape-of-water",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:53:47.080Z",
+      "sourceSha256": "48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054",
+      "originalSha256": "48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054",
+      "optimizedSha256": "166be27cf81adbfff9dd1eaa2cb1aa3dfcd0b4b3922c0caeaa0a88b6bc6c5f92",
+      "originalKey": "cineprint/versions/original/the-shape-of-water/48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054.jpg",
+      "optimizedKey": "cineprint/versions/optimized/the-shape-of-water/166be27cf81adbfff9dd1eaa2cb1aa3dfcd0b4b3922c0caeaa0a88b6bc6c5f92-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 278150,
+      "optimizedSizeBytes": 121676,
+      "originalDimensions": {
+        "width": 960,
+        "height": 1200
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1000
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:53:47.080Z",
+      "incrementAttempts": true
+    },
+    "the-substance-1": {
+      "posterId": "the-substance-1",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:54:16.516Z",
+      "sourceSha256": "f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb",
+      "originalSha256": "f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb",
+      "optimizedSha256": "e0738baa98448a95afd0b40e9afd0e58000ff7f76ca9ea9267a491523fdc7a8b",
+      "originalKey": "cineprint/versions/original/the-substance-1/f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb.png",
+      "optimizedKey": "cineprint/versions/optimized/the-substance-1/e0738baa98448a95afd0b40e9afd0e58000ff7f76ca9ea9267a491523fdc7a8b-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3850566,
+      "optimizedSizeBytes": 127052,
+      "originalDimensions": {
+        "width": 1179,
+        "height": 1817
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1233
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:54:16.516Z",
+      "incrementAttempts": true
+    },
+    "the-way-of-seeing-life": {
+      "posterId": "the-way-of-seeing-life",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:54:25.515Z",
+      "sourceSha256": "440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a",
+      "originalSha256": "440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a",
+      "optimizedSha256": "ae484b69e68c76bdfba03ec71b63affb5df1ec21e3fef02e024835f2275c7254",
+      "originalKey": "cineprint/versions/original/the-way-of-seeing-life/440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a.jpg",
+      "optimizedKey": "cineprint/versions/optimized/the-way-of-seeing-life/ae484b69e68c76bdfba03ec71b63affb5df1ec21e3fef02e024835f2275c7254-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 334968,
+      "optimizedSizeBytes": 111166,
+      "originalDimensions": {
+        "width": 1080,
+        "height": 1600
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:54:25.515Z",
+      "incrementAttempts": true
+    },
+    "the-woman-who-ran": {
+      "posterId": "the-woman-who-ran",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:54:32.277Z",
+      "sourceSha256": "0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d",
+      "originalSha256": "0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d",
+      "optimizedSha256": "9dd74e364fdeb91a007d94a36f58214214847d518be79ef15040a6f89b2735fe",
+      "originalKey": "cineprint/versions/original/the-woman-who-ran/0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d.png",
+      "optimizedKey": "cineprint/versions/optimized/the-woman-who-ran/9dd74e364fdeb91a007d94a36f58214214847d518be79ef15040a6f89b2735fe-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 634077,
+      "optimizedSizeBytes": 52992,
+      "originalDimensions": {
+        "width": 704,
+        "height": 1024
+      },
+      "optimizedDimensions": {
+        "width": 704,
+        "height": 1024
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:54:32.277Z",
+      "incrementAttempts": true
+    }
+  }
+}

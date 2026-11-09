@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   X,
   Heart,
@@ -15,6 +15,19 @@ import { Link } from "@tanstack/react-router";
 import { ShareModal } from "./ShareModal";
 import { AddToCollectionModal } from "./AddToCollectionModal";
 import { PosterImage } from "./PosterImage";
+import {
+  getPosterDownloadUrl,
+  getPosterImageCandidates,
+  getPosterImageUrl,
+} from "@/lib/poster-images";
+import { downloadExtension } from "@/lib/download-image";
+import {
+  INITIAL_IMAGE_LOAD_STATE,
+  imageStatusForKey,
+  statusFromImage,
+  withImageStatus,
+  type ImageLoadState,
+} from "@/lib/image-load-state";
 import { play } from "cuelume";
 import { getBase64Image } from "@/lib/notion";
 import { toast } from "sonner";
@@ -111,33 +124,34 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   const handlePlexDownload = async () => {
     if (!poster || downloading) return;
 
-    const downloadUrl = poster.posterImageUrl || poster.image;
+    const downloadUrl = getPosterDownloadUrl(poster);
     if (!downloadUrl) {
       toast.error("No image URL found for this poster.");
       return;
     }
 
-    let filename = "";
+    let baseFilename = "";
     if (poster.collectionName) {
-      filename = `${poster.collectionName}.jpg`;
+      baseFilename = poster.collectionName;
     } else if (poster.mediaType === "show") {
       if (poster.seasonNumber !== undefined && poster.seasonNumber !== null) {
         const paddedSeason = String(poster.seasonNumber).padStart(2, "0");
-        filename = `${poster.title} - Season ${paddedSeason}.jpg`;
+        baseFilename = `${poster.title} - Season ${paddedSeason}`;
       } else {
-        filename = `${poster.title}.jpg`;
+        baseFilename = poster.title;
       }
     } else {
-      filename = `${poster.title} (${poster.year}).jpg`;
+      baseFilename = `${poster.title} (${poster.year})`;
     }
 
-    filename = filename.replace(/[\\/:*?"<>|]/g, "_");
+    baseFilename = baseFilename.replace(/[\\/:*?"<>|]/g, "_");
 
     setDownloading(true);
     const toastId = toast.loading("Preparing high-res download for Plex/Jellyfin...");
 
     try {
       const base64Data = await getBase64Image({ data: downloadUrl });
+      const filename = `${baseFilename}.${downloadExtension(downloadUrl, base64Data)}`;
       const link = document.createElement("a");
       link.href = base64Data;
       link.download = filename;
@@ -157,7 +171,8 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   const [zoom, setZoom] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageState, setImageState] = useState<ImageLoadState>(INITIAL_IMAGE_LOAD_STATE);
+  const imageCleanupRef = useRef<(() => void) | null>(null);
   // Exit animation state — keeps component mounted while fading out
   const [visible, setVisible] = useState(false);
 
@@ -222,6 +237,66 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
         : []
     : [];
 
+  const imagePurpose = zoom ? "original" : "detail";
+  const imageUrl = poster ? getPosterImageUrl(poster, imagePurpose) : null;
+  const imageCandidates = poster ? getPosterImageCandidates(poster, imagePurpose) : [];
+  const finalCandidate = imageCandidates[imageCandidates.length - 1] ?? null;
+  const imageKey = poster && imageUrl ? `${poster.id}:${imageUrl}` : null;
+  const imageStatus = imageStatusForKey(imageState, imageKey);
+
+  const markImage = (status: "loaded" | "error") => {
+    if (imageKey) setImageState(withImageStatus(imageKey, status));
+  };
+
+  // Attach native listeners at the moment the image node is committed. This
+  // catches images that completed before React's synthetic onLoad/onError
+  // handlers were attached, and also checks the current complete state.
+  const setImageRef = useCallback(
+    (image: HTMLImageElement | null) => {
+      imageCleanupRef.current?.();
+      imageCleanupRef.current = null;
+
+      if (!image || !imageKey) return;
+
+      const resolve = () => {
+        const status = statusFromImage(image);
+        if (status === "loading") return;
+
+        const currentSrc = image.currentSrc || image.src;
+        // PosterImage advances through the finite candidate list. Only a
+        // failure of the final candidate is terminal here.
+        if (status === "error" && finalCandidate && currentSrc !== finalCandidate) {
+          return;
+        }
+
+        setImageState(withImageStatus(imageKey, status));
+      };
+
+      resolve();
+      image.addEventListener("load", resolve);
+      image.addEventListener("error", resolve);
+      imageCleanupRef.current = () => {
+        image.removeEventListener("load", resolve);
+        image.removeEventListener("error", resolve);
+      };
+    },
+    [imageKey, finalCandidate],
+  );
+
+  useEffect(() => {
+    if (!imageKey) {
+      setImageState(INITIAL_IMAGE_LOAD_STATE);
+    }
+  }, [imageKey]);
+
+  useEffect(
+    () => () => {
+      imageCleanupRef.current?.();
+      imageCleanupRef.current = null;
+    },
+    [],
+  );
+
   // Fade-in when poster becomes available
   useEffect(() => {
     if (poster) {
@@ -254,9 +329,6 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
     };
   }, [poster, prevPoster, nextPoster, onNavigate]);
 
-  // Track already loaded images to prevent flashing loading placeholder when navigating back/forward
-  const loadedUrlsRef = useRef<Set<string>>(new Set());
-
   // Reset transient state on poster change
   const prevPosterIdRef = useRef<string | null>(null);
   useEffect(() => {
@@ -265,18 +337,11 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
     setShowDetails(false);
 
     if (poster) {
-      if (loadedUrlsRef.current.has(poster.image)) {
-        setImageLoaded(true);
-      } else {
-        setImageLoaded(false);
-      }
-
       if (prevPosterIdRef.current && prevPosterIdRef.current !== poster.id) {
         play("bloom");
       }
       prevPosterIdRef.current = poster.id;
     } else {
-      setImageLoaded(false);
       prevPosterIdRef.current = null;
     }
 
@@ -376,27 +441,27 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
 
             <div
               className={`relative flex items-center justify-center aspect-[2/3] max-h-[calc(100vh-120px)] md:max-h-[85vh] w-full max-w-[56.67vh] transition-transform duration-200 ease-[var(--ease-out)] rounded-xl ${
-                !imageLoaded ? "bg-white/[0.05] border border-white/5" : "border border-transparent"
+                imageStatus !== "loaded"
+                  ? "bg-white/[0.05] border border-white/5"
+                  : "border border-transparent"
               }`}
             >
               <PosterImage
-                key={`${poster.id}-${zoom ? "original" : "detail"}`}
+                ref={setImageRef}
+                key={`${poster.id}-${imagePurpose}`}
                 poster={poster}
-                purpose={zoom ? "original" : "detail"}
+                purpose={imagePurpose}
                 alt={`${poster.title} (${poster.year})`}
-                onLoad={() => {
-                  setImageLoaded(true);
-                  if (poster) {
-                    loadedUrlsRef.current.add(poster.image);
-                  }
-                }}
+                onLoad={() => markImage("loaded")}
+                onError={() => markImage("error")}
+                onTerminalError={() => markImage("error")}
                 onClick={() => setZoom((z) => !z)}
                 className={`max-h-[calc(100vh-120px)] md:max-h-[85vh] w-full cursor-zoom-in rounded-lg object-contain transition-transform duration-200 ease-[var(--ease-out)] ${
-                  imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
+                  imageStatus === "loaded" ? "opacity-100 scale-100" : "opacity-0 scale-95"
                 }`}
                 style={zoom ? { transform: "scale(1.25)", cursor: "zoom-out" } : undefined}
               />
-              {!imageLoaded && (
+              {imageStatus === "loading" && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
                   <div className="relative flex items-center justify-center">
                     <div className="absolute w-20 h-20 rounded-full bg-[#FF6B6B]/5 blur-xl animate-pulse" />
@@ -407,6 +472,19 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                   </div>
                   <span className="text-[10px] tracking-[0.25em] font-mono text-white/55 uppercase animate-pulse">
                     Loading Poster
+                  </span>
+                </div>
+              )}
+              {imageStatus === "error" && (
+                <div
+                  role="status"
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center"
+                >
+                  <span className="text-[10px] tracking-[0.25em] font-mono text-white/55 uppercase">
+                    Image unavailable
+                  </span>
+                  <span className="text-xs text-white/50">
+                    This poster could not be loaded.
                   </span>
                 </div>
               )}
