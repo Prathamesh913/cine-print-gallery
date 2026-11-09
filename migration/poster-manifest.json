@@ -1,0 +1,3401 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-07T05:01:59.239Z",
+  "baselineCommit": "ec5401c",
+  "sourceCommit": "ec5401ca82bb7d71f4679c60f2994cbc607177fe",
+  "source": {
+    "firestoreCollection": "posters",
+    "notionDatabaseId": "38c890a5f3e2800783f8da7b81a268e4",
+    "notionDataSourceId": "38c890a5-f3e2-808b-a395-000b9b97e9db",
+    "raindropEndpoint": "https://api.raindrop.io/rest/v1/raindrops/0",
+    "blobProvider": "vercel-blob"
+  },
+  "target": {
+    "provider": "cloudflare-r2",
+    "bucket": "cineprint-posters",
+    "publicBaseUrl": "https://images.cineprint.click"
+  },
+  "counts": {
+    "firestoreDocuments": 63,
+    "notionPages": 57,
+    "notionPosters": 63,
+    "manifestEntries": 63,
+    "sourceAvailable": 63,
+    "sourceUnavailable": 0,
+    "highConfidence": 61,
+    "mediumConfidence": 2,
+    "lowConfidence": 0,
+    "noneConfidence": 0,
+    "optimizedExisting": 51,
+    "optimizedMissing": 12,
+    "unusedExternalOptimized": 19,
+    "sourceSizeMatchesExistingOriginal": 63,
+    "sourceSizeMismatchesExistingOriginal": 0
+  },
+  "coverage": {
+    "identity": "63/63",
+    "source": "63/63",
+    "firestoreIdsPreserved": "63/63",
+    "optimized": "51/63 existing; 12 regenerate"
+  },
+  "dryRunValidation": {
+    "manifestEntries": 63,
+    "firestoreDocuments": 63,
+    "idsMatch": true,
+    "missingFromManifest": [],
+    "extraInManifest": [],
+    "notionPageIdMismatches": [],
+    "currentImageUrlMismatches": [],
+    "notionDerivedIdMismatches": [],
+    "sourceAvailable": 63,
+    "sourceUnavailable": 0,
+    "optimizedExisting": 51,
+    "optimizedMissing": 12,
+    "checks": {
+      "exactly63Entries": true,
+      "exactly63FirestoreDocuments": true,
+      "allFirestoreIdsPreserved": true,
+      "allNotionPageIdsMatch": true,
+      "allCurrentImageUrlsMatch": true,
+      "allNotionDerivedIdsMatch": true,
+      "allSourcesAvailable": true,
+      "allSourcesHaveSha256": true,
+      "allSourcesHaveDimensions": true,
+      "allOriginalKeysPresent": true,
+      "allOptimizedKeysPresent": true,
+      "noDuplicateSourceUrls": true,
+      "noDuplicateRaindropIds": true
+    }
+  },
+  "sourceProviders": {
+    "raindrop-file": 31,
+    "pbs-twimg": 32,
+    "unknown": 0
+  },
+  "identityMethods": {
+    "poster_image_raindrop": 20,
+    "firestore_raindrop_id": 14,
+    "blob_path_raindrop_multi": 10,
+    "poster_image_pbs": 17,
+    "poster_image_pbs_multi_external": 2
+  },
+  "migrationStatusCounts": {
+    "READY_TO_COPY": 61,
+    "READY_WITH_REVIEW": 2
+  },
+  "duplicates": {
+    "sourceImageUrls": [],
+    "raindropIds": [],
+    "originalR2Keys": [],
+    "optimizedR2Keys": [],
+    "currentImageUrls": []
+  },
+  "ambiguities": [
+    {
+      "cineprintPosterId": "stranger-things-2",
+      "notionPageId": "38c890a5-f3e2-80fa-bf29-e86e56cd77a2",
+      "raindropId": "1521167165",
+      "identityMatchMethod": "poster_image_pbs_multi_external",
+      "identityConfidence": "medium",
+      "migrationStatus": "READY_WITH_REVIEW",
+      "reason": "Multi-image page with an external image; matched via page-level Poster Image URL (pbs) and external Blob key. Bookmark movie/show tag does not confirm poster title \"Stranger Things\". Source size and MIME match the existing Blob original exactly (2728405 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/stranger-things-2.webp. Optimized external object exists but the current resolver does not use it. Multi-image external match raised to medium confidence because the source size and MIME match the existing Blob original exactly."
+    },
+    {
+      "cineprintPosterId": "the-substance-2",
+      "notionPageId": "38c890a5-f3e2-804c-a1ee-eb60974fb46e",
+      "raindropId": "1786264374",
+      "identityMatchMethod": "poster_image_pbs_multi_external",
+      "identityConfidence": "medium",
+      "migrationStatus": "READY_WITH_REVIEW",
+      "reason": "Multi-image page with an external image; matched via page-level Poster Image URL (pbs) and external Blob key. Bookmark movie/show tag does not confirm poster title \"The Substance\". Source size and MIME match the existing Blob original exactly (77278 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/the-substance-2.webp. Optimized external object exists but the current resolver does not use it. Multi-image external match raised to medium confidence because the source size and MIME match the existing Blob original exactly."
+    }
+  ],
+  "multiImagePages": [
+    {
+      "notionPageId": "38d890a5-f3e2-8002-bd6d-d95cf0f42567",
+      "notionTitle": "Backrooms",
+      "imageCount": 3,
+      "posterIds": [
+        "backrooms-1",
+        "backrooms-2",
+        "backrooms-3"
+      ],
+      "posterImageUrlProvider": "raindrop-file"
+    },
+    {
+      "notionPageId": "38c890a5-f3e2-8033-86d0-f64c12255e6b",
+      "notionTitle": "No Other Choice",
+      "imageCount": 2,
+      "posterIds": [
+        "no-other-choice-2025-1",
+        "no-other-choice-2025-2"
+      ],
+      "posterImageUrlProvider": "raindrop-file"
+    },
+    {
+      "notionPageId": "38c890a5-f3e2-804c-a1ee-eb60974fb46e",
+      "notionTitle": "The Substance",
+      "imageCount": 2,
+      "posterIds": [
+        "the-substance-1",
+        "the-substance-2"
+      ],
+      "posterImageUrlProvider": "pbs-twimg"
+    },
+    {
+      "notionPageId": "38c890a5-f3e2-80fa-bf29-e86e56cd77a2",
+      "notionTitle": "Stranger Things",
+      "imageCount": 3,
+      "posterIds": [
+        "stranger-things-1",
+        "stranger-things-2",
+        "stranger-things-3"
+      ],
+      "posterImageUrlProvider": "pbs-twimg"
+    },
+    {
+      "notionPageId": "38c890a5-f3e2-80b2-a595-ccb0b76f4743",
+      "notionTitle": "Kill Bill",
+      "imageCount": 2,
+      "posterIds": [
+        "kill-bill-vol-1-1",
+        "kill-bill-vol-1-2"
+      ],
+      "posterImageUrlProvider": "raindrop-file"
+    }
+  ],
+  "optimized": {
+    "existing": 51,
+    "missing": 12,
+    "missingPosterIds": [
+      "artwork-1824607248",
+      "artwork-1824628665",
+      "artwork-1824637521",
+      "artwork-1824638987",
+      "artwork-1824644552",
+      "artwork-1824648439",
+      "artwork-1824734129",
+      "artwork-1831537050",
+      "artwork-1831537996",
+      "artwork-1831541280",
+      "artwork-1831541566",
+      "artwork-1831544424"
+    ],
+    "unusedExternalPosterIds": [
+      "bugonia",
+      "cure-1997",
+      "everything-everywhere-all-at-once",
+      "frankenstein-2025",
+      "her",
+      "lady-vengeance",
+      "midsommar",
+      "mother-2009",
+      "mother-2017",
+      "mullholland-drive",
+      "obsession-2025",
+      "parasite",
+      "project-hail-mary",
+      "stranger-things-2",
+      "tenet",
+      "the-mummy-1999",
+      "the-shape-of-water",
+      "the-substance-2",
+      "the-way-of-seeing-life"
+    ],
+    "byKind": {
+      "legacy": 30,
+      "external": 19,
+      "artwork": 14
+    },
+    "existingByKind": {
+      "legacy": 30,
+      "external": 19,
+      "artwork": 2
+    },
+    "missingByKind": {
+      "legacy": 0,
+      "external": 0,
+      "artwork": 12
+    }
+  },
+  "firestoreIdentitySnapshotFile": "migration/firestore-identities.json",
+  "entries": [
+    {
+      "cineprintPosterId": "2001-a-space-odyssey",
+      "notionPageId": "38c890a5-f3e2-8091-87c8-ea7df6db569f",
+      "notionTitle": "2001: A Space Odyssey",
+      "notionDerivedId": "2001-a-space-odyssey",
+      "identityReconciled": true,
+      "raindropId": "1528361110",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "2EC100BD-BC7C-40ED-B4E3-F634A8F4644B.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1528361110/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 864,
+        "height": 1200
+      },
+      "sourceSizeBytes": 2165830,
+      "sourceSha256": "06428b124970ab09552f99833b50ef7758458b2e9e54dc80dfc01e2e6098d10f",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1528361110.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1528361110.png",
+      "originalR2Key": "cineprint/raindrop/1528361110.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/2001-a-space-odyssey.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1528361110.png",
+        "exists": true,
+        "sizeBytes": 2165830,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/2001-a-space-odyssey.webp",
+        "exists": true,
+        "sizeBytes": 131070,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (2165830 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/2001-a-space-odyssey.webp."
+    },
+    {
+      "cineprintPosterId": "art-of-a-hit-2024",
+      "notionPageId": "38c890a5-f3e2-802f-be2b-e8ccc9fd785b",
+      "notionTitle": "Art of A Hit",
+      "notionDerivedId": "art-of-a-hit-2024",
+      "identityReconciled": true,
+      "raindropId": "1535262867",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "373E482A-988B-4833-9F19-0EFFDAF407E5.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1535262867/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "sourceSizeBytes": 2950361,
+      "sourceSha256": "ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1535262867.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1535262867.png",
+      "originalR2Key": "cineprint/raindrop/1535262867.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/art-of-a-hit-2024.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1535262867.png",
+        "exists": true,
+        "sizeBytes": 2950361,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/art-of-a-hit-2024.webp",
+        "exists": true,
+        "sizeBytes": 116278,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (2950361 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/art-of-a-hit-2024.webp."
+    },
+    {
+      "cineprintPosterId": "artwork-1812274995",
+      "notionPageId": "3b6890a5-f3e2-81ca-b753-cad318357f27",
+      "notionTitle": "BlacKkKlansman",
+      "notionDerivedId": "artwork-1812274995",
+      "identityReconciled": true,
+      "raindropId": "1812274995",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "7A3A9C05-E57C-433E-B577-75A8E875215A.png",
+      "raindropBookmarkTags": [
+        "artist:Eileen Steinbach",
+        "movie:BlacKkKlansman|2018"
+      ],
+      "sourcePageUrl": "https://x.com/sg_posters/status/2074969264499392888?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1812274995/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "sourceSizeBytes": 3251321,
+      "sourceSha256": "d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1812274995.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1812274995.png",
+      "originalR2Key": "cineprint/raindrop/1812274995.png",
+      "optimizedR2Key": "cineprint/optimized/1812274995.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1812274995.png",
+        "exists": true,
+        "sizeBytes": 3251321,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1812274995.webp",
+        "exists": true,
+        "sizeBytes": 86718,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (3251321 bytes, image/png). Optimized Blob object exists at cineprint/optimized/1812274995.webp."
+    },
+    {
+      "cineprintPosterId": "artwork-1813721087",
+      "notionPageId": "3b6890a5-f3e2-81f8-8953-f08c4188e201",
+      "notionTitle": "Spider-Man: Brand New Day",
+      "notionDerivedId": "artwork-1813721087",
+      "identityReconciled": true,
+      "raindropId": "1813721087",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HJvhpWUAAyir",
+      "raindropBookmarkTags": [
+        "artist:Ahmed Gamal",
+        "movie:Spider-Man: Brand New Day|2026"
+      ],
+      "sourcePageUrl": "https://x.com/Jimmyarts2009/status/2061489608068567431/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HJvh3p8WUAAy8ir?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1400,
+        "height": 1850
+      },
+      "sourceSizeBytes": 225616,
+      "sourceSha256": "b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1813721087.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1813721087.jpg",
+      "originalR2Key": "cineprint/raindrop/1813721087.jpg",
+      "optimizedR2Key": "cineprint/optimized/1813721087.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1813721087.jpg",
+        "exists": true,
+        "sizeBytes": 225616,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1813721087.webp",
+        "exists": true,
+        "sizeBytes": 60452,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (225616 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/1813721087.webp."
+    },
+    {
+      "cineprintPosterId": "artwork-1824607248",
+      "notionPageId": "3d3890a5-f3e2-8113-939f-d34a820223a7",
+      "notionTitle": "Backrooms",
+      "notionDerivedId": "artwork-1824607248",
+      "identityReconciled": true,
+      "raindropId": "1824607248",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HPvqEVKXkAATDn",
+      "raindropBookmarkTags": [
+        "artist:Aleks Phoenix",
+        "movie:Backrooms|2026"
+      ],
+      "sourcePageUrl": "https://x.com/AleksPhoenix/status/2088520224286867563",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HPvqEVKXkAATD6n?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2000,
+        "height": 2963
+      },
+      "sourceSizeBytes": 1329925,
+      "sourceSha256": "04c3c8596c08ca16ecbb62cfe4cec32c6b42262020a0e25a39911a15b3109925",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1824607248.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1824607248.jpg",
+      "originalR2Key": "cineprint/raindrop/1824607248.jpg",
+      "optimizedR2Key": "cineprint/optimized/1824607248.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1824607248.jpg",
+        "exists": true,
+        "sizeBytes": 1329925,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1824607248.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (1329925 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1824628665",
+      "notionPageId": "3d3890a5-f3e2-818a-96ad-f63d648ad843",
+      "notionTitle": "Backrooms",
+      "notionDerivedId": "artwork-1824628665",
+      "identityReconciled": true,
+      "raindropId": "1824628665",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HPvqEUyXoAACLZk",
+      "raindropBookmarkTags": [
+        "artist:Aleks Phoenix",
+        "movie:Backrooms|2026"
+      ],
+      "sourcePageUrl": "https://x.com/AleksPhoenix/status/2088520224286867563",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HPvqEUyXoAACLZk?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2000,
+        "height": 2963
+      },
+      "sourceSizeBytes": 1414161,
+      "sourceSha256": "c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1824628665.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1824628665.jpg",
+      "originalR2Key": "cineprint/raindrop/1824628665.jpg",
+      "optimizedR2Key": "cineprint/optimized/1824628665.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1824628665.jpg",
+        "exists": true,
+        "sizeBytes": 1414161,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1824628665.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (1414161 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1824637521",
+      "notionPageId": "3d3890a5-f3e2-81e5-b9da-dde04e570528",
+      "notionTitle": "Primetime",
+      "notionDerivedId": "artwork-1824637521",
+      "identityReconciled": true,
+      "raindropId": "1824637521",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HPIFwfWoAApLt",
+      "raindropBookmarkTags": [
+        "artist:Iván G",
+        "movie:Primetime|2026"
+      ],
+      "sourcePageUrl": "https://x.com/1350px/status/2085795063460683874/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HPI6FwfWoAApL9t?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1836,
+        "height": 2596
+      },
+      "sourceSizeBytes": 1905871,
+      "sourceSha256": "635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1824637521.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1824637521.jpg",
+      "originalR2Key": "cineprint/raindrop/1824637521.jpg",
+      "optimizedR2Key": "cineprint/optimized/1824637521.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1824637521.jpg",
+        "exists": true,
+        "sizeBytes": 1905871,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1824637521.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (1905871 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1824638987",
+      "notionPageId": "3d3890a5-f3e2-815a-8f09-f083f4a4ef7e",
+      "notionTitle": "Primetime",
+      "notionDerivedId": "artwork-1824638987",
+      "identityReconciled": true,
+      "raindropId": "1824638987",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HPNZHXhasAAoOnE",
+      "raindropBookmarkTags": [
+        "artist:Sammy",
+        "movie:Primetime|2026"
+      ],
+      "sourcePageUrl": "https://x.com/JackyWackyDA/status/2086109388142731437",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HPNZHXhasAAoOnE?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 3277,
+        "height": 4096
+      },
+      "sourceSizeBytes": 3454878,
+      "sourceSha256": "a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1824638987.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1824638987.jpg",
+      "originalR2Key": "cineprint/raindrop/1824638987.jpg",
+      "optimizedR2Key": "cineprint/optimized/1824638987.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1824638987.jpg",
+        "exists": true,
+        "sizeBytes": 3454878,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1824638987.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (3454878 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1824644552",
+      "notionPageId": "3d3890a5-f3e2-810d-a40b-d5f7f8817653",
+      "notionTitle": "Pearl",
+      "notionDerivedId": "artwork-1824644552",
+      "identityReconciled": true,
+      "raindropId": "1824644552",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HOVlkUsXcAAtxMf",
+      "raindropBookmarkTags": [
+        "artist:Iván G",
+        "movie:Pearl|2022"
+      ],
+      "sourcePageUrl": "https://x.com/1350px/status/2082182300813472240/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HOVlkUsXcAAtxMf?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2893,
+        "height": 4096
+      },
+      "sourceSizeBytes": 2922282,
+      "sourceSha256": "ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1824644552.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1824644552.jpg",
+      "originalR2Key": "cineprint/raindrop/1824644552.jpg",
+      "optimizedR2Key": "cineprint/optimized/1824644552.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1824644552.jpg",
+        "exists": true,
+        "sizeBytes": 2922282,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1824644552.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (2922282 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1824648439",
+      "notionPageId": "3d3890a5-f3e2-8111-8b69-d44d07ca9997",
+      "notionTitle": "Spider-Man: Brand New Day",
+      "notionDerivedId": "artwork-1824648439",
+      "identityReconciled": true,
+      "raindropId": "1824648439",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HFzSOcaoAAbMG",
+      "raindropBookmarkTags": [
+        "artist:Venomhology",
+        "movie:Spider-Man: Brand New Day|2026"
+      ],
+      "sourcePageUrl": "https://x.com/venmohology/status/2043987002958459009",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HF2zSOcaoAAbMG5?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1188,
+        "height": 1782
+      },
+      "sourceSizeBytes": 674402,
+      "sourceSha256": "c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1824648439.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1824648439.jpg",
+      "originalR2Key": "cineprint/raindrop/1824648439.jpg",
+      "optimizedR2Key": "cineprint/optimized/1824648439.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1824648439.jpg",
+        "exists": true,
+        "sizeBytes": 674402,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1824648439.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (674402 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1824734129",
+      "notionPageId": "3d3890a5-f3e2-8136-982b-c2da9656440f",
+      "notionTitle": "Spider-Man: Brand New Day",
+      "notionDerivedId": "artwork-1824734129",
+      "identityReconciled": true,
+      "raindropId": "1824734129",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HOWJZWXoAAPesq",
+      "raindropBookmarkTags": [
+        "artist:César Moreno",
+        "movie:Spider-Man: Brand New Day|2026"
+      ],
+      "sourcePageUrl": "https://x.com/theKomixBro/status/2082222175075864668/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HOWJ6ZWXoAAPesq?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 3320,
+        "height": 4096
+      },
+      "sourceSizeBytes": 1938142,
+      "sourceSha256": "4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1824734129.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1824734129.jpg",
+      "originalR2Key": "cineprint/raindrop/1824734129.jpg",
+      "optimizedR2Key": "cineprint/optimized/1824734129.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1824734129.jpg",
+        "exists": true,
+        "sizeBytes": 1938142,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1824734129.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (1938142 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1831537050",
+      "notionPageId": "3d3890a5-f3e2-8109-85b6-e4fc0cc1c455",
+      "notionTitle": "Eyes Wide Shut",
+      "notionDerivedId": "artwork-1831537050",
+      "identityReconciled": true,
+      "raindropId": "1831537050",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HQSkoDWgAAhnou",
+      "raindropBookmarkTags": [
+        "artist:Aleks Phoenix",
+        "movie:Eyes Wide Shut|1999"
+      ],
+      "sourcePageUrl": "https://x.com/AleksPhoenix/status/2090977795425927518/photo/3",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HQSko5DWgAAhnou?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1350,
+        "height": 2000
+      },
+      "sourceSizeBytes": 2235939,
+      "sourceSha256": "ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1831537050.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1831537050.jpg",
+      "originalR2Key": "cineprint/raindrop/1831537050.jpg",
+      "optimizedR2Key": "cineprint/optimized/1831537050.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1831537050.jpg",
+        "exists": true,
+        "sizeBytes": 2235939,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1831537050.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (2235939 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1831537996",
+      "notionPageId": "3d3890a5-f3e2-81fa-bfb6-e469650706c1",
+      "notionTitle": "Phantom Thread",
+      "notionDerivedId": "artwork-1831537996",
+      "identityReconciled": true,
+      "raindropId": "1831537996",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HQSkoJXQAAwYhs",
+      "raindropBookmarkTags": [
+        "artist:Aleks Phoenix",
+        "movie:Phantom Thread|2017"
+      ],
+      "sourcePageUrl": "https://x.com/AleksPhoenix/status/2090977795425927518/photo/4",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HQSko5JXQAAwYhs?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2000,
+        "height": 2963
+      },
+      "sourceSizeBytes": 4733895,
+      "sourceSha256": "a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1831537996.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1831537996.jpg",
+      "originalR2Key": "cineprint/raindrop/1831537996.jpg",
+      "optimizedR2Key": "cineprint/optimized/1831537996.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1831537996.jpg",
+        "exists": true,
+        "sizeBytes": 4733895,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1831537996.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (4733895 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1831541280",
+      "notionPageId": "3d3890a5-f3e2-8101-b24a-df615ca2b0f8",
+      "notionTitle": "The Substance",
+      "notionDerivedId": "artwork-1831541280",
+      "identityReconciled": true,
+      "raindropId": "1831541280",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HQRGwiXAEQhmg",
+      "raindropBookmarkTags": [
+        "artist:Aleks Phoenix",
+        "movie:The Substance|2024"
+      ],
+      "sourcePageUrl": "https://x.com/AleksPhoenix/status/2090874111903891822/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HQRGw6iX0AEQhmg?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2000,
+        "height": 3000
+      },
+      "sourceSizeBytes": 1267485,
+      "sourceSha256": "1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1831541280.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1831541280.jpg",
+      "originalR2Key": "cineprint/raindrop/1831541280.jpg",
+      "optimizedR2Key": "cineprint/optimized/1831541280.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1831541280.jpg",
+        "exists": true,
+        "sizeBytes": 1267485,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1831541280.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (1267485 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1831541566",
+      "notionPageId": "3d3890a5-f3e2-81f3-aaa1-f776b9c71a93",
+      "notionTitle": "Anora",
+      "notionDerivedId": "artwork-1831541566",
+      "identityReconciled": true,
+      "raindropId": "1831541566",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HQRGweWMAABnDC",
+      "raindropBookmarkTags": [
+        "artist:Aleks Phoenix",
+        "movie:Anora|2024"
+      ],
+      "sourcePageUrl": "https://x.com/AleksPhoenix/status/2090874111903891822/photo/3",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HQRGw5eWMAABnDC?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2000,
+        "height": 3000
+      },
+      "sourceSizeBytes": 3557511,
+      "sourceSha256": "59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1831541566.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1831541566.jpg",
+      "originalR2Key": "cineprint/raindrop/1831541566.jpg",
+      "optimizedR2Key": "cineprint/optimized/1831541566.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1831541566.jpg",
+        "exists": true,
+        "sizeBytes": 3557511,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1831541566.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (3557511 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "artwork-1831544424",
+      "notionPageId": "3d3890a5-f3e2-8146-9b89-cc82009408aa",
+      "notionTitle": "Disclosure Day",
+      "notionDerivedId": "artwork-1831544424",
+      "identityReconciled": true,
+      "raindropId": "1831544424",
+      "raindropCollectionId": 73692175,
+      "raindropBookmarkTitle": "HKndeNWgAAwnYq",
+      "raindropBookmarkTags": [
+        "artist:Rola Rafal",
+        "movie:Disclosure Day|2026"
+      ],
+      "sourcePageUrl": "https://x.com/RolaRafal/status/2065425770525106416/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HKndeN3WgAAwnYq?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1010,
+        "height": 1350
+      },
+      "sourceSizeBytes": 383956,
+      "sourceSha256": "9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1831544424.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1831544424.jpg",
+      "originalR2Key": "cineprint/raindrop/1831544424.jpg",
+      "optimizedR2Key": "cineprint/optimized/1831544424.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1831544424.jpg",
+        "exists": true,
+        "sizeBytes": 383956,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/1831544424.webp",
+        "exists": false,
+        "sizeBytes": null,
+        "mimeType": null
+      },
+      "optimizedAction": "regenerate",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "firestore_raindrop_id",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Source size and MIME match the existing Blob original exactly (383956 bytes, image/jpeg). Optimized Blob object is missing; regenerate from the source."
+    },
+    {
+      "cineprintPosterId": "backrooms-1",
+      "notionPageId": "38d890a5-f3e2-8002-bd6d-d95cf0f42567",
+      "notionTitle": "Backrooms",
+      "notionDerivedId": "backrooms-1",
+      "identityReconciled": true,
+      "raindropId": "1779301125",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "FF92A463-D66D-4C56-8242-5A2B3EB9E7BA.png",
+      "raindropBookmarkTags": [
+        "Rola Rafal",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/posterescape/status/2067351362547884136?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1779301125/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 674,
+        "height": 900
+      },
+      "sourceSizeBytes": 509343,
+      "sourceSha256": "14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1779301125.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1779301125.png",
+      "originalR2Key": "cineprint/raindrop/1779301125.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/backrooms-1.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1779301125.png",
+        "exists": true,
+        "sizeBytes": 509343,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/backrooms-1.webp",
+        "exists": true,
+        "sizeBytes": 29406,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (509343 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/backrooms-1.webp."
+    },
+    {
+      "cineprintPosterId": "backrooms-2",
+      "notionPageId": "38d890a5-f3e2-8002-bd6d-d95cf0f42567",
+      "notionTitle": "Backrooms",
+      "notionDerivedId": "backrooms-2",
+      "identityReconciled": true,
+      "raindropId": "1779304223",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "277B4C73-E6E3-4898-BDDE-AEB57D0B339B.png",
+      "raindropBookmarkTags": [
+        "Agustin R Michael",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/posterescape/status/2067351352217412056?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1779304223/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1701,
+        "height": 2551
+      },
+      "sourceSizeBytes": 8293392,
+      "sourceSha256": "51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1779304223.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1779304223.png",
+      "originalR2Key": "cineprint/raindrop/1779304223.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/backrooms-2.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1779304223.png",
+        "exists": true,
+        "sizeBytes": 8293392,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/backrooms-2.webp",
+        "exists": true,
+        "sizeBytes": 80800,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (8293392 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/backrooms-2.webp."
+    },
+    {
+      "cineprintPosterId": "backrooms-3",
+      "notionPageId": "38d890a5-f3e2-8002-bd6d-d95cf0f42567",
+      "notionTitle": "Backrooms",
+      "notionDerivedId": "backrooms-3",
+      "identityReconciled": true,
+      "raindropId": "1786274036",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "ED5F2868-E940-4FFA-834E-1AD08C937DE5.png",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Alessandro Montalto"
+      ],
+      "sourcePageUrl": "https://x.com/noctrnlayouts/status/2074970175980343478?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1786274036/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1383,
+        "height": 2048
+      },
+      "sourceSizeBytes": 6202243,
+      "sourceSha256": "81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1786274036.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1786274036.png",
+      "originalR2Key": "cineprint/raindrop/1786274036.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/backrooms-3.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1786274036.png",
+        "exists": true,
+        "sizeBytes": 6202243,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/backrooms-3.webp",
+        "exists": true,
+        "sizeBytes": 205870,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (6202243 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/backrooms-3.webp."
+    },
+    {
+      "cineprintPosterId": "black-widow",
+      "notionPageId": "38c890a5-f3e2-801d-bd27-d60abefe85fe",
+      "notionTitle": "Black Widow",
+      "notionDerivedId": "black-widow",
+      "identityReconciled": true,
+      "raindropId": "1535263039",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "140D09D3-5E1E-4AE3-8D27-B20CB80668E7.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1535263039/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1200,
+        "height": 1500
+      },
+      "sourceSizeBytes": 1822693,
+      "sourceSha256": "839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1535263039.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1535263039.png",
+      "originalR2Key": "cineprint/raindrop/1535263039.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/black-widow.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1535263039.png",
+        "exists": true,
+        "sizeBytes": 1822693,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/black-widow.webp",
+        "exists": true,
+        "sizeBytes": 74454,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (1822693 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/black-widow.webp."
+    },
+    {
+      "cineprintPosterId": "bugonia",
+      "notionPageId": "3ab890a5-f3e2-80cc-a499-f1d4aa68ab07",
+      "notionTitle": "Bugonia",
+      "notionDerivedId": "bugonia",
+      "identityReconciled": true,
+      "raindropId": "1791459718",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GKljIYXEAAnsdV",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Lydia Maltby"
+      ],
+      "sourcePageUrl": "https://x.com/LydiaMaltby/status/1986832411942936768/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G5KljIYXEAAnsdV?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1359,
+        "height": 2048
+      },
+      "sourceSizeBytes": 471241,
+      "sourceSha256": "cc731c31edc3c379895c7bbc095fb48e0cfc81703a450ac34dc773bec3b7c58f",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/bugonia.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/bugonia.jpg",
+      "originalR2Key": "cineprint/external/bugonia.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/bugonia.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/bugonia.jpg",
+        "exists": true,
+        "sizeBytes": 471241,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/bugonia.webp",
+        "exists": true,
+        "sizeBytes": 85200,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (471241 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/bugonia.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "cure-1997",
+      "notionPageId": "38c890a5-f3e2-80e0-a388-e53e73adb3e9",
+      "notionTitle": "Cure",
+      "notionDerivedId": "cure-1997",
+      "identityReconciled": true,
+      "raindropId": "1520934248",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "https://pbs.twimg.com/media/G9XDSlkXcAAs-Ps?format=jpg&name=4096x4096",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9XDSlkXcAAs-Ps?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1701,
+        "height": 2551
+      },
+      "sourceSizeBytes": 2732638,
+      "sourceSha256": "36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/cure-1997.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/cure-1997.jpg",
+      "originalR2Key": "cineprint/external/cure-1997.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/cure-1997.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/cure-1997.jpg",
+        "exists": true,
+        "sizeBytes": 2732638,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/cure-1997.webp",
+        "exists": true,
+        "sizeBytes": 12280,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (2732638 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/cure-1997.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "dune-part-one",
+      "notionPageId": "3ab890a5-f3e2-800f-a747-d3a19a9d4500",
+      "notionTitle": "Dune: Part One",
+      "notionDerivedId": "dune-part-one",
+      "identityReconciled": true,
+      "raindropId": "1790103802",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "1AF8574F-6631-418C-B27B-3D102C131371.png",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Joey Lee"
+      ],
+      "sourcePageUrl": "https://x.com/jdebbiel/status/2076810595253227616?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1790103802/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 2731,
+        "height": 4096
+      },
+      "sourceSizeBytes": 17735235,
+      "sourceSha256": "53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1790103802.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1790103802.png",
+      "originalR2Key": "cineprint/raindrop/1790103802.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/dune-part-one.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1790103802.png",
+        "exists": true,
+        "sizeBytes": 17735235,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/dune-part-one.webp",
+        "exists": true,
+        "sizeBytes": 161542,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (17735235 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/dune-part-one.webp."
+    },
+    {
+      "cineprintPosterId": "everything-everywhere-all-at-once",
+      "notionPageId": "38c890a5-f3e2-8080-9b73-f47d15f91de6",
+      "notionTitle": "Everything Everywhere All at once",
+      "notionDerivedId": "everything-everywhere-all-at-once",
+      "identityReconciled": true,
+      "raindropId": "1520929331",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GYYIEsWcAAWIp",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9YYIEsWcAAWIp4?format=jpg&name=medium",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 829,
+        "height": 1200
+      },
+      "sourceSizeBytes": 363976,
+      "sourceSha256": "92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/everything-everywhere-all-at-once.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/everything-everywhere-all-at-once.jpg",
+      "originalR2Key": "cineprint/external/everything-everywhere-all-at-once.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/everything-everywhere-all-at-once.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/everything-everywhere-all-at-once.jpg",
+        "exists": true,
+        "sizeBytes": 363976,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/everything-everywhere-all-at-once.webp",
+        "exists": true,
+        "sizeBytes": 258098,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (363976 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/everything-everywhere-all-at-once.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "frankenstein-2025",
+      "notionPageId": "38c890a5-f3e2-809b-b737-f65cc8797063",
+      "notionTitle": "Frankenstein",
+      "notionDerivedId": "frankenstein-2025",
+      "identityReconciled": true,
+      "raindropId": "1520929629",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "https://pbs.twimg.com/media/G9YYIEmW4AAUlXE?format=jpg&name=medium",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9YYIEmW4AAUlXE?format=jpg&name=medium",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 825,
+        "height": 1199
+      },
+      "sourceSizeBytes": 286410,
+      "sourceSha256": "78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/frankenstein-2025.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/frankenstein-2025.jpg",
+      "originalR2Key": "cineprint/external/frankenstein-2025.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/frankenstein-2025.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/frankenstein-2025.jpg",
+        "exists": true,
+        "sizeBytes": 286410,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/frankenstein-2025.webp",
+        "exists": true,
+        "sizeBytes": 199190,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (286410 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/frankenstein-2025.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "friday-the-13th-2009",
+      "notionPageId": "393890a5-f3e2-80d7-b7cf-f4966e1ad748",
+      "notionTitle": "Friday The 13th",
+      "notionDerivedId": "friday-the-13th-2009",
+      "identityReconciled": true,
+      "raindropId": "1779300010",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "BA1131A8-9914-4687-82B7-204073609F4D.png",
+      "raindropBookmarkTags": [
+        "Huanartposters",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/posterescape/status/2070190785987829946?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1779300010/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1280,
+        "height": 1898
+      },
+      "sourceSizeBytes": 1955235,
+      "sourceSha256": "385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1779300010.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1779300010.png",
+      "originalR2Key": "cineprint/raindrop/1779300010.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/friday-the-13th-2009.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1779300010.png",
+        "exists": true,
+        "sizeBytes": 1955235,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/friday-the-13th-2009.webp",
+        "exists": true,
+        "sizeBytes": 30696,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (1955235 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/friday-the-13th-2009.webp."
+    },
+    {
+      "cineprintPosterId": "furiosa-a-mad-max-saga",
+      "notionPageId": "38c890a5-f3e2-8006-82af-d1576b61649d",
+      "notionTitle": "Furiosa: A Mad Max Saga",
+      "notionDerivedId": "furiosa-a-mad-max-saga",
+      "identityReconciled": true,
+      "raindropId": "1530975794",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "96DBCCD5-6649-41FC-A9C2-A547BEADED1D.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1530975794/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 776,
+        "height": 1199
+      },
+      "sourceSizeBytes": 2246819,
+      "sourceSha256": "ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1530975794.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1530975794.png",
+      "originalR2Key": "cineprint/raindrop/1530975794.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/furiosa-a-mad-max-saga.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1530975794.png",
+        "exists": true,
+        "sizeBytes": 2246819,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/furiosa-a-mad-max-saga.webp",
+        "exists": true,
+        "sizeBytes": 382590,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (2246819 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/furiosa-a-mad-max-saga.webp."
+    },
+    {
+      "cineprintPosterId": "hamnet",
+      "notionPageId": "39b890a5-f3e2-809f-b8f1-d80c21478f1a",
+      "notionTitle": "Hamnet",
+      "notionDerivedId": "hamnet",
+      "identityReconciled": true,
+      "raindropId": "1786287206",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "9083530A-E6EB-4DE1-A59B-077E639D9BDB.png",
+      "raindropBookmarkTags": [
+        "Alessandro Montalto",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/noctrnlayouts/status/2074975078891044916?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1786287206/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1366,
+        "height": 2048
+      },
+      "sourceSizeBytes": 4958665,
+      "sourceSha256": "b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1786287206.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1786287206.png",
+      "originalR2Key": "cineprint/raindrop/1786287206.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/hamnet.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1786287206.png",
+        "exists": true,
+        "sizeBytes": 4958665,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/hamnet.webp",
+        "exists": true,
+        "sizeBytes": 110028,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (4958665 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/hamnet.webp."
+    },
+    {
+      "cineprintPosterId": "heat-1995",
+      "notionPageId": "38c890a5-f3e2-806a-9372-c0604a24154f",
+      "notionTitle": "Heat",
+      "notionDerivedId": "heat-1995",
+      "identityReconciled": true,
+      "raindropId": "1531827396",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "435E71EF-74CF-416F-A138-E0CDB3BB34F9.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1531827396/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 961,
+        "height": 1200
+      },
+      "sourceSizeBytes": 1492532,
+      "sourceSha256": "a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1531827396.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1531827396.png",
+      "originalR2Key": "cineprint/raindrop/1531827396.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/heat-1995.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1531827396.png",
+        "exists": true,
+        "sizeBytes": 1492532,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/heat-1995.webp",
+        "exists": true,
+        "sizeBytes": 187252,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (1492532 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/heat-1995.webp."
+    },
+    {
+      "cineprintPosterId": "her",
+      "notionPageId": "3ab890a5-f3e2-8007-a5e1-d3d5666e1645",
+      "notionTitle": "Her",
+      "notionDerivedId": "her",
+      "identityReconciled": true,
+      "raindropId": "1791455601",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GevokpWAANIUx",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Lydia Maltby"
+      ],
+      "sourcePageUrl": "https://x.com/LydiaMaltby/status/1867842197363863719/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/Gevok0pW4AANIUx?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1326,
+        "height": 2048
+      },
+      "sourceSizeBytes": 205457,
+      "sourceSha256": "bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/her.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/her.jpg",
+      "originalR2Key": "cineprint/external/her.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/her.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/her.jpg",
+        "exists": true,
+        "sizeBytes": 205457,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/her.webp",
+        "exists": true,
+        "sizeBytes": 34030,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (205457 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/her.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "kill-bill-vol-1-1",
+      "notionPageId": "38c890a5-f3e2-80b2-a595-ccb0b76f4743",
+      "notionTitle": "Kill Bill",
+      "notionDerivedId": "kill-bill-vol-1-1",
+      "identityReconciled": true,
+      "raindropId": "1606171492",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "8C186B4D-AE2C-4A25-B064-F2F39CC5D2DC.png",
+      "raindropBookmarkTags": [],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1606171492/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1080,
+        "height": 1350
+      },
+      "sourceSizeBytes": 353941,
+      "sourceSha256": "adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1606171492.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1606171492.png",
+      "originalR2Key": "cineprint/raindrop/1606171492.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/kill-bill-vol-1-1.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1606171492.png",
+        "exists": true,
+        "sizeBytes": 353941,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/kill-bill-vol-1-1.webp",
+        "exists": true,
+        "sizeBytes": 29116,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (353941 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/kill-bill-vol-1-1.webp."
+    },
+    {
+      "cineprintPosterId": "kill-bill-vol-1-2",
+      "notionPageId": "38c890a5-f3e2-80b2-a595-ccb0b76f4743",
+      "notionTitle": "Kill Bill",
+      "notionDerivedId": "kill-bill-vol-1-2",
+      "identityReconciled": true,
+      "raindropId": "1606171578",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "FCC97038-1F7C-43AF-8E68-697CF46A1774.png",
+      "raindropBookmarkTags": [],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1606171578/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1365,
+        "height": 2048
+      },
+      "sourceSizeBytes": 4758298,
+      "sourceSha256": "57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1606171578.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1606171578.png",
+      "originalR2Key": "cineprint/raindrop/1606171578.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/kill-bill-vol-1-2.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1606171578.png",
+        "exists": true,
+        "sizeBytes": 4758298,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/kill-bill-vol-1-2.webp",
+        "exists": true,
+        "sizeBytes": 99282,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (4758298 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/kill-bill-vol-1-2.webp."
+    },
+    {
+      "cineprintPosterId": "lady-vengeance",
+      "notionPageId": "3ab890a5-f3e2-80f7-aab4-dfa833118076",
+      "notionTitle": "Sympathy for Lady Vengeance",
+      "notionDerivedId": "lady-vengeance",
+      "identityReconciled": true,
+      "raindropId": "1791462354",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "HNOGgGYXoAAhJSM",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Clement Guitteau"
+      ],
+      "sourcePageUrl": "https://x.com/ClemsGraphics/status/2077152385588175232/photo/2",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HNOGgGYXoAAhJSM?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1553,
+        "height": 2300
+      },
+      "sourceSizeBytes": 441591,
+      "sourceSha256": "34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/lady-vengeance.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/lady-vengeance.jpg",
+      "originalR2Key": "cineprint/external/lady-vengeance.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/lady-vengeance.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/lady-vengeance.jpg",
+        "exists": true,
+        "sizeBytes": 441591,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/lady-vengeance.webp",
+        "exists": true,
+        "sizeBytes": 62784,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (441591 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/lady-vengeance.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "marty-supreme",
+      "notionPageId": "393890a5-f3e2-80ed-adac-cdc5e4ee1da7",
+      "notionTitle": "Marty Supreme",
+      "notionDerivedId": "marty-supreme",
+      "identityReconciled": true,
+      "raindropId": "1779298270",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "D0C08823-1CA4-4980-B589-B133F3E7817A.png",
+      "raindropBookmarkTags": [
+        "Michael Sapienza Designs",
+        "CinePrint"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1779298270/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1140,
+        "height": 1762
+      },
+      "sourceSizeBytes": 3907990,
+      "sourceSha256": "145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1779298270.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1779298270.png",
+      "originalR2Key": "cineprint/raindrop/1779298270.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/marty-supreme.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1779298270.png",
+        "exists": true,
+        "sizeBytes": 3907990,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/marty-supreme.webp",
+        "exists": true,
+        "sizeBytes": 224784,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (3907990 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/marty-supreme.webp."
+    },
+    {
+      "cineprintPosterId": "metropolis-1927",
+      "notionPageId": "38c890a5-f3e2-8071-b896-d3203ff94674",
+      "notionTitle": "Metropolis",
+      "notionDerivedId": "metropolis-1927",
+      "identityReconciled": true,
+      "raindropId": "1528364793",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "A38C74A0-EF2B-49F9-B11E-2E76CBE995F5.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1528364793/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1375,
+        "height": 2048
+      },
+      "sourceSizeBytes": 6255368,
+      "sourceSha256": "a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1528364793.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1528364793.png",
+      "originalR2Key": "cineprint/raindrop/1528364793.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/metropolis-1927.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1528364793.png",
+        "exists": true,
+        "sizeBytes": 6255368,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/metropolis-1927.webp",
+        "exists": true,
+        "sizeBytes": 230392,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (6255368 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/metropolis-1927.webp."
+    },
+    {
+      "cineprintPosterId": "midsommar",
+      "notionPageId": "38c890a5-f3e2-80ae-aae0-f6a19cf1535a",
+      "notionTitle": "Midsommar",
+      "notionDerivedId": "midsommar",
+      "identityReconciled": true,
+      "raindropId": "1520939308",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GSSnJlXAAENZ",
+      "raindropBookmarkTags": [],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9SSnJlXAAENZ37?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1061,
+        "height": 1500
+      },
+      "sourceSizeBytes": 592968,
+      "sourceSha256": "0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/midsommar.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/midsommar.jpg",
+      "originalR2Key": "cineprint/external/midsommar.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/midsommar.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/midsommar.jpg",
+        "exists": true,
+        "sizeBytes": 592968,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/midsommar.webp",
+        "exists": true,
+        "sizeBytes": 276832,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (592968 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/midsommar.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "mighty-morphin-power-rangers-the-movie",
+      "notionPageId": "38c890a5-f3e2-80c2-b18c-d0ecd9ecb10e",
+      "notionTitle": "Mighty Morphin Power Rangers: The Movie",
+      "notionDerivedId": "mighty-morphin-power-rangers-the-movie",
+      "identityReconciled": true,
+      "raindropId": "1528227517",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "AA8A703E-1CB6-4BAB-875F-02742757E56A.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1528227517/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1290,
+        "height": 1906
+      },
+      "sourceSizeBytes": 4362197,
+      "sourceSha256": "73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1528227517.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1528227517.png",
+      "originalR2Key": "cineprint/raindrop/1528227517.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/mighty-morphin-power-rangers-the-movie.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1528227517.png",
+        "exists": true,
+        "sizeBytes": 4362197,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/mighty-morphin-power-rangers-the-movie.webp",
+        "exists": true,
+        "sizeBytes": 105218,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (4362197 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/mighty-morphin-power-rangers-the-movie.webp."
+    },
+    {
+      "cineprintPosterId": "mother-2009",
+      "notionPageId": "38c890a5-f3e2-80a5-8df8-e2eaa3caaeab",
+      "notionTitle": "Mother",
+      "notionDerivedId": "mother-2009",
+      "identityReconciled": true,
+      "raindropId": "1520934630",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GXDSlkXAAbQV",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9XDSlkX0AAbQ9V?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1701,
+        "height": 2551
+      },
+      "sourceSizeBytes": 1987433,
+      "sourceSha256": "2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/mother-2009.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/mother-2009.jpg",
+      "originalR2Key": "cineprint/external/mother-2009.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/mother-2009.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/mother-2009.jpg",
+        "exists": true,
+        "sizeBytes": 1987433,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/mother-2009.webp",
+        "exists": true,
+        "sizeBytes": 216670,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (1987433 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/mother-2009.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "mother-2017",
+      "notionPageId": "38c890a5-f3e2-80a0-8f6e-c9826ff69016",
+      "notionTitle": "Mother!",
+      "notionDerivedId": "mother-2017",
+      "identityReconciled": true,
+      "raindropId": "1520929882",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GYYIEvWYAABfcq",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9YYIEvWYAABfcq?format=jpg&name=medium",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 802,
+        "height": 1200
+      },
+      "sourceSizeBytes": 212742,
+      "sourceSha256": "078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/mother-2017.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/mother-2017.jpg",
+      "originalR2Key": "cineprint/external/mother-2017.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/mother-2017.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/mother-2017.jpg",
+        "exists": true,
+        "sizeBytes": 212742,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/mother-2017.webp",
+        "exists": true,
+        "sizeBytes": 151370,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (212742 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/mother-2017.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "mullholland-drive",
+      "notionPageId": "3ab890a5-f3e2-80bb-b3c3-e169486f6c31",
+      "notionTitle": "Mulholland Drive",
+      "notionDerivedId": "mullholland-drive",
+      "identityReconciled": true,
+      "raindropId": "1791456228",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GussfKjWsAAdUm",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Lydia Maltby"
+      ],
+      "sourcePageUrl": "https://x.com/LydiaMaltby/status/1939692987388232156/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/GussfKjWsAAdUm5?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1766,
+        "height": 2048
+      },
+      "sourceSizeBytes": 350797,
+      "sourceSha256": "2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/mullholland-drive.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/mullholland-drive.jpg",
+      "originalR2Key": "cineprint/external/mullholland-drive.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/mullholland-drive.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/mullholland-drive.jpg",
+        "exists": true,
+        "sizeBytes": 350797,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/mullholland-drive.webp",
+        "exists": true,
+        "sizeBytes": 30188,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (350797 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/mullholland-drive.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "no-other-choice-2025-1",
+      "notionPageId": "38c890a5-f3e2-8033-86d0-f64c12255e6b",
+      "notionTitle": "No Other Choice",
+      "notionDerivedId": "no-other-choice-2025-1",
+      "identityReconciled": true,
+      "raindropId": "1563985378",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "0F797B84-F563-4D9F-B9E6-64737EFF4184.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1563985378/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 840,
+        "height": 1200
+      },
+      "sourceSizeBytes": 2057955,
+      "sourceSha256": "5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1563985378.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1563985378.png",
+      "originalR2Key": "cineprint/raindrop/1563985378.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/no-other-choice-2025-1.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1563985378.png",
+        "exists": true,
+        "sizeBytes": 2057955,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/no-other-choice-2025-1.webp",
+        "exists": true,
+        "sizeBytes": 220742,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (2057955 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/no-other-choice-2025-1.webp."
+    },
+    {
+      "cineprintPosterId": "no-other-choice-2025-2",
+      "notionPageId": "38c890a5-f3e2-8033-86d0-f64c12255e6b",
+      "notionTitle": "No Other Choice",
+      "notionDerivedId": "no-other-choice-2025-2",
+      "identityReconciled": true,
+      "raindropId": "1563985321",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "B0EC9CEE-BABC-4F36-A95B-BA8510D7D0BD.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1563985321/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 840,
+        "height": 1200
+      },
+      "sourceSizeBytes": 2012942,
+      "sourceSha256": "da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1563985321.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1563985321.png",
+      "originalR2Key": "cineprint/raindrop/1563985321.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/no-other-choice-2025-2.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1563985321.png",
+        "exists": true,
+        "sizeBytes": 2012942,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/no-other-choice-2025-2.webp",
+        "exists": true,
+        "sizeBytes": 131396,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (2012942 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/no-other-choice-2025-2.webp."
+    },
+    {
+      "cineprintPosterId": "nope",
+      "notionPageId": "39b890a5-f3e2-805b-899b-f7d71c5fe43d",
+      "notionTitle": "Nope",
+      "notionDerivedId": "nope",
+      "identityReconciled": true,
+      "raindropId": "1786278781",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "DEFBA411-CB4D-4C2F-BB28-BB47B1A549EB.png",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Agustin R Michael"
+      ],
+      "sourcePageUrl": "https://x.com/agustinrmichel/status/2074617916671111193?s=46",
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1786278781/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1365,
+        "height": 2048
+      },
+      "sourceSizeBytes": 3901780,
+      "sourceSha256": "1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1786278781.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1786278781.png",
+      "originalR2Key": "cineprint/raindrop/1786278781.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/nope.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1786278781.png",
+        "exists": true,
+        "sizeBytes": 3901780,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/nope.webp",
+        "exists": true,
+        "sizeBytes": 232048,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (3901780 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/nope.webp."
+    },
+    {
+      "cineprintPosterId": "nosferatu-2024",
+      "notionPageId": "38c890a5-f3e2-8090-85ee-dc2d236847b0",
+      "notionTitle": "Nosferatu",
+      "notionDerivedId": "nosferatu-2024",
+      "identityReconciled": true,
+      "raindropId": "1530975868",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "C4324F33-ECDD-42A4-9B7C-D0E43A11CA1F.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1530975868/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1179,
+        "height": 1814
+      },
+      "sourceSizeBytes": 2998871,
+      "sourceSha256": "dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1530975868.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1530975868.png",
+      "originalR2Key": "cineprint/raindrop/1530975868.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/nosferatu-2024.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1530975868.png",
+        "exists": true,
+        "sizeBytes": 2998871,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/nosferatu-2024.webp",
+        "exists": true,
+        "sizeBytes": 237636,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (2998871 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/nosferatu-2024.webp."
+    },
+    {
+      "cineprintPosterId": "obsession-2025",
+      "notionPageId": "393890a5-f3e2-8007-9657-ddbc5c26cdd4",
+      "notionTitle": "Obsession",
+      "notionDerivedId": "obsession-2025",
+      "identityReconciled": true,
+      "raindropId": "1780816176",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "HMAZo RXkAAHXY",
+      "raindropBookmarkTags": [
+        "Michael Sapienza Designs",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/PosterEscape/status/2072364357577847210",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HMAZo-RXkAAHXY9?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1140,
+        "height": 1762
+      },
+      "sourceSizeBytes": 519717,
+      "sourceSha256": "ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/obsession-2025.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/obsession-2025.jpg",
+      "originalR2Key": "cineprint/external/obsession-2025.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/obsession-2025.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/obsession-2025.jpg",
+        "exists": true,
+        "sizeBytes": 519717,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/obsession-2025.webp",
+        "exists": true,
+        "sizeBytes": 324064,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (519717 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/obsession-2025.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "one-battle-after-another",
+      "notionPageId": "38c890a5-f3e2-8098-82f2-c0f56251413f",
+      "notionTitle": "One Battle After Another",
+      "notionDerivedId": "one-battle-after-another",
+      "identityReconciled": true,
+      "raindropId": "1535266643",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "7BC810C3-D72A-4F4E-855C-A181487EB744.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1535266643/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 959,
+        "height": 1421
+      },
+      "sourceSizeBytes": 3388637,
+      "sourceSha256": "dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1535266643.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1535266643.png",
+      "originalR2Key": "cineprint/raindrop/1535266643.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/one-battle-after-another.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1535266643.png",
+        "exists": true,
+        "sizeBytes": 3388637,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/one-battle-after-another.webp",
+        "exists": true,
+        "sizeBytes": 199842,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (3388637 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/one-battle-after-another.webp."
+    },
+    {
+      "cineprintPosterId": "parasite",
+      "notionPageId": "38c890a5-f3e2-807e-a0e8-fc57fc02072e",
+      "notionTitle": "Parasite",
+      "notionDerivedId": "parasite",
+      "identityReconciled": true,
+      "raindropId": "1520934785",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GXDSljXcAAGMil",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9XDSljXcAAGMil?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2250,
+        "height": 3375
+      },
+      "sourceSizeBytes": 1425328,
+      "sourceSha256": "659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/parasite.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/parasite.jpg",
+      "originalR2Key": "cineprint/external/parasite.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/parasite.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/parasite.jpg",
+        "exists": true,
+        "sizeBytes": 1425328,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/parasite.webp",
+        "exists": true,
+        "sizeBytes": 119166,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (1425328 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/parasite.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "peacemaker",
+      "notionPageId": "393890a5-f3e2-8073-b8f2-c23b8bdaf1a7",
+      "notionTitle": "Peacemaker",
+      "notionDerivedId": "peacemaker",
+      "identityReconciled": true,
+      "raindropId": "1779292357",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "F4DAC3EB-E678-4469-9F84-92DB34ED842F.png",
+      "raindropBookmarkTags": [
+        "Michael Sapienza Designs",
+        "CinePrint"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1779292357/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 792,
+        "height": 1224
+      },
+      "sourceSizeBytes": 2314875,
+      "sourceSha256": "7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1779292357.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1779292357.png",
+      "originalR2Key": "cineprint/raindrop/1779292357.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/peacemaker.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1779292357.png",
+        "exists": true,
+        "sizeBytes": 2314875,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/peacemaker.webp",
+        "exists": true,
+        "sizeBytes": 270108,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (2314875 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/peacemaker.webp."
+    },
+    {
+      "cineprintPosterId": "project-hail-mary",
+      "notionPageId": "3ab890a5-f3e2-804d-93e4-f76f52b8246c",
+      "notionTitle": "Project Hail Mary",
+      "notionDerivedId": "project-hail-mary",
+      "identityReconciled": true,
+      "raindropId": "1791462993",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "HNNyDUyaIAAjgxp",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Azmat"
+      ],
+      "sourcePageUrl": "https://x.com/Visualsofazmat1/status/2077129285660483640/photo/2",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HNNyDUyaIAAjgxp?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1428,
+        "height": 2048
+      },
+      "sourceSizeBytes": 564728,
+      "sourceSha256": "44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/project-hail-mary.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/project-hail-mary.jpg",
+      "originalR2Key": "cineprint/external/project-hail-mary.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/project-hail-mary.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/project-hail-mary.jpg",
+        "exists": true,
+        "sizeBytes": 564728,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/project-hail-mary.webp",
+        "exists": true,
+        "sizeBytes": 138944,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (564728 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/project-hail-mary.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "rogue-one-a-star-wars-story",
+      "notionPageId": "38c890a5-f3e2-807f-bc97-d10c5d9fd04a",
+      "notionTitle": "Rogue One",
+      "notionDerivedId": "rogue-one-a-star-wars-story",
+      "identityReconciled": true,
+      "raindropId": "1530975832",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "6086322A-848B-40CA-BADF-D44C2FD69E88.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1530975832/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 776,
+        "height": 1199
+      },
+      "sourceSizeBytes": 932752,
+      "sourceSha256": "8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1530975832.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1530975832.png",
+      "originalR2Key": "cineprint/raindrop/1530975832.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/rogue-one-a-star-wars-story.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1530975832.png",
+        "exists": true,
+        "sizeBytes": 932752,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/rogue-one-a-star-wars-story.webp",
+        "exists": true,
+        "sizeBytes": 123126,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (932752 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/rogue-one-a-star-wars-story.webp."
+    },
+    {
+      "cineprintPosterId": "stranger-things-1",
+      "notionPageId": "38c890a5-f3e2-80fa-bf29-e86e56cd77a2",
+      "notionTitle": "Stranger Things",
+      "notionDerivedId": "stranger-things-1",
+      "identityReconciled": true,
+      "raindropId": "1532498759",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "84D3940D-96F6-4A47-8CA7-4BF7DE6343F9.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1532498759/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1081,
+        "height": 1350
+      },
+      "sourceSizeBytes": 3773987,
+      "sourceSha256": "a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1532498759.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1532498759.png",
+      "originalR2Key": "cineprint/raindrop/1532498759.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/stranger-things-1.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1532498759.png",
+        "exists": true,
+        "sizeBytes": 3773987,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/stranger-things-1.webp",
+        "exists": true,
+        "sizeBytes": 261826,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (3773987 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/stranger-things-1.webp."
+    },
+    {
+      "cineprintPosterId": "stranger-things-2",
+      "notionPageId": "38c890a5-f3e2-80fa-bf29-e86e56cd77a2",
+      "notionTitle": "Stranger Things",
+      "notionDerivedId": "stranger-things-2",
+      "identityReconciled": true,
+      "raindropId": "1521167165",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "GgZVdWEAAOjjU",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9gZV6dWEAAOjjU?format=jpg&name=4096x4096",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 2473,
+        "height": 3297
+      },
+      "sourceSizeBytes": 2728405,
+      "sourceSha256": "303277e83081b273e0ea271bccba7d3a9bed17a8a9227903cec51ede078ee25b",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/stranger-things-2.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/stranger-things-2.jpg",
+      "originalR2Key": "cineprint/external/stranger-things-2.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/stranger-things-2.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/stranger-things-2.jpg",
+        "exists": true,
+        "sizeBytes": 2728405,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/stranger-things-2.webp",
+        "exists": true,
+        "sizeBytes": 202004,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs_multi_external",
+      "identityConfidence": "medium",
+      "migrationStatus": "READY_WITH_REVIEW",
+      "verificationNotes": "Multi-image page with an external image; matched via page-level Poster Image URL (pbs) and external Blob key. Bookmark movie/show tag does not confirm poster title \"Stranger Things\". Source size and MIME match the existing Blob original exactly (2728405 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/stranger-things-2.webp. Optimized external object exists but the current resolver does not use it. Multi-image external match raised to medium confidence because the source size and MIME match the existing Blob original exactly."
+    },
+    {
+      "cineprintPosterId": "stranger-things-3",
+      "notionPageId": "38c890a5-f3e2-80fa-bf29-e86e56cd77a2",
+      "notionTitle": "Stranger Things",
+      "notionDerivedId": "stranger-things-3",
+      "identityReconciled": true,
+      "raindropId": "1528195848",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "C168AB30-F792-4899-BF24-DBF9682BF112.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1528195848/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1024,
+        "height": 1536
+      },
+      "sourceSizeBytes": 2726483,
+      "sourceSha256": "bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1528195848.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1528195848.png",
+      "originalR2Key": "cineprint/raindrop/1528195848.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/stranger-things-3.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1528195848.png",
+        "exists": true,
+        "sizeBytes": 2726483,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/stranger-things-3.webp",
+        "exists": true,
+        "sizeBytes": 98102,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (2726483 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/stranger-things-3.webp."
+    },
+    {
+      "cineprintPosterId": "tenet",
+      "notionPageId": "39b890a5-f3e2-801e-be7b-f4c8ad4061a5",
+      "notionTitle": "Tenet",
+      "notionDerivedId": "tenet",
+      "identityReconciled": true,
+      "raindropId": "1786264710",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "HMpe IXMAICVo",
+      "raindropBookmarkTags": [
+        "Eileen Steinbach",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/SG_Posters/status/2074574908256858362",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HMpe3-IXMAIC8Vo?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "sourceSizeBytes": 251508,
+      "sourceSha256": "b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/tenet.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/tenet.jpg",
+      "originalR2Key": "cineprint/external/tenet.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/tenet.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/tenet.jpg",
+        "exists": true,
+        "sizeBytes": 251508,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/tenet.webp",
+        "exists": true,
+        "sizeBytes": 53952,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (251508 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/tenet.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "the-handmaiden",
+      "notionPageId": "38c890a5-f3e2-80bd-8d69-c012fab29cc8",
+      "notionTitle": "The Handmaiden",
+      "notionDerivedId": "the-handmaiden",
+      "identityReconciled": true,
+      "raindropId": "1529611344",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "1FA2A6E3-638C-483A-B099-42F6807F9541.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1529611344/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1175,
+        "height": 1750
+      },
+      "sourceSizeBytes": 4275302,
+      "sourceSha256": "3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1529611344.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1529611344.png",
+      "originalR2Key": "cineprint/raindrop/1529611344.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/the-handmaiden.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1529611344.png",
+        "exists": true,
+        "sizeBytes": 4275302,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/the-handmaiden.webp",
+        "exists": true,
+        "sizeBytes": 261412,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (4275302 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/the-handmaiden.webp."
+    },
+    {
+      "cineprintPosterId": "the-killer-2023",
+      "notionPageId": "38c890a5-f3e2-8051-aea1-c49563c91cb0",
+      "notionTitle": "The Killer",
+      "notionDerivedId": "the-killer-2023",
+      "identityReconciled": true,
+      "raindropId": "1535262520",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "A1EFAC31-F17F-445E-8D3C-48F0D4207864.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1535262520/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "sourceSizeBytes": 4040005,
+      "sourceSha256": "a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1535262520.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1535262520.png",
+      "originalR2Key": "cineprint/raindrop/1535262520.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/the-killer-2023.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1535262520.png",
+        "exists": true,
+        "sizeBytes": 4040005,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/the-killer-2023.webp",
+        "exists": true,
+        "sizeBytes": 176836,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (4040005 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/the-killer-2023.webp."
+    },
+    {
+      "cineprintPosterId": "the-mummy-1999",
+      "notionPageId": "393890a5-f3e2-80cb-9f63-d8874ad835aa",
+      "notionTitle": "The Mummy",
+      "notionDerivedId": "the-mummy-1999",
+      "identityReconciled": true,
+      "raindropId": "1780835687",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "HKzgvmBWMAAegz",
+      "raindropBookmarkTags": [
+        "Kevin Bravo",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/thatkevinbravo/status/2066273454752399579/photo/1",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HKzgvmBWMAAegz6?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1374,
+        "height": 2048
+      },
+      "sourceSizeBytes": 492450,
+      "sourceSha256": "2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/the-mummy-1999.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/the-mummy-1999.jpg",
+      "originalR2Key": "cineprint/external/the-mummy-1999.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/the-mummy-1999.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/the-mummy-1999.jpg",
+        "exists": true,
+        "sizeBytes": 492450,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/the-mummy-1999.webp",
+        "exists": true,
+        "sizeBytes": 135946,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (492450 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/the-mummy-1999.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "the-platform",
+      "notionPageId": "38c890a5-f3e2-80b8-ae23-d9ff8182a138",
+      "notionTitle": "The Platform",
+      "notionDerivedId": "the-platform",
+      "identityReconciled": true,
+      "raindropId": "1535263689",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "4961EA60-F15F-4891-B0A5-3F823CC7D4CD.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1535263689/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1200,
+        "height": 1754
+      },
+      "sourceSizeBytes": 2390581,
+      "sourceSha256": "b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1535263689.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1535263689.png",
+      "originalR2Key": "cineprint/raindrop/1535263689.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/the-platform.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1535263689.png",
+        "exists": true,
+        "sizeBytes": 2390581,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/the-platform.webp",
+        "exists": true,
+        "sizeBytes": 31102,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (2390581 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/the-platform.webp."
+    },
+    {
+      "cineprintPosterId": "the-shape-of-water",
+      "notionPageId": "38c890a5-f3e2-802a-b66c-ccbbc3315a9b",
+      "notionTitle": "The Shape of Water",
+      "notionDerivedId": "the-shape-of-water",
+      "identityReconciled": true,
+      "raindropId": "1520929989",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "https://pbs.twimg.com/media/G9YYIEqWMAA4Bde?format=jpg&name=medium",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/G9YYIEqWMAA4Bde?format=jpg&name=medium",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 960,
+        "height": 1200
+      },
+      "sourceSizeBytes": 278150,
+      "sourceSha256": "48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/the-shape-of-water.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/the-shape-of-water.jpg",
+      "originalR2Key": "cineprint/external/the-shape-of-water.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/the-shape-of-water.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/the-shape-of-water.jpg",
+        "exists": true,
+        "sizeBytes": 278150,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/the-shape-of-water.webp",
+        "exists": true,
+        "sizeBytes": 121676,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (278150 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/the-shape-of-water.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "the-substance-1",
+      "notionPageId": "38c890a5-f3e2-804c-a1ee-eb60974fb46e",
+      "notionTitle": "The Substance",
+      "notionDerivedId": "the-substance-1",
+      "identityReconciled": true,
+      "raindropId": "1530975924",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "E7567EC7-39CC-4162-B026-B73B03F64083.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1530975924/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 1179,
+        "height": 1817
+      },
+      "sourceSizeBytes": 3850566,
+      "sourceSha256": "f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1530975924.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1530975924.png",
+      "originalR2Key": "cineprint/raindrop/1530975924.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/the-substance-1.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1530975924.png",
+        "exists": true,
+        "sizeBytes": 3850566,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/the-substance-1.webp",
+        "exists": true,
+        "sizeBytes": 127052,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "blob_path_raindrop_multi",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Multi-image page; matched per-poster via current Blob path. Source size and MIME match the existing Blob original exactly (3850566 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/the-substance-1.webp."
+    },
+    {
+      "cineprintPosterId": "the-substance-2",
+      "notionPageId": "38c890a5-f3e2-804c-a1ee-eb60974fb46e",
+      "notionTitle": "The Substance",
+      "notionDerivedId": "the-substance-2",
+      "identityReconciled": true,
+      "raindropId": "1786264374",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "HMtwlGHXgAAYtL",
+      "raindropBookmarkTags": [
+        "Eileen Steinbach",
+        "CinePrint"
+      ],
+      "sourcePageUrl": "https://x.com/SG_Posters/status/2074875876106281342/photo/2",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HMtwlGHXgAAYt0L?format=jpg&name=medium",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 690,
+        "height": 1024
+      },
+      "sourceSizeBytes": 77278,
+      "sourceSha256": "7235e3b6206fb71c761af2df87540ca3a7735cf7fb0dadadbb62e446cb029d3d",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/the-substance-2.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/the-substance-2.jpg",
+      "originalR2Key": "cineprint/external/the-substance-2.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/the-substance-2.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/the-substance-2.jpg",
+        "exists": true,
+        "sizeBytes": 77278,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/the-substance-2.webp",
+        "exists": true,
+        "sizeBytes": 41044,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs_multi_external",
+      "identityConfidence": "medium",
+      "migrationStatus": "READY_WITH_REVIEW",
+      "verificationNotes": "Multi-image page with an external image; matched via page-level Poster Image URL (pbs) and external Blob key. Bookmark movie/show tag does not confirm poster title \"The Substance\". Source size and MIME match the existing Blob original exactly (77278 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/the-substance-2.webp. Optimized external object exists but the current resolver does not use it. Multi-image external match raised to medium confidence because the source size and MIME match the existing Blob original exactly."
+    },
+    {
+      "cineprintPosterId": "the-way-of-seeing-life",
+      "notionPageId": "3ab890a5-f3e2-8007-b77b-f9b940e6e86f",
+      "notionTitle": "The Way of Seeing Life",
+      "notionDerivedId": "the-way-of-seeing-life",
+      "identityReconciled": true,
+      "raindropId": "1791461362",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "HNOGlxdXIAAIhVk",
+      "raindropBookmarkTags": [
+        "CinePrint",
+        "Clement Guitteau"
+      ],
+      "sourcePageUrl": "https://x.com/ClemsGraphics/status/2077152385588175232/photo/2",
+      "sourceProvider": "pbs-twimg",
+      "sourceImageUrl": "https://pbs.twimg.com/media/HNOGlxdXIAAIhVk?format=jpg&name=large",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/jpeg",
+      "sourceDimensions": {
+        "width": 1080,
+        "height": 1600
+      },
+      "sourceSizeBytes": 334968,
+      "sourceSha256": "440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/the-way-of-seeing-life.jpg",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/external/the-way-of-seeing-life.jpg",
+      "originalR2Key": "cineprint/external/the-way-of-seeing-life.jpg",
+      "optimizedR2Key": "cineprint/optimized/external/the-way-of-seeing-life.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/external/the-way-of-seeing-life.jpg",
+        "exists": true,
+        "sizeBytes": 334968,
+        "mimeType": "image/jpeg"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/external/the-way-of-seeing-life.webp",
+        "exists": true,
+        "sizeBytes": 111166,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": true,
+      "identityMatchMethod": "poster_image_pbs",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (pbs media ID) to Raindrop bookmark link. Source size and MIME match the existing Blob original exactly (334968 bytes, image/jpeg). Optimized Blob object exists at cineprint/optimized/external/the-way-of-seeing-life.webp. Optimized external object exists but the current resolver does not use it."
+    },
+    {
+      "cineprintPosterId": "the-woman-who-ran",
+      "notionPageId": "38c890a5-f3e2-80c9-8234-dac3253f7c56",
+      "notionTitle": "The Woman Who Ran",
+      "notionDerivedId": "the-woman-who-ran",
+      "identityReconciled": true,
+      "raindropId": "1566640397",
+      "raindropCollectionId": 65021430,
+      "raindropBookmarkTitle": "3FFD5202-88FB-4F1C-A031-AC18228A4975.png",
+      "raindropBookmarkTags": [
+        "Poster"
+      ],
+      "sourcePageUrl": null,
+      "sourceProvider": "raindrop-file",
+      "sourceImageUrl": "https://api.raindrop.io/rest/v1/raindrop/1566640397/file",
+      "sourceAvailability": "available",
+      "sourceHttpStatus": 200,
+      "sourceMimeType": "image/png",
+      "sourceDimensions": {
+        "width": 704,
+        "height": 1024
+      },
+      "sourceSizeBytes": 634077,
+      "sourceSha256": "0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d",
+      "sourceMatchesExistingOriginal": true,
+      "sourceExistingOriginalSizeDelta": 0,
+      "currentImageUrl": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1566640397.png",
+      "currentImageProvider": "vercel-blob",
+      "currentImageObjectKey": "cineprint/raindrop/1566640397.png",
+      "originalR2Key": "cineprint/raindrop/1566640397.png",
+      "optimizedR2Key": "cineprint/optimized/legacy/the-woman-who-ran.webp",
+      "existingOriginalObject": {
+        "path": "cineprint/raindrop/1566640397.png",
+        "exists": true,
+        "sizeBytes": 634077,
+        "mimeType": "image/png"
+      },
+      "existingOptimizedObject": {
+        "path": "cineprint/optimized/legacy/the-woman-who-ran.webp",
+        "exists": true,
+        "sizeBytes": 52992,
+        "mimeType": "image/webp"
+      },
+      "optimizedAction": "reuse-existing",
+      "optimizedCurrentlyUnused": false,
+      "identityMatchMethod": "poster_image_raindrop",
+      "identityConfidence": "high",
+      "migrationStatus": "READY_TO_COPY",
+      "verificationNotes": "Matched via Notion Poster Image URL (Raindrop file URL). Source size and MIME match the existing Blob original exactly (634077 bytes, image/png). Optimized Blob object exists at cineprint/optimized/legacy/the-woman-who-ran.webp."
+    }
+  ]
+}

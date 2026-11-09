@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "manifestHash": "6e5a648341f5a4cd4a97c76da25e02441fdc64b2ccc7bd1bce6225972371c11a",
+  "createdAt": "2026-11-08T18:41:43.633Z",
+  "updatedAt": "2026-11-08T18:47:30.014Z",
+  "entries": {
+    "mother-2017": {
+      "posterId": "mother-2017",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:41:50.852Z",
+      "sourceSha256": "078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c",
+      "originalSha256": "078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c",
+      "optimizedSha256": "1aba174aab7167afc0ab359f7e6a1898583c681addf16862a13547d211ba86f8",
+      "originalKey": "cineprint/versions/original/mother-2017/078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c.jpg",
+      "optimizedKey": "cineprint/versions/optimized/mother-2017/1aba174aab7167afc0ab359f7e6a1898583c681addf16862a13547d211ba86f8-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 212742,
+      "optimizedSizeBytes": 151370,
+      "originalDimensions": {
+        "width": 802,
+        "height": 1200
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1197
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:41:50.852Z",
+      "incrementAttempts": true
+    },
+    "mullholland-drive": {
+      "posterId": "mullholland-drive",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:41:56.552Z",
+      "sourceSha256": "2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81",
+      "originalSha256": "2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81",
+      "optimizedSha256": "57a81fb3e6b1b51d6d234d409d484e8f7409d37801cc9141ee0220c4bec06a98",
+      "originalKey": "cineprint/versions/original/mullholland-drive/2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81.jpg",
+      "optimizedKey": "cineprint/versions/optimized/mullholland-drive/57a81fb3e6b1b51d6d234d409d484e8f7409d37801cc9141ee0220c4bec06a98-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 350797,
+      "optimizedSizeBytes": 30188,
+      "originalDimensions": {
+        "width": 1766,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 928
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:41:56.552Z",
+      "incrementAttempts": true
+    },
+    "no-other-choice-2025-1": {
+      "posterId": "no-other-choice-2025-1",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:42:19.810Z",
+      "sourceSha256": "5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643",
+      "originalSha256": "5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643",
+      "optimizedSha256": "412518a5aadbce43074cfe9d2b113ba3cf4da3785b2c1d53ac7a9bbd623fba92",
+      "originalKey": "cineprint/versions/original/no-other-choice-2025-1/5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643.png",
+      "optimizedKey": "cineprint/versions/optimized/no-other-choice-2025-1/412518a5aadbce43074cfe9d2b113ba3cf4da3785b2c1d53ac7a9bbd623fba92-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2057955,
+      "optimizedSizeBytes": 220742,
+      "originalDimensions": {
+        "width": 840,
+        "height": 1200
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1143
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:42:19.810Z",
+      "incrementAttempts": true
+    },
+    "no-other-choice-2025-2": {
+      "posterId": "no-other-choice-2025-2",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:42:35.380Z",
+      "sourceSha256": "da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53",
+      "originalSha256": "da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53",
+      "optimizedSha256": "c292470cb30b63c701f7fae47db4585416c08473c630ff46258652fc5432a794",
+      "originalKey": "cineprint/versions/original/no-other-choice-2025-2/da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53.png",
+      "optimizedKey": "cineprint/versions/optimized/no-other-choice-2025-2/c292470cb30b63c701f7fae47db4585416c08473c630ff46258652fc5432a794-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2012942,
+      "optimizedSizeBytes": 131396,
+      "originalDimensions": {
+        "width": 840,
+        "height": 1200
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1143
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:42:35.380Z",
+      "incrementAttempts": true
+    },
+    "nope": {
+      "posterId": "nope",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:42:58.788Z",
+      "sourceSha256": "1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a",
+      "originalSha256": "1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a",
+      "optimizedSha256": "c78e8dc15a2d5a27cb0dd5a85a14fb5146980c28b3810e2da8a67f7c856f5896",
+      "originalKey": "cineprint/versions/original/nope/1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a.png",
+      "optimizedKey": "cineprint/versions/optimized/nope/c78e8dc15a2d5a27cb0dd5a85a14fb5146980c28b3810e2da8a67f7c856f5896-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3901780,
+      "optimizedSizeBytes": 232048,
+      "originalDimensions": {
+        "width": 1365,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:42:58.788Z",
+      "incrementAttempts": true
+    },
+    "nosferatu-2024": {
+      "posterId": "nosferatu-2024",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:43:28.951Z",
+      "sourceSha256": "dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572",
+      "originalSha256": "dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572",
+      "optimizedSha256": "bc5f8a68b449e57a3673d201285ed2df6e955490a14b3a7974df31d4229291cd",
+      "originalKey": "cineprint/versions/original/nosferatu-2024/dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572.png",
+      "optimizedKey": "cineprint/versions/optimized/nosferatu-2024/bc5f8a68b449e57a3673d201285ed2df6e955490a14b3a7974df31d4229291cd-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2998871,
+      "optimizedSizeBytes": 237636,
+      "originalDimensions": {
+        "width": 1179,
+        "height": 1814
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1231
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:43:28.951Z",
+      "incrementAttempts": true
+    },
+    "obsession-2025": {
+      "posterId": "obsession-2025",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:43:39.620Z",
+      "sourceSha256": "ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da",
+      "originalSha256": "ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da",
+      "optimizedSha256": "5aac4b21622d288810a30fbdfee476bbe5e3d5e21fec832b995d3bfaca817f46",
+      "originalKey": "cineprint/versions/original/obsession-2025/ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da.jpg",
+      "optimizedKey": "cineprint/versions/optimized/obsession-2025/5aac4b21622d288810a30fbdfee476bbe5e3d5e21fec832b995d3bfaca817f46-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 519717,
+      "optimizedSizeBytes": 324064,
+      "originalDimensions": {
+        "width": 1140,
+        "height": 1762
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1236
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:43:39.620Z",
+      "incrementAttempts": true
+    },
+    "one-battle-after-another": {
+      "posterId": "one-battle-after-another",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:44:50.298Z",
+      "sourceSha256": "dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724",
+      "originalSha256": "dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724",
+      "optimizedSha256": "2dc786ee119e915c6538653a31adac49a08d190a3919e3f11e0ee1f9de04b9f2",
+      "originalKey": "cineprint/versions/original/one-battle-after-another/dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724.png",
+      "optimizedKey": "cineprint/versions/optimized/one-battle-after-another/2dc786ee119e915c6538653a31adac49a08d190a3919e3f11e0ee1f9de04b9f2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3388637,
+      "optimizedSizeBytes": 199842,
+      "originalDimensions": {
+        "width": 959,
+        "height": 1421
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:44:50.298Z",
+      "incrementAttempts": true
+    },
+    "parasite": {
+      "posterId": "parasite",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:45:15.016Z",
+      "sourceSha256": "659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1",
+      "originalSha256": "659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1",
+      "optimizedSha256": "fab0359a21ce4b5609db0325bb3bd49f0dc375ff60a6a82138bd947534e082c2",
+      "originalKey": "cineprint/versions/original/parasite/659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1.jpg",
+      "optimizedKey": "cineprint/versions/optimized/parasite/fab0359a21ce4b5609db0325bb3bd49f0dc375ff60a6a82138bd947534e082c2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1425328,
+      "optimizedSizeBytes": 119166,
+      "originalDimensions": {
+        "width": 2250,
+        "height": 3375
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:45:15.016Z",
+      "incrementAttempts": true
+    },
+    "peacemaker": {
+      "posterId": "peacemaker",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:45:52.009Z",
+      "sourceSha256": "7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12",
+      "originalSha256": "7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12",
+      "optimizedSha256": "8426256b0a6ba1a0a4f27cd24e7105b264aedd54c1323a5aeb3aea9149baa6f7",
+      "originalKey": "cineprint/versions/original/peacemaker/7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12.png",
+      "optimizedKey": "cineprint/versions/optimized/peacemaker/8426256b0a6ba1a0a4f27cd24e7105b264aedd54c1323a5aeb3aea9149baa6f7-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2314875,
+      "optimizedSizeBytes": 270108,
+      "originalDimensions": {
+        "width": 792,
+        "height": 1224
+      },
+      "optimizedDimensions": {
+        "width": 792,
+        "height": 1224
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:45:52.009Z",
+      "incrementAttempts": true
+    },
+    "project-hail-mary": {
+      "posterId": "project-hail-mary",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:46:02.745Z",
+      "sourceSha256": "44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa",
+      "originalSha256": "44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa",
+      "optimizedSha256": "31eb91ddefee0cbf273d49fc4f357e0dfb60c39f5d10df2cbfc7f98b229d91f9",
+      "originalKey": "cineprint/versions/original/project-hail-mary/44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa.jpg",
+      "optimizedKey": "cineprint/versions/optimized/project-hail-mary/31eb91ddefee0cbf273d49fc4f357e0dfb60c39f5d10df2cbfc7f98b229d91f9-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 564728,
+      "optimizedSizeBytes": 138944,
+      "originalDimensions": {
+        "width": 1428,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1147
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:46:02.745Z",
+      "incrementAttempts": true
+    },
+    "rogue-one-a-star-wars-story": {
+      "posterId": "rogue-one-a-star-wars-story",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:46:17.200Z",
+      "sourceSha256": "8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a",
+      "originalSha256": "8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a",
+      "optimizedSha256": "0ede852cf92d54a365d2a67825a0bdedc95f7a552170eee3253672bb4ddd5c9c",
+      "originalKey": "cineprint/versions/original/rogue-one-a-star-wars-story/8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a.png",
+      "optimizedKey": "cineprint/versions/optimized/rogue-one-a-star-wars-story/0ede852cf92d54a365d2a67825a0bdedc95f7a552170eee3253672bb4ddd5c9c-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 932752,
+      "optimizedSizeBytes": 123126,
+      "originalDimensions": {
+        "width": 776,
+        "height": 1199
+      },
+      "optimizedDimensions": {
+        "width": 776,
+        "height": 1199
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:46:17.200Z",
+      "incrementAttempts": true
+    },
+    "stranger-things-1": {
+      "posterId": "stranger-things-1",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:46:58.670Z",
+      "sourceSha256": "a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f",
+      "originalSha256": "a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f",
+      "optimizedSha256": "d930e27b1f6487f7eb5ac139d1f13a0c0dc1b29070685335f262c9056f82bedc",
+      "originalKey": "cineprint/versions/original/stranger-things-1/a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f.png",
+      "optimizedKey": "cineprint/versions/optimized/stranger-things-1/d930e27b1f6487f7eb5ac139d1f13a0c0dc1b29070685335f262c9056f82bedc-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3773987,
+      "optimizedSizeBytes": 261826,
+      "originalDimensions": {
+        "width": 1081,
+        "height": 1350
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 999
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:46:58.670Z",
+      "incrementAttempts": true
+    },
+    "stranger-things-3": {
+      "posterId": "stranger-things-3",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:47:24.204Z",
+      "sourceSha256": "bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d",
+      "originalSha256": "bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d",
+      "optimizedSha256": "228d2f7077248a9425fcd9088f3a6eb9ac4e711be512776dd00cee2a34a36935",
+      "originalKey": "cineprint/versions/original/stranger-things-3/bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d.png",
+      "optimizedKey": "cineprint/versions/optimized/stranger-things-3/228d2f7077248a9425fcd9088f3a6eb9ac4e711be512776dd00cee2a34a36935-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2726483,
+      "optimizedSizeBytes": 98102,
+      "originalDimensions": {
+        "width": 1024,
+        "height": 1536
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:47:24.204Z",
+      "incrementAttempts": true
+    },
+    "tenet": {
+      "posterId": "tenet",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:47:30.014Z",
+      "sourceSha256": "b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f",
+      "originalSha256": "b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f",
+      "optimizedSha256": "88396cf93c74c820ad549c57932837bc08ac2aa9dbb1c0a75d367068d60f0bb1",
+      "originalKey": "cineprint/versions/original/tenet/b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f.jpg",
+      "optimizedKey": "cineprint/versions/optimized/tenet/88396cf93c74c820ad549c57932837bc08ac2aa9dbb1c0a75d367068d60f0bb1-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 251508,
+      "optimizedSizeBytes": 53952,
+      "originalDimensions": {
+        "width": 1200,
+        "height": 1781
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1187
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:47:30.014Z",
+      "incrementAttempts": true
+    }
+  }
+}

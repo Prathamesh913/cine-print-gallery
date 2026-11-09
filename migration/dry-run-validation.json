@@ -1,0 +1,29 @@
+{
+  "manifestEntries": 63,
+  "firestoreDocuments": 63,
+  "idsMatch": true,
+  "missingFromManifest": [],
+  "extraInManifest": [],
+  "notionPageIdMismatches": [],
+  "currentImageUrlMismatches": [],
+  "notionDerivedIdMismatches": [],
+  "sourceAvailable": 63,
+  "sourceUnavailable": 0,
+  "optimizedExisting": 51,
+  "optimizedMissing": 12,
+  "checks": {
+    "exactly63Entries": true,
+    "exactly63FirestoreDocuments": true,
+    "allFirestoreIdsPreserved": true,
+    "allNotionPageIdsMatch": true,
+    "allCurrentImageUrlsMatch": true,
+    "allNotionDerivedIdsMatch": true,
+    "allSourcesAvailable": true,
+    "allSourcesHaveSha256": true,
+    "allSourcesHaveDimensions": true,
+    "allOriginalKeysPresent": true,
+    "allOptimizedKeysPresent": true,
+    "noDuplicateSourceUrls": true,
+    "noDuplicateRaindropIds": true
+  }
+}

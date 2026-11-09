@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "manifestHash": "6e5a648341f5a4cd4a97c76da25e02441fdc64b2ccc7bd1bce6225972371c11a",
+  "createdAt": "2026-11-07T14:06:59.004Z",
+  "updatedAt": "2026-11-07T14:07:37.546Z",
+  "entries": {
+    "2001-a-space-odyssey": {
+      "posterId": "2001-a-space-odyssey",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-07T14:07:37.546Z",
+      "sourceSha256": "06428b124970ab09552f99833b50ef7758458b2e9e54dc80dfc01e2e6098d10f",
+      "originalSha256": "06428b124970ab09552f99833b50ef7758458b2e9e54dc80dfc01e2e6098d10f",
+      "optimizedSha256": "f1aaa42c0cba63f50ead1e760eac66fa65ef71ead724c4b7149cf8b050b77965",
+      "originalKey": "cineprint/raindrop/1528361110.png",
+      "optimizedKey": "cineprint/optimized/legacy/2001-a-space-odyssey.webp",
+      "originalSizeBytes": 2165830,
+      "optimizedSizeBytes": 131070,
+      "originalDimensions": {
+        "width": 864,
+        "height": 1200
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1111
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-07T14:07:37.545Z",
+      "incrementAttempts": true
+    },
+    "bugonia": {
+      "posterId": "bugonia",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-07T14:07:17.492Z",
+      "sourceSha256": "cc731c31edc3c379895c7bbc095fb48e0cfc81703a450ac34dc773bec3b7c58f",
+      "originalSha256": "cc731c31edc3c379895c7bbc095fb48e0cfc81703a450ac34dc773bec3b7c58f",
+      "optimizedSha256": "a08bfef4b4c728687970bcfa5cb1dde7785410c34f67d1bc4ebd7fad0215b6e0",
+      "originalKey": "cineprint/external/bugonia.jpg",
+      "optimizedKey": "cineprint/optimized/external/bugonia.webp",
+      "originalSizeBytes": 471241,
+      "optimizedSizeBytes": 85200,
+      "originalDimensions": {
+        "width": 1359,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1206
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-07T14:07:17.492Z",
+      "incrementAttempts": true
+    },
+    "artwork-1824607248": {
+      "posterId": "artwork-1824607248",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-07T14:07:33.662Z",
+      "sourceSha256": "04c3c8596c08ca16ecbb62cfe4cec32c6b42262020a0e25a39911a15b3109925",
+      "originalSha256": "04c3c8596c08ca16ecbb62cfe4cec32c6b42262020a0e25a39911a15b3109925",
+      "optimizedSha256": "fac10e4e6f74a6af583125eeddf35919062d91e57225d38bf6badad6d39832e9",
+      "originalKey": "cineprint/raindrop/1824607248.jpg",
+      "optimizedKey": "cineprint/optimized/1824607248.webp",
+      "originalSizeBytes": 1329925,
+      "optimizedSizeBytes": 92980,
+      "originalDimensions": {
+        "width": 2000,
+        "height": 2963
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-07T14:07:33.662Z",
+      "incrementAttempts": true
+    }
+  }
+}

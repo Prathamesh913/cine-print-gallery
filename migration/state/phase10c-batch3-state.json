@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "manifestHash": "6e5a648341f5a4cd4a97c76da25e02441fdc64b2ccc7bd1bce6225972371c11a",
+  "createdAt": "2026-11-08T18:26:08.974Z",
+  "updatedAt": "2026-11-08T18:34:10.329Z",
+  "entries": {
+    "everything-everywhere-all-at-once": {
+      "posterId": "everything-everywhere-all-at-once",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:26:21.203Z",
+      "sourceSha256": "92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a",
+      "originalSha256": "92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a",
+      "optimizedSha256": "8ece4096701b299688bffc11765e6b8e7eb3db8b37fdde18e159f34497e71d3c",
+      "originalKey": "cineprint/versions/original/everything-everywhere-all-at-once/92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a.jpg",
+      "optimizedKey": "cineprint/versions/optimized/everything-everywhere-all-at-once/8ece4096701b299688bffc11765e6b8e7eb3db8b37fdde18e159f34497e71d3c-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 363976,
+      "optimizedSizeBytes": 258098,
+      "originalDimensions": {
+        "width": 829,
+        "height": 1200
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1158
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:26:21.203Z",
+      "incrementAttempts": true
+    },
+    "frankenstein-2025": {
+      "posterId": "frankenstein-2025",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:26:35.952Z",
+      "sourceSha256": "78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e",
+      "originalSha256": "78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e",
+      "optimizedSha256": "d166ecc3388d6eba4f5fe44bb2d5525f377dc766dec7c3cf0e2cdaa6b0c272b0",
+      "originalKey": "cineprint/versions/original/frankenstein-2025/78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e.jpg",
+      "optimizedKey": "cineprint/versions/optimized/frankenstein-2025/d166ecc3388d6eba4f5fe44bb2d5525f377dc766dec7c3cf0e2cdaa6b0c272b0-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 286410,
+      "optimizedSizeBytes": 199190,
+      "originalDimensions": {
+        "width": 825,
+        "height": 1199
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1163
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:26:35.952Z",
+      "incrementAttempts": true
+    },
+    "friday-the-13th-2009": {
+      "posterId": "friday-the-13th-2009",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:27:07.134Z",
+      "sourceSha256": "385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1",
+      "originalSha256": "385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1",
+      "optimizedSha256": "40b87340c7f13d5a2b5014efcc274ef123df5ef654cc603d05fe6a4b1c6bfb72",
+      "originalKey": "cineprint/versions/original/friday-the-13th-2009/385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1.png",
+      "optimizedKey": "cineprint/versions/optimized/friday-the-13th-2009/40b87340c7f13d5a2b5014efcc274ef123df5ef654cc603d05fe6a4b1c6bfb72-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1955235,
+      "optimizedSizeBytes": 30696,
+      "originalDimensions": {
+        "width": 1280,
+        "height": 1898
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1186
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:27:07.134Z",
+      "incrementAttempts": true
+    },
+    "furiosa-a-mad-max-saga": {
+      "posterId": "furiosa-a-mad-max-saga",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:27:29.739Z",
+      "sourceSha256": "ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441",
+      "originalSha256": "ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441",
+      "optimizedSha256": "70460fc8f526ddec3b5523cf07375b04f0173fc0c7900e31259758720529fdd1",
+      "originalKey": "cineprint/versions/original/furiosa-a-mad-max-saga/ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441.png",
+      "optimizedKey": "cineprint/versions/optimized/furiosa-a-mad-max-saga/70460fc8f526ddec3b5523cf07375b04f0173fc0c7900e31259758720529fdd1-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2246819,
+      "optimizedSizeBytes": 382590,
+      "originalDimensions": {
+        "width": 776,
+        "height": 1199
+      },
+      "optimizedDimensions": {
+        "width": 776,
+        "height": 1199
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:27:29.739Z",
+      "incrementAttempts": true
+    },
+    "hamnet": {
+      "posterId": "hamnet",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:28:10.967Z",
+      "sourceSha256": "b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa",
+      "originalSha256": "b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa",
+      "optimizedSha256": "b2feba3f036880834339485bcf464c19fbac15e96ea45b8fbba12369ea9ea9a4",
+      "originalKey": "cineprint/versions/original/hamnet/b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa.png",
+      "optimizedKey": "cineprint/versions/optimized/hamnet/b2feba3f036880834339485bcf464c19fbac15e96ea45b8fbba12369ea9ea9a4-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 4958665,
+      "optimizedSizeBytes": 110028,
+      "originalDimensions": {
+        "width": 1366,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1199
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:28:10.967Z",
+      "incrementAttempts": true
+    },
+    "heat-1995": {
+      "posterId": "heat-1995",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:28:32.957Z",
+      "sourceSha256": "a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a",
+      "originalSha256": "a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a",
+      "optimizedSha256": "88b3a17353621f0b9300e3b9262c21145d4f93cf72ad7a5f584b9cb67736d556",
+      "originalKey": "cineprint/versions/original/heat-1995/a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a.png",
+      "optimizedKey": "cineprint/versions/optimized/heat-1995/88b3a17353621f0b9300e3b9262c21145d4f93cf72ad7a5f584b9cb67736d556-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1492532,
+      "optimizedSizeBytes": 187252,
+      "originalDimensions": {
+        "width": 961,
+        "height": 1200
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 999
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:28:32.957Z",
+      "incrementAttempts": true
+    },
+    "her": {
+      "posterId": "her",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:28:36.519Z",
+      "sourceSha256": "bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7",
+      "originalSha256": "bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7",
+      "optimizedSha256": "bac5b9880ae092b0ef54583693a5e88f83f23580c1493c74fb34a63abec057f2",
+      "originalKey": "cineprint/versions/original/her/bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7.jpg",
+      "optimizedKey": "cineprint/versions/optimized/her/bac5b9880ae092b0ef54583693a5e88f83f23580c1493c74fb34a63abec057f2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 205457,
+      "optimizedSizeBytes": 34030,
+      "originalDimensions": {
+        "width": 1326,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1236
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:28:36.519Z",
+      "incrementAttempts": true
+    },
+    "kill-bill-vol-1-1": {
+      "posterId": "kill-bill-vol-1-1",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:28:40.229Z",
+      "sourceSha256": "adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee",
+      "originalSha256": "adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee",
+      "optimizedSha256": "32ee1fc16b2b878bdd595c88595c7e385bb77e59fbdc6cae38c2418a69c2a261",
+      "originalKey": "cineprint/versions/original/kill-bill-vol-1-1/adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee.png",
+      "optimizedKey": "cineprint/versions/optimized/kill-bill-vol-1-1/32ee1fc16b2b878bdd595c88595c7e385bb77e59fbdc6cae38c2418a69c2a261-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 353941,
+      "optimizedSizeBytes": 29116,
+      "originalDimensions": {
+        "width": 1080,
+        "height": 1350
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1000
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:28:40.229Z",
+      "incrementAttempts": true
+    },
+    "kill-bill-vol-1-2": {
+      "posterId": "kill-bill-vol-1-2",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:29:03.554Z",
+      "sourceSha256": "57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc",
+      "originalSha256": "57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc",
+      "optimizedSha256": "c03668c59a2acd53ec11515276e4634ffcfdcad0f114624041a73b8bc76e5558",
+      "originalKey": "cineprint/versions/original/kill-bill-vol-1-2/57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc.png",
+      "optimizedKey": "cineprint/versions/optimized/kill-bill-vol-1-2/c03668c59a2acd53ec11515276e4634ffcfdcad0f114624041a73b8bc76e5558-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 4758298,
+      "optimizedSizeBytes": 99282,
+      "originalDimensions": {
+        "width": 1365,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:29:03.554Z",
+      "incrementAttempts": true
+    },
+    "lady-vengeance": {
+      "posterId": "lady-vengeance",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:29:07.583Z",
+      "sourceSha256": "34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62",
+      "originalSha256": "34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62",
+      "optimizedSha256": "b45e060bb5048a712a222c6fe664c040bb18926cf4fd892e5a989743b38262b5",
+      "originalKey": "cineprint/versions/original/lady-vengeance/34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62.jpg",
+      "optimizedKey": "cineprint/versions/optimized/lady-vengeance/b45e060bb5048a712a222c6fe664c040bb18926cf4fd892e5a989743b38262b5-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 441591,
+      "optimizedSizeBytes": 62784,
+      "originalDimensions": {
+        "width": 1553,
+        "height": 2300
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:29:07.583Z",
+      "incrementAttempts": true
+    },
+    "marty-supreme": {
+      "posterId": "marty-supreme",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:29:37.565Z",
+      "sourceSha256": "145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f",
+      "originalSha256": "145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f",
+      "optimizedSha256": "8577368358a7ca053029d39de4a8d6cbdb0e75acaabab1121bed46798c722b58",
+      "originalKey": "cineprint/versions/original/marty-supreme/145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f.png",
+      "optimizedKey": "cineprint/versions/optimized/marty-supreme/8577368358a7ca053029d39de4a8d6cbdb0e75acaabab1121bed46798c722b58-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3907990,
+      "optimizedSizeBytes": 224784,
+      "originalDimensions": {
+        "width": 1140,
+        "height": 1762
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1236
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:29:37.565Z",
+      "incrementAttempts": true
+    },
+    "metropolis-1927": {
+      "posterId": "metropolis-1927",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:31:44.667Z",
+      "sourceSha256": "a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c",
+      "originalSha256": "a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c",
+      "optimizedSha256": "b16fde0d3cd83dcf9c45a32bf440c270a138e07ce774bb196f83084397a880bc",
+      "originalKey": "cineprint/versions/original/metropolis-1927/a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c.png",
+      "optimizedKey": "cineprint/versions/optimized/metropolis-1927/b16fde0d3cd83dcf9c45a32bf440c270a138e07ce774bb196f83084397a880bc-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 6255368,
+      "optimizedSizeBytes": 230392,
+      "originalDimensions": {
+        "width": 1375,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1192
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:31:44.667Z",
+      "incrementAttempts": true
+    },
+    "midsommar": {
+      "posterId": "midsommar",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:32:05.397Z",
+      "sourceSha256": "0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af",
+      "originalSha256": "0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af",
+      "optimizedSha256": "0147b45d6aa744daa77546f9955e43aad1cab77dc6b2b401dc36932f541279e2",
+      "originalKey": "cineprint/versions/original/midsommar/0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af.jpg",
+      "optimizedKey": "cineprint/versions/optimized/midsommar/0147b45d6aa744daa77546f9955e43aad1cab77dc6b2b401dc36932f541279e2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 592968,
+      "optimizedSizeBytes": 276832,
+      "originalDimensions": {
+        "width": 1061,
+        "height": 1500
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1131
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:32:05.397Z",
+      "incrementAttempts": true
+    },
+    "mighty-morphin-power-rangers-the-movie": {
+      "posterId": "mighty-morphin-power-rangers-the-movie",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:33:32.254Z",
+      "sourceSha256": "73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9",
+      "originalSha256": "73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9",
+      "optimizedSha256": "0505fc517bf7d4c5b82de9bcf50c1256411e2cb31c8877700d6c2eb99a38045e",
+      "originalKey": "cineprint/versions/original/mighty-morphin-power-rangers-the-movie/73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9.png",
+      "optimizedKey": "cineprint/versions/optimized/mighty-morphin-power-rangers-the-movie/0505fc517bf7d4c5b82de9bcf50c1256411e2cb31c8877700d6c2eb99a38045e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 4362197,
+      "optimizedSizeBytes": 105218,
+      "originalDimensions": {
+        "width": 1290,
+        "height": 1906
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1182
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:33:32.254Z",
+      "incrementAttempts": true
+    },
+    "mother-2009": {
+      "posterId": "mother-2009",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:34:10.329Z",
+      "sourceSha256": "2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437",
+      "originalSha256": "2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437",
+      "optimizedSha256": "1aa40beafcc93242a187d528e15dc8f99b536622a9a01c768dfd96cd71e57cec",
+      "originalKey": "cineprint/versions/original/mother-2009/2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437.jpg",
+      "optimizedKey": "cineprint/versions/optimized/mother-2009/1aa40beafcc93242a187d528e15dc8f99b536622a9a01c768dfd96cd71e57cec-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1987433,
+      "optimizedSizeBytes": 216670,
+      "originalDimensions": {
+        "width": 1701,
+        "height": 2551
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:34:10.329Z",
+      "incrementAttempts": true
+    }
+  }
+}

@@ -1,0 +1,2291 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-08T17:27:07.655Z",
+  "complete": true,
+  "optimizer": {
+    "name": "sharp",
+    "version": "0.35.3",
+    "libvipsVersion": "8.18.3"
+  },
+  "optimizerSlug": "sharp-0.35.3-libvips-8.18.3",
+  "transformation": {
+    "width": 800,
+    "quality": 80,
+    "format": "webp",
+    "withoutEnlargement": true,
+    "rotate": "exif"
+  },
+  "counts": {
+    "posters": 58,
+    "artifacts": 116,
+    "originals": 58,
+    "optimized": 58,
+    "uniqueKeys": 116,
+    "failures": 0
+  },
+  "artifacts": [
+    {
+      "posterId": "art-of-a-hit-2024",
+      "role": "original",
+      "sourceSha256": "ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d",
+      "artifactSha256": "ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d",
+      "sizeBytes": 2950361,
+      "width": 1200,
+      "height": 1781,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/art-of-a-hit-2024.png",
+      "r2Key": "cineprint/versions/original/art-of-a-hit-2024/ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "art-of-a-hit-2024",
+      "role": "optimized",
+      "sourceSha256": "ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d",
+      "artifactSha256": "a0e5547368ecefca5a22bfcaa923920d88dd0e37458bcad2c5d8feda023c535e",
+      "sizeBytes": 116278,
+      "width": 800,
+      "height": 1187,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/art-of-a-hit-2024.webp",
+      "r2Key": "cineprint/versions/optimized/art-of-a-hit-2024/a0e5547368ecefca5a22bfcaa923920d88dd0e37458bcad2c5d8feda023c535e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1812274995",
+      "role": "original",
+      "sourceSha256": "d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327",
+      "artifactSha256": "d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327",
+      "sizeBytes": 3251321,
+      "width": 1200,
+      "height": 1781,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/artwork-1812274995.png",
+      "r2Key": "cineprint/versions/original/artwork-1812274995/d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1812274995",
+      "role": "optimized",
+      "sourceSha256": "d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327",
+      "artifactSha256": "27d085597b93b9e964762e9a4c3f12d5516fd29dcae0be9b2e41c2ba7fe0d0ca",
+      "sizeBytes": 86718,
+      "width": 800,
+      "height": 1187,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1812274995.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1812274995/27d085597b93b9e964762e9a4c3f12d5516fd29dcae0be9b2e41c2ba7fe0d0ca-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1813721087",
+      "role": "original",
+      "sourceSha256": "b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc",
+      "artifactSha256": "b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc",
+      "sizeBytes": 225616,
+      "width": 1400,
+      "height": 1850,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1813721087.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1813721087/b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1813721087",
+      "role": "optimized",
+      "sourceSha256": "b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc",
+      "artifactSha256": "a0ea2b38f7578268f3f9942a21a87c99fc4642843910b9d01e2a8b0fb60392d6",
+      "sizeBytes": 60452,
+      "width": 800,
+      "height": 1057,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1813721087.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1813721087/a0ea2b38f7578268f3f9942a21a87c99fc4642843910b9d01e2a8b0fb60392d6-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824628665",
+      "role": "original",
+      "sourceSha256": "c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb",
+      "artifactSha256": "c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb",
+      "sizeBytes": 1414161,
+      "width": 2000,
+      "height": 2963,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1824628665.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1824628665/c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824628665",
+      "role": "optimized",
+      "sourceSha256": "c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb",
+      "artifactSha256": "e2df9cedf9f604c927daefdce565c409ebef39b00138d679807a25ab2380259e",
+      "sizeBytes": 119172,
+      "width": 800,
+      "height": 1185,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1824628665.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1824628665/e2df9cedf9f604c927daefdce565c409ebef39b00138d679807a25ab2380259e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824637521",
+      "role": "original",
+      "sourceSha256": "635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af",
+      "artifactSha256": "635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af",
+      "sizeBytes": 1905871,
+      "width": 1836,
+      "height": 2596,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1824637521.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1824637521/635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824637521",
+      "role": "optimized",
+      "sourceSha256": "635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af",
+      "artifactSha256": "1ee2d695fcc80ae87bbe1333a010fe533e6618e682f4e03b81ccaf4185f1fb58",
+      "sizeBytes": 279194,
+      "width": 800,
+      "height": 1131,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1824637521.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1824637521/1ee2d695fcc80ae87bbe1333a010fe533e6618e682f4e03b81ccaf4185f1fb58-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824638987",
+      "role": "original",
+      "sourceSha256": "a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796",
+      "artifactSha256": "a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796",
+      "sizeBytes": 3454878,
+      "width": 3277,
+      "height": 4096,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1824638987.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1824638987/a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824638987",
+      "role": "optimized",
+      "sourceSha256": "a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796",
+      "artifactSha256": "884c112a76d32c224957c4a2e3c3a1cf7404fec973281104a1081b3e5621be40",
+      "sizeBytes": 233916,
+      "width": 800,
+      "height": 1000,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1824638987.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1824638987/884c112a76d32c224957c4a2e3c3a1cf7404fec973281104a1081b3e5621be40-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824644552",
+      "role": "original",
+      "sourceSha256": "ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf",
+      "artifactSha256": "ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf",
+      "sizeBytes": 2922282,
+      "width": 2893,
+      "height": 4096,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1824644552.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1824644552/ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824644552",
+      "role": "optimized",
+      "sourceSha256": "ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf",
+      "artifactSha256": "734e886b471e372882231247dd6701378d1a3f0ad1771fae442ff0d94353bd79",
+      "sizeBytes": 99244,
+      "width": 800,
+      "height": 1133,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1824644552.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1824644552/734e886b471e372882231247dd6701378d1a3f0ad1771fae442ff0d94353bd79-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824648439",
+      "role": "original",
+      "sourceSha256": "c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5",
+      "artifactSha256": "c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5",
+      "sizeBytes": 674402,
+      "width": 1188,
+      "height": 1782,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1824648439.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1824648439/c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824648439",
+      "role": "optimized",
+      "sourceSha256": "c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5",
+      "artifactSha256": "48feb64201b2701c5ff668b5aa75b6cab623c1dbe35c334292125ee249591af8",
+      "sizeBytes": 112486,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1824648439.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1824648439/48feb64201b2701c5ff668b5aa75b6cab623c1dbe35c334292125ee249591af8-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824734129",
+      "role": "original",
+      "sourceSha256": "4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f",
+      "artifactSha256": "4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f",
+      "sizeBytes": 1938142,
+      "width": 3320,
+      "height": 4096,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1824734129.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1824734129/4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1824734129",
+      "role": "optimized",
+      "sourceSha256": "4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f",
+      "artifactSha256": "c5af65d817063d0b7426a8f5c37826f3dce0b2a57fe4018a9eeba82496fde829",
+      "sizeBytes": 166326,
+      "width": 800,
+      "height": 987,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1824734129.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1824734129/c5af65d817063d0b7426a8f5c37826f3dce0b2a57fe4018a9eeba82496fde829-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831537050",
+      "role": "original",
+      "sourceSha256": "ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a",
+      "artifactSha256": "ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a",
+      "sizeBytes": 2235939,
+      "width": 1350,
+      "height": 2000,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1831537050.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1831537050/ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831537050",
+      "role": "optimized",
+      "sourceSha256": "ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a",
+      "artifactSha256": "a4e9c6373386e22c0840393abdd8a5c9beaf4141915c7609c514d76fd5d56a1a",
+      "sizeBytes": 76096,
+      "width": 800,
+      "height": 1185,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1831537050.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1831537050/a4e9c6373386e22c0840393abdd8a5c9beaf4141915c7609c514d76fd5d56a1a-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831537996",
+      "role": "original",
+      "sourceSha256": "a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874",
+      "artifactSha256": "a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874",
+      "sizeBytes": 4733895,
+      "width": 2000,
+      "height": 2963,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1831537996.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1831537996/a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831537996",
+      "role": "optimized",
+      "sourceSha256": "a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874",
+      "artifactSha256": "435921870eaf06e4afc9dc492933bb6c68e0f847f9b565cfc66ba9236bb125d8",
+      "sizeBytes": 98808,
+      "width": 800,
+      "height": 1185,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1831537996.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1831537996/435921870eaf06e4afc9dc492933bb6c68e0f847f9b565cfc66ba9236bb125d8-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831541280",
+      "role": "original",
+      "sourceSha256": "1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a",
+      "artifactSha256": "1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a",
+      "sizeBytes": 1267485,
+      "width": 2000,
+      "height": 3000,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1831541280.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1831541280/1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831541280",
+      "role": "optimized",
+      "sourceSha256": "1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a",
+      "artifactSha256": "19dba5be14afb937b27c45b32f55ae672a3af1209d5d8d7b69f643539e9b037e",
+      "sizeBytes": 129864,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1831541280.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1831541280/19dba5be14afb937b27c45b32f55ae672a3af1209d5d8d7b69f643539e9b037e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831541566",
+      "role": "original",
+      "sourceSha256": "59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa",
+      "artifactSha256": "59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa",
+      "sizeBytes": 3557511,
+      "width": 2000,
+      "height": 3000,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1831541566.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1831541566/59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831541566",
+      "role": "optimized",
+      "sourceSha256": "59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa",
+      "artifactSha256": "801b3ea3c44191029c21c6e520c30e9bd8560e03360d1c55086eaab41093351d",
+      "sizeBytes": 25460,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1831541566.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1831541566/801b3ea3c44191029c21c6e520c30e9bd8560e03360d1c55086eaab41093351d-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831544424",
+      "role": "original",
+      "sourceSha256": "9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f",
+      "artifactSha256": "9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f",
+      "sizeBytes": 383956,
+      "width": 1010,
+      "height": 1350,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/artwork-1831544424.jpg",
+      "r2Key": "cineprint/versions/original/artwork-1831544424/9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "artwork-1831544424",
+      "role": "optimized",
+      "sourceSha256": "9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f",
+      "artifactSha256": "fe8e0de8fc7bd845492723d4f2ba57162c59889afe63bb4131117830b3b6c286",
+      "sizeBytes": 181962,
+      "width": 800,
+      "height": 1069,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/artwork-1831544424.webp",
+      "r2Key": "cineprint/versions/optimized/artwork-1831544424/fe8e0de8fc7bd845492723d4f2ba57162c59889afe63bb4131117830b3b6c286-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "backrooms-1",
+      "role": "original",
+      "sourceSha256": "14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de",
+      "artifactSha256": "14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de",
+      "sizeBytes": 509343,
+      "width": 674,
+      "height": 900,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/backrooms-1.png",
+      "r2Key": "cineprint/versions/original/backrooms-1/14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "backrooms-1",
+      "role": "optimized",
+      "sourceSha256": "14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de",
+      "artifactSha256": "6d5018a14ea4cf6867dfed90ea6496ab47b36be5215b2d521ccc120f536cf92e",
+      "sizeBytes": 29406,
+      "width": 674,
+      "height": 900,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/backrooms-1.webp",
+      "r2Key": "cineprint/versions/optimized/backrooms-1/6d5018a14ea4cf6867dfed90ea6496ab47b36be5215b2d521ccc120f536cf92e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "backrooms-2",
+      "role": "original",
+      "sourceSha256": "51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98",
+      "artifactSha256": "51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98",
+      "sizeBytes": 8293392,
+      "width": 1701,
+      "height": 2551,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/backrooms-2.png",
+      "r2Key": "cineprint/versions/original/backrooms-2/51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "backrooms-2",
+      "role": "optimized",
+      "sourceSha256": "51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98",
+      "artifactSha256": "2f199b3d255ab1661b879412977fabf423c5fc5b2a44619015b2f99da29d2c36",
+      "sizeBytes": 80800,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/backrooms-2.webp",
+      "r2Key": "cineprint/versions/optimized/backrooms-2/2f199b3d255ab1661b879412977fabf423c5fc5b2a44619015b2f99da29d2c36-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "backrooms-3",
+      "role": "original",
+      "sourceSha256": "81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d",
+      "artifactSha256": "81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d",
+      "sizeBytes": 6202243,
+      "width": 1383,
+      "height": 2048,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/backrooms-3.png",
+      "r2Key": "cineprint/versions/original/backrooms-3/81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "backrooms-3",
+      "role": "optimized",
+      "sourceSha256": "81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d",
+      "artifactSha256": "248a880596203352310081bd4a70e94992317ad4082e8a45f1a860d232d72cdf",
+      "sizeBytes": 205870,
+      "width": 800,
+      "height": 1185,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/backrooms-3.webp",
+      "r2Key": "cineprint/versions/optimized/backrooms-3/248a880596203352310081bd4a70e94992317ad4082e8a45f1a860d232d72cdf-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "black-widow",
+      "role": "original",
+      "sourceSha256": "839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720",
+      "artifactSha256": "839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720",
+      "sizeBytes": 1822693,
+      "width": 1200,
+      "height": 1500,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/black-widow.png",
+      "r2Key": "cineprint/versions/original/black-widow/839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "black-widow",
+      "role": "optimized",
+      "sourceSha256": "839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720",
+      "artifactSha256": "aa4843514421b201a0d1a7ec6ae40fae1710c726a73bbdb93621a54a0ed439b7",
+      "sizeBytes": 74454,
+      "width": 800,
+      "height": 1000,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/black-widow.webp",
+      "r2Key": "cineprint/versions/optimized/black-widow/aa4843514421b201a0d1a7ec6ae40fae1710c726a73bbdb93621a54a0ed439b7-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "cure-1997",
+      "role": "original",
+      "sourceSha256": "36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9",
+      "artifactSha256": "36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9",
+      "sizeBytes": 2732638,
+      "width": 1701,
+      "height": 2551,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/cure-1997.jpg",
+      "r2Key": "cineprint/versions/original/cure-1997/36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "cure-1997",
+      "role": "optimized",
+      "sourceSha256": "36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9",
+      "artifactSha256": "10a4468a73c9b700025a1b347b334a3aa5057cc398530e5476c8375e0c5a56c1",
+      "sizeBytes": 12280,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/cure-1997.webp",
+      "r2Key": "cineprint/versions/optimized/cure-1997/10a4468a73c9b700025a1b347b334a3aa5057cc398530e5476c8375e0c5a56c1-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "dune-part-one",
+      "role": "original",
+      "sourceSha256": "53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019",
+      "artifactSha256": "53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019",
+      "sizeBytes": 17735235,
+      "width": 2731,
+      "height": 4096,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/dune-part-one.png",
+      "r2Key": "cineprint/versions/original/dune-part-one/53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "dune-part-one",
+      "role": "optimized",
+      "sourceSha256": "53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019",
+      "artifactSha256": "2bc8d221f87032e42af5a4d2ccfdf55f87308bd165b75cd8c02a237625327b2b",
+      "sizeBytes": 161542,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/dune-part-one.webp",
+      "r2Key": "cineprint/versions/optimized/dune-part-one/2bc8d221f87032e42af5a4d2ccfdf55f87308bd165b75cd8c02a237625327b2b-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "everything-everywhere-all-at-once",
+      "role": "original",
+      "sourceSha256": "92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a",
+      "artifactSha256": "92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a",
+      "sizeBytes": 363976,
+      "width": 829,
+      "height": 1200,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/everything-everywhere-all-at-once.jpg",
+      "r2Key": "cineprint/versions/original/everything-everywhere-all-at-once/92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "everything-everywhere-all-at-once",
+      "role": "optimized",
+      "sourceSha256": "92a5fcc8db60b24d92ff0e314ecc3fbb5c29a01e6a3e5d7802838f2c8aaf214a",
+      "artifactSha256": "8ece4096701b299688bffc11765e6b8e7eb3db8b37fdde18e159f34497e71d3c",
+      "sizeBytes": 258098,
+      "width": 800,
+      "height": 1158,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/everything-everywhere-all-at-once.webp",
+      "r2Key": "cineprint/versions/optimized/everything-everywhere-all-at-once/8ece4096701b299688bffc11765e6b8e7eb3db8b37fdde18e159f34497e71d3c-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "frankenstein-2025",
+      "role": "original",
+      "sourceSha256": "78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e",
+      "artifactSha256": "78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e",
+      "sizeBytes": 286410,
+      "width": 825,
+      "height": 1199,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/frankenstein-2025.jpg",
+      "r2Key": "cineprint/versions/original/frankenstein-2025/78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "frankenstein-2025",
+      "role": "optimized",
+      "sourceSha256": "78339052c19b19555dafd3cba72ebf1f038f79e56cbccc122d1b1143ccf0ba9e",
+      "artifactSha256": "d166ecc3388d6eba4f5fe44bb2d5525f377dc766dec7c3cf0e2cdaa6b0c272b0",
+      "sizeBytes": 199190,
+      "width": 800,
+      "height": 1163,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/frankenstein-2025.webp",
+      "r2Key": "cineprint/versions/optimized/frankenstein-2025/d166ecc3388d6eba4f5fe44bb2d5525f377dc766dec7c3cf0e2cdaa6b0c272b0-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "friday-the-13th-2009",
+      "role": "original",
+      "sourceSha256": "385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1",
+      "artifactSha256": "385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1",
+      "sizeBytes": 1955235,
+      "width": 1280,
+      "height": 1898,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/friday-the-13th-2009.png",
+      "r2Key": "cineprint/versions/original/friday-the-13th-2009/385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "friday-the-13th-2009",
+      "role": "optimized",
+      "sourceSha256": "385928b77b401353ee71368174534a66a705faffd62fd7b78e183cc1f5f824d1",
+      "artifactSha256": "40b87340c7f13d5a2b5014efcc274ef123df5ef654cc603d05fe6a4b1c6bfb72",
+      "sizeBytes": 30696,
+      "width": 800,
+      "height": 1186,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/friday-the-13th-2009.webp",
+      "r2Key": "cineprint/versions/optimized/friday-the-13th-2009/40b87340c7f13d5a2b5014efcc274ef123df5ef654cc603d05fe6a4b1c6bfb72-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "furiosa-a-mad-max-saga",
+      "role": "original",
+      "sourceSha256": "ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441",
+      "artifactSha256": "ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441",
+      "sizeBytes": 2246819,
+      "width": 776,
+      "height": 1199,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/furiosa-a-mad-max-saga.png",
+      "r2Key": "cineprint/versions/original/furiosa-a-mad-max-saga/ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "furiosa-a-mad-max-saga",
+      "role": "optimized",
+      "sourceSha256": "ce87a4921c109414b3f3a26994a19389dc405c6a7a05c9878a5197efe9607441",
+      "artifactSha256": "70460fc8f526ddec3b5523cf07375b04f0173fc0c7900e31259758720529fdd1",
+      "sizeBytes": 382590,
+      "width": 776,
+      "height": 1199,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/furiosa-a-mad-max-saga.webp",
+      "r2Key": "cineprint/versions/optimized/furiosa-a-mad-max-saga/70460fc8f526ddec3b5523cf07375b04f0173fc0c7900e31259758720529fdd1-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "hamnet",
+      "role": "original",
+      "sourceSha256": "b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa",
+      "artifactSha256": "b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa",
+      "sizeBytes": 4958665,
+      "width": 1366,
+      "height": 2048,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/hamnet.png",
+      "r2Key": "cineprint/versions/original/hamnet/b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "hamnet",
+      "role": "optimized",
+      "sourceSha256": "b1372a8387c10c3b109769bdf97900a8d81dbe1cc16f7413f4a3c5a94bebbefa",
+      "artifactSha256": "b2feba3f036880834339485bcf464c19fbac15e96ea45b8fbba12369ea9ea9a4",
+      "sizeBytes": 110028,
+      "width": 800,
+      "height": 1199,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/hamnet.webp",
+      "r2Key": "cineprint/versions/optimized/hamnet/b2feba3f036880834339485bcf464c19fbac15e96ea45b8fbba12369ea9ea9a4-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "heat-1995",
+      "role": "original",
+      "sourceSha256": "a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a",
+      "artifactSha256": "a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a",
+      "sizeBytes": 1492532,
+      "width": 961,
+      "height": 1200,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/heat-1995.png",
+      "r2Key": "cineprint/versions/original/heat-1995/a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "heat-1995",
+      "role": "optimized",
+      "sourceSha256": "a0ef7ff782206cbc775a038928a479b19b6446c166607b1a5428b02109ea225a",
+      "artifactSha256": "88b3a17353621f0b9300e3b9262c21145d4f93cf72ad7a5f584b9cb67736d556",
+      "sizeBytes": 187252,
+      "width": 800,
+      "height": 999,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/heat-1995.webp",
+      "r2Key": "cineprint/versions/optimized/heat-1995/88b3a17353621f0b9300e3b9262c21145d4f93cf72ad7a5f584b9cb67736d556-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "her",
+      "role": "original",
+      "sourceSha256": "bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7",
+      "artifactSha256": "bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7",
+      "sizeBytes": 205457,
+      "width": 1326,
+      "height": 2048,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/her.jpg",
+      "r2Key": "cineprint/versions/original/her/bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "her",
+      "role": "optimized",
+      "sourceSha256": "bff11d629654a3ad050c48073ae5cfc1cf1b5341a058013b010c19e3d43cf2e7",
+      "artifactSha256": "bac5b9880ae092b0ef54583693a5e88f83f23580c1493c74fb34a63abec057f2",
+      "sizeBytes": 34030,
+      "width": 800,
+      "height": 1236,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/her.webp",
+      "r2Key": "cineprint/versions/optimized/her/bac5b9880ae092b0ef54583693a5e88f83f23580c1493c74fb34a63abec057f2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "kill-bill-vol-1-1",
+      "role": "original",
+      "sourceSha256": "adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee",
+      "artifactSha256": "adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee",
+      "sizeBytes": 353941,
+      "width": 1080,
+      "height": 1350,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/kill-bill-vol-1-1.png",
+      "r2Key": "cineprint/versions/original/kill-bill-vol-1-1/adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "kill-bill-vol-1-1",
+      "role": "optimized",
+      "sourceSha256": "adc228f18f71ff9a58cdfc895ca363aa1fd967abf31df8a211c50550d81383ee",
+      "artifactSha256": "32ee1fc16b2b878bdd595c88595c7e385bb77e59fbdc6cae38c2418a69c2a261",
+      "sizeBytes": 29116,
+      "width": 800,
+      "height": 1000,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/kill-bill-vol-1-1.webp",
+      "r2Key": "cineprint/versions/optimized/kill-bill-vol-1-1/32ee1fc16b2b878bdd595c88595c7e385bb77e59fbdc6cae38c2418a69c2a261-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "kill-bill-vol-1-2",
+      "role": "original",
+      "sourceSha256": "57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc",
+      "artifactSha256": "57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc",
+      "sizeBytes": 4758298,
+      "width": 1365,
+      "height": 2048,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/kill-bill-vol-1-2.png",
+      "r2Key": "cineprint/versions/original/kill-bill-vol-1-2/57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "kill-bill-vol-1-2",
+      "role": "optimized",
+      "sourceSha256": "57a3bb44ed7090ddb303727dfeb1207bd647c316367989f55873becd91c352cc",
+      "artifactSha256": "c03668c59a2acd53ec11515276e4634ffcfdcad0f114624041a73b8bc76e5558",
+      "sizeBytes": 99282,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/kill-bill-vol-1-2.webp",
+      "r2Key": "cineprint/versions/optimized/kill-bill-vol-1-2/c03668c59a2acd53ec11515276e4634ffcfdcad0f114624041a73b8bc76e5558-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "lady-vengeance",
+      "role": "original",
+      "sourceSha256": "34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62",
+      "artifactSha256": "34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62",
+      "sizeBytes": 441591,
+      "width": 1553,
+      "height": 2300,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/lady-vengeance.jpg",
+      "r2Key": "cineprint/versions/original/lady-vengeance/34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "lady-vengeance",
+      "role": "optimized",
+      "sourceSha256": "34a49a14ca90af8a78ac891837b7975f76539f8885ad7558c28db117c0666d62",
+      "artifactSha256": "b45e060bb5048a712a222c6fe664c040bb18926cf4fd892e5a989743b38262b5",
+      "sizeBytes": 62784,
+      "width": 800,
+      "height": 1185,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/lady-vengeance.webp",
+      "r2Key": "cineprint/versions/optimized/lady-vengeance/b45e060bb5048a712a222c6fe664c040bb18926cf4fd892e5a989743b38262b5-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "marty-supreme",
+      "role": "original",
+      "sourceSha256": "145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f",
+      "artifactSha256": "145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f",
+      "sizeBytes": 3907990,
+      "width": 1140,
+      "height": 1762,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/marty-supreme.png",
+      "r2Key": "cineprint/versions/original/marty-supreme/145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "marty-supreme",
+      "role": "optimized",
+      "sourceSha256": "145c093c4d367511f29147797774f6dc83eb646b13f7090fe005371c603cf28f",
+      "artifactSha256": "8577368358a7ca053029d39de4a8d6cbdb0e75acaabab1121bed46798c722b58",
+      "sizeBytes": 224784,
+      "width": 800,
+      "height": 1236,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/marty-supreme.webp",
+      "r2Key": "cineprint/versions/optimized/marty-supreme/8577368358a7ca053029d39de4a8d6cbdb0e75acaabab1121bed46798c722b58-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "metropolis-1927",
+      "role": "original",
+      "sourceSha256": "a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c",
+      "artifactSha256": "a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c",
+      "sizeBytes": 6255368,
+      "width": 1375,
+      "height": 2048,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/metropolis-1927.png",
+      "r2Key": "cineprint/versions/original/metropolis-1927/a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "metropolis-1927",
+      "role": "optimized",
+      "sourceSha256": "a71d41631fb7239f3db4f6896256317632c2434811a34cde99b8485ff806f29c",
+      "artifactSha256": "b16fde0d3cd83dcf9c45a32bf440c270a138e07ce774bb196f83084397a880bc",
+      "sizeBytes": 230392,
+      "width": 800,
+      "height": 1192,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/metropolis-1927.webp",
+      "r2Key": "cineprint/versions/optimized/metropolis-1927/b16fde0d3cd83dcf9c45a32bf440c270a138e07ce774bb196f83084397a880bc-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "midsommar",
+      "role": "original",
+      "sourceSha256": "0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af",
+      "artifactSha256": "0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af",
+      "sizeBytes": 592968,
+      "width": 1061,
+      "height": 1500,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/midsommar.jpg",
+      "r2Key": "cineprint/versions/original/midsommar/0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "midsommar",
+      "role": "optimized",
+      "sourceSha256": "0bf0e3b7ca6e92322b839c25951c0ef8aab96ae35cdbd93aed7d89670021a7af",
+      "artifactSha256": "0147b45d6aa744daa77546f9955e43aad1cab77dc6b2b401dc36932f541279e2",
+      "sizeBytes": 276832,
+      "width": 800,
+      "height": 1131,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/midsommar.webp",
+      "r2Key": "cineprint/versions/optimized/midsommar/0147b45d6aa744daa77546f9955e43aad1cab77dc6b2b401dc36932f541279e2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mighty-morphin-power-rangers-the-movie",
+      "role": "original",
+      "sourceSha256": "73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9",
+      "artifactSha256": "73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9",
+      "sizeBytes": 4362197,
+      "width": 1290,
+      "height": 1906,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/mighty-morphin-power-rangers-the-movie.png",
+      "r2Key": "cineprint/versions/original/mighty-morphin-power-rangers-the-movie/73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mighty-morphin-power-rangers-the-movie",
+      "role": "optimized",
+      "sourceSha256": "73ec3fd50f5cd2cb421e06042f1fe38369914ec05ed5bc99d5a09505c8a9d1c9",
+      "artifactSha256": "0505fc517bf7d4c5b82de9bcf50c1256411e2cb31c8877700d6c2eb99a38045e",
+      "sizeBytes": 105218,
+      "width": 800,
+      "height": 1182,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/mighty-morphin-power-rangers-the-movie.webp",
+      "r2Key": "cineprint/versions/optimized/mighty-morphin-power-rangers-the-movie/0505fc517bf7d4c5b82de9bcf50c1256411e2cb31c8877700d6c2eb99a38045e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mother-2009",
+      "role": "original",
+      "sourceSha256": "2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437",
+      "artifactSha256": "2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437",
+      "sizeBytes": 1987433,
+      "width": 1701,
+      "height": 2551,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/mother-2009.jpg",
+      "r2Key": "cineprint/versions/original/mother-2009/2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mother-2009",
+      "role": "optimized",
+      "sourceSha256": "2ba48002cc1481465767c26fe8aeb508e59d1832bd92bba5288c73bd051a3437",
+      "artifactSha256": "1aa40beafcc93242a187d528e15dc8f99b536622a9a01c768dfd96cd71e57cec",
+      "sizeBytes": 216670,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/mother-2009.webp",
+      "r2Key": "cineprint/versions/optimized/mother-2009/1aa40beafcc93242a187d528e15dc8f99b536622a9a01c768dfd96cd71e57cec-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mother-2017",
+      "role": "original",
+      "sourceSha256": "078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c",
+      "artifactSha256": "078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c",
+      "sizeBytes": 212742,
+      "width": 802,
+      "height": 1200,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/mother-2017.jpg",
+      "r2Key": "cineprint/versions/original/mother-2017/078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mother-2017",
+      "role": "optimized",
+      "sourceSha256": "078e6d70cd6eb5260079cf01f8fceda742a10c488e3e6d9304b277d7378fbd5c",
+      "artifactSha256": "1aba174aab7167afc0ab359f7e6a1898583c681addf16862a13547d211ba86f8",
+      "sizeBytes": 151370,
+      "width": 800,
+      "height": 1197,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/mother-2017.webp",
+      "r2Key": "cineprint/versions/optimized/mother-2017/1aba174aab7167afc0ab359f7e6a1898583c681addf16862a13547d211ba86f8-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mullholland-drive",
+      "role": "original",
+      "sourceSha256": "2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81",
+      "artifactSha256": "2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81",
+      "sizeBytes": 350797,
+      "width": 1766,
+      "height": 2048,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/mullholland-drive.jpg",
+      "r2Key": "cineprint/versions/original/mullholland-drive/2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "mullholland-drive",
+      "role": "optimized",
+      "sourceSha256": "2f49e1c2b47a8d46c0a4fa84402996f2126c85822be7450eff45102cfcf9ba81",
+      "artifactSha256": "57a81fb3e6b1b51d6d234d409d484e8f7409d37801cc9141ee0220c4bec06a98",
+      "sizeBytes": 30188,
+      "width": 800,
+      "height": 928,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/mullholland-drive.webp",
+      "r2Key": "cineprint/versions/optimized/mullholland-drive/57a81fb3e6b1b51d6d234d409d484e8f7409d37801cc9141ee0220c4bec06a98-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "no-other-choice-2025-1",
+      "role": "original",
+      "sourceSha256": "5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643",
+      "artifactSha256": "5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643",
+      "sizeBytes": 2057955,
+      "width": 840,
+      "height": 1200,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/no-other-choice-2025-1.png",
+      "r2Key": "cineprint/versions/original/no-other-choice-2025-1/5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "no-other-choice-2025-1",
+      "role": "optimized",
+      "sourceSha256": "5b7d09bc6f7edc05ac1ff36a66a3ef70350388dfb6af39aabc115cd88ea2e643",
+      "artifactSha256": "412518a5aadbce43074cfe9d2b113ba3cf4da3785b2c1d53ac7a9bbd623fba92",
+      "sizeBytes": 220742,
+      "width": 800,
+      "height": 1143,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/no-other-choice-2025-1.webp",
+      "r2Key": "cineprint/versions/optimized/no-other-choice-2025-1/412518a5aadbce43074cfe9d2b113ba3cf4da3785b2c1d53ac7a9bbd623fba92-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "no-other-choice-2025-2",
+      "role": "original",
+      "sourceSha256": "da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53",
+      "artifactSha256": "da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53",
+      "sizeBytes": 2012942,
+      "width": 840,
+      "height": 1200,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/no-other-choice-2025-2.png",
+      "r2Key": "cineprint/versions/original/no-other-choice-2025-2/da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "no-other-choice-2025-2",
+      "role": "optimized",
+      "sourceSha256": "da354525ca9c5091e426f15cb7048767695af1068d3554b52335d21052526b53",
+      "artifactSha256": "c292470cb30b63c701f7fae47db4585416c08473c630ff46258652fc5432a794",
+      "sizeBytes": 131396,
+      "width": 800,
+      "height": 1143,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/no-other-choice-2025-2.webp",
+      "r2Key": "cineprint/versions/optimized/no-other-choice-2025-2/c292470cb30b63c701f7fae47db4585416c08473c630ff46258652fc5432a794-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "nope",
+      "role": "original",
+      "sourceSha256": "1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a",
+      "artifactSha256": "1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a",
+      "sizeBytes": 3901780,
+      "width": 1365,
+      "height": 2048,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/nope.png",
+      "r2Key": "cineprint/versions/original/nope/1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "nope",
+      "role": "optimized",
+      "sourceSha256": "1809a3688e13080f16dfa28a8b9e803202d0e1431b3336876ed48972bae8e38a",
+      "artifactSha256": "c78e8dc15a2d5a27cb0dd5a85a14fb5146980c28b3810e2da8a67f7c856f5896",
+      "sizeBytes": 232048,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/nope.webp",
+      "r2Key": "cineprint/versions/optimized/nope/c78e8dc15a2d5a27cb0dd5a85a14fb5146980c28b3810e2da8a67f7c856f5896-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "nosferatu-2024",
+      "role": "original",
+      "sourceSha256": "dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572",
+      "artifactSha256": "dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572",
+      "sizeBytes": 2998871,
+      "width": 1179,
+      "height": 1814,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/nosferatu-2024.png",
+      "r2Key": "cineprint/versions/original/nosferatu-2024/dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "nosferatu-2024",
+      "role": "optimized",
+      "sourceSha256": "dda033e957813cdae4817c2df7180bd217e9469e141138e9bf582d8c21660572",
+      "artifactSha256": "bc5f8a68b449e57a3673d201285ed2df6e955490a14b3a7974df31d4229291cd",
+      "sizeBytes": 237636,
+      "width": 800,
+      "height": 1231,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/nosferatu-2024.webp",
+      "r2Key": "cineprint/versions/optimized/nosferatu-2024/bc5f8a68b449e57a3673d201285ed2df6e955490a14b3a7974df31d4229291cd-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "obsession-2025",
+      "role": "original",
+      "sourceSha256": "ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da",
+      "artifactSha256": "ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da",
+      "sizeBytes": 519717,
+      "width": 1140,
+      "height": 1762,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/obsession-2025.jpg",
+      "r2Key": "cineprint/versions/original/obsession-2025/ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "obsession-2025",
+      "role": "optimized",
+      "sourceSha256": "ce707cb6862c7f92760b067f029fa973f1b7565f94ba9a7afc98c34ddf1cd4da",
+      "artifactSha256": "5aac4b21622d288810a30fbdfee476bbe5e3d5e21fec832b995d3bfaca817f46",
+      "sizeBytes": 324064,
+      "width": 800,
+      "height": 1236,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/obsession-2025.webp",
+      "r2Key": "cineprint/versions/optimized/obsession-2025/5aac4b21622d288810a30fbdfee476bbe5e3d5e21fec832b995d3bfaca817f46-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "one-battle-after-another",
+      "role": "original",
+      "sourceSha256": "dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724",
+      "artifactSha256": "dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724",
+      "sizeBytes": 3388637,
+      "width": 959,
+      "height": 1421,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/one-battle-after-another.png",
+      "r2Key": "cineprint/versions/original/one-battle-after-another/dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "one-battle-after-another",
+      "role": "optimized",
+      "sourceSha256": "dc3097e79a1178ba309d5653b03e81ea6170112d3724fdcb0d17daec7b17d724",
+      "artifactSha256": "2dc786ee119e915c6538653a31adac49a08d190a3919e3f11e0ee1f9de04b9f2",
+      "sizeBytes": 199842,
+      "width": 800,
+      "height": 1185,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/one-battle-after-another.webp",
+      "r2Key": "cineprint/versions/optimized/one-battle-after-another/2dc786ee119e915c6538653a31adac49a08d190a3919e3f11e0ee1f9de04b9f2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "parasite",
+      "role": "original",
+      "sourceSha256": "659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1",
+      "artifactSha256": "659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1",
+      "sizeBytes": 1425328,
+      "width": 2250,
+      "height": 3375,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/parasite.jpg",
+      "r2Key": "cineprint/versions/original/parasite/659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "parasite",
+      "role": "optimized",
+      "sourceSha256": "659657db3d5e780cce7615f2aa441df028186204e8655ec7022085375a8b91e1",
+      "artifactSha256": "fab0359a21ce4b5609db0325bb3bd49f0dc375ff60a6a82138bd947534e082c2",
+      "sizeBytes": 119166,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/parasite.webp",
+      "r2Key": "cineprint/versions/optimized/parasite/fab0359a21ce4b5609db0325bb3bd49f0dc375ff60a6a82138bd947534e082c2-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "peacemaker",
+      "role": "original",
+      "sourceSha256": "7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12",
+      "artifactSha256": "7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12",
+      "sizeBytes": 2314875,
+      "width": 792,
+      "height": 1224,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/peacemaker.png",
+      "r2Key": "cineprint/versions/original/peacemaker/7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "peacemaker",
+      "role": "optimized",
+      "sourceSha256": "7319fa7945719a3ed03770cf095a4f3fb9cbc3243b783fa82d2203af6fa46d12",
+      "artifactSha256": "8426256b0a6ba1a0a4f27cd24e7105b264aedd54c1323a5aeb3aea9149baa6f7",
+      "sizeBytes": 270108,
+      "width": 792,
+      "height": 1224,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/peacemaker.webp",
+      "r2Key": "cineprint/versions/optimized/peacemaker/8426256b0a6ba1a0a4f27cd24e7105b264aedd54c1323a5aeb3aea9149baa6f7-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "project-hail-mary",
+      "role": "original",
+      "sourceSha256": "44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa",
+      "artifactSha256": "44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa",
+      "sizeBytes": 564728,
+      "width": 1428,
+      "height": 2048,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/project-hail-mary.jpg",
+      "r2Key": "cineprint/versions/original/project-hail-mary/44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "project-hail-mary",
+      "role": "optimized",
+      "sourceSha256": "44ec4b2a730d6cd50aca68252147738bba1fdd30d20ab6493626546e3c7ee5aa",
+      "artifactSha256": "31eb91ddefee0cbf273d49fc4f357e0dfb60c39f5d10df2cbfc7f98b229d91f9",
+      "sizeBytes": 138944,
+      "width": 800,
+      "height": 1147,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/project-hail-mary.webp",
+      "r2Key": "cineprint/versions/optimized/project-hail-mary/31eb91ddefee0cbf273d49fc4f357e0dfb60c39f5d10df2cbfc7f98b229d91f9-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "rogue-one-a-star-wars-story",
+      "role": "original",
+      "sourceSha256": "8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a",
+      "artifactSha256": "8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a",
+      "sizeBytes": 932752,
+      "width": 776,
+      "height": 1199,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/rogue-one-a-star-wars-story.png",
+      "r2Key": "cineprint/versions/original/rogue-one-a-star-wars-story/8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "rogue-one-a-star-wars-story",
+      "role": "optimized",
+      "sourceSha256": "8a5ff2c5635ed8d34bb3233490cccb2533c77ef6ed4983586c00b217686cfa8a",
+      "artifactSha256": "0ede852cf92d54a365d2a67825a0bdedc95f7a552170eee3253672bb4ddd5c9c",
+      "sizeBytes": 123126,
+      "width": 776,
+      "height": 1199,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/rogue-one-a-star-wars-story.webp",
+      "r2Key": "cineprint/versions/optimized/rogue-one-a-star-wars-story/0ede852cf92d54a365d2a67825a0bdedc95f7a552170eee3253672bb4ddd5c9c-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "stranger-things-1",
+      "role": "original",
+      "sourceSha256": "a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f",
+      "artifactSha256": "a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f",
+      "sizeBytes": 3773987,
+      "width": 1081,
+      "height": 1350,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/stranger-things-1.png",
+      "r2Key": "cineprint/versions/original/stranger-things-1/a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "stranger-things-1",
+      "role": "optimized",
+      "sourceSha256": "a13c7599e4d8af05041431f603570ca5923672dfce0e998e00d5d5416a76aa1f",
+      "artifactSha256": "d930e27b1f6487f7eb5ac139d1f13a0c0dc1b29070685335f262c9056f82bedc",
+      "sizeBytes": 261826,
+      "width": 800,
+      "height": 999,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/stranger-things-1.webp",
+      "r2Key": "cineprint/versions/optimized/stranger-things-1/d930e27b1f6487f7eb5ac139d1f13a0c0dc1b29070685335f262c9056f82bedc-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "stranger-things-3",
+      "role": "original",
+      "sourceSha256": "bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d",
+      "artifactSha256": "bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d",
+      "sizeBytes": 2726483,
+      "width": 1024,
+      "height": 1536,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/stranger-things-3.png",
+      "r2Key": "cineprint/versions/original/stranger-things-3/bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "stranger-things-3",
+      "role": "optimized",
+      "sourceSha256": "bfe26015b2e1fe534e51e4f4d471296678f0b6f41557e877002786582373a94d",
+      "artifactSha256": "228d2f7077248a9425fcd9088f3a6eb9ac4e711be512776dd00cee2a34a36935",
+      "sizeBytes": 98102,
+      "width": 800,
+      "height": 1200,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/stranger-things-3.webp",
+      "r2Key": "cineprint/versions/optimized/stranger-things-3/228d2f7077248a9425fcd9088f3a6eb9ac4e711be512776dd00cee2a34a36935-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "tenet",
+      "role": "original",
+      "sourceSha256": "b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f",
+      "artifactSha256": "b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f",
+      "sizeBytes": 251508,
+      "width": 1200,
+      "height": 1781,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/tenet.jpg",
+      "r2Key": "cineprint/versions/original/tenet/b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "tenet",
+      "role": "optimized",
+      "sourceSha256": "b0a3af765022ac190dbe770e699493d5ef49df1df23fcc13979609a9ee998e7f",
+      "artifactSha256": "88396cf93c74c820ad549c57932837bc08ac2aa9dbb1c0a75d367068d60f0bb1",
+      "sizeBytes": 53952,
+      "width": 800,
+      "height": 1187,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/tenet.webp",
+      "r2Key": "cineprint/versions/optimized/tenet/88396cf93c74c820ad549c57932837bc08ac2aa9dbb1c0a75d367068d60f0bb1-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-handmaiden",
+      "role": "original",
+      "sourceSha256": "3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d",
+      "artifactSha256": "3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d",
+      "sizeBytes": 4275302,
+      "width": 1175,
+      "height": 1750,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/the-handmaiden.png",
+      "r2Key": "cineprint/versions/original/the-handmaiden/3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-handmaiden",
+      "role": "optimized",
+      "sourceSha256": "3117d7400333170d785f2972627d9dd77cae7a5f5574256ff231a4426263225d",
+      "artifactSha256": "82adbeb8cd3a3586595bd5ae76e1999c6405a88428fba3204e384e6cd0f9aea3",
+      "sizeBytes": 261412,
+      "width": 800,
+      "height": 1191,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-handmaiden.webp",
+      "r2Key": "cineprint/versions/optimized/the-handmaiden/82adbeb8cd3a3586595bd5ae76e1999c6405a88428fba3204e384e6cd0f9aea3-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-killer-2023",
+      "role": "original",
+      "sourceSha256": "a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7",
+      "artifactSha256": "a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7",
+      "sizeBytes": 4040005,
+      "width": 1200,
+      "height": 1781,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/the-killer-2023.png",
+      "r2Key": "cineprint/versions/original/the-killer-2023/a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-killer-2023",
+      "role": "optimized",
+      "sourceSha256": "a27bd8b5bfd054a26672c3724f6c96fe098a6dbce7a45c3aaa12a58b154a18d7",
+      "artifactSha256": "b7714fe751d233ca751f25f39a99f0235a3320bcdf1074a6dfb93eee5a969a76",
+      "sizeBytes": 176836,
+      "width": 800,
+      "height": 1187,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-killer-2023.webp",
+      "r2Key": "cineprint/versions/optimized/the-killer-2023/b7714fe751d233ca751f25f39a99f0235a3320bcdf1074a6dfb93eee5a969a76-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-mummy-1999",
+      "role": "original",
+      "sourceSha256": "2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57",
+      "artifactSha256": "2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57",
+      "sizeBytes": 492450,
+      "width": 1374,
+      "height": 2048,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/the-mummy-1999.jpg",
+      "r2Key": "cineprint/versions/original/the-mummy-1999/2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-mummy-1999",
+      "role": "optimized",
+      "sourceSha256": "2231c75b834bde0863a11c6d8d08c1661bbde0212e20fc01b65dfef6a51c5e57",
+      "artifactSha256": "ed9b96ad39704066ae8afc561b25224cb99c77415ee8c02dded3a63ec997ec73",
+      "sizeBytes": 135946,
+      "width": 800,
+      "height": 1192,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-mummy-1999.webp",
+      "r2Key": "cineprint/versions/optimized/the-mummy-1999/ed9b96ad39704066ae8afc561b25224cb99c77415ee8c02dded3a63ec997ec73-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-platform",
+      "role": "original",
+      "sourceSha256": "b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb",
+      "artifactSha256": "b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb",
+      "sizeBytes": 2390581,
+      "width": 1200,
+      "height": 1754,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/the-platform.png",
+      "r2Key": "cineprint/versions/original/the-platform/b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-platform",
+      "role": "optimized",
+      "sourceSha256": "b31911e5bb1edc03ded7fff45468fd73519b3606e49986e095deae01b7f277eb",
+      "artifactSha256": "b3da126e9f5832aa143e1963db9ee61a75d79b438fd216cf11bc9590d1f523b3",
+      "sizeBytes": 31102,
+      "width": 800,
+      "height": 1169,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-platform.webp",
+      "r2Key": "cineprint/versions/optimized/the-platform/b3da126e9f5832aa143e1963db9ee61a75d79b438fd216cf11bc9590d1f523b3-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-shape-of-water",
+      "role": "original",
+      "sourceSha256": "48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054",
+      "artifactSha256": "48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054",
+      "sizeBytes": 278150,
+      "width": 960,
+      "height": 1200,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/the-shape-of-water.jpg",
+      "r2Key": "cineprint/versions/original/the-shape-of-water/48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-shape-of-water",
+      "role": "optimized",
+      "sourceSha256": "48573b87e085bc304d0d51a5176bf4baab50b3ad5756d925bf96ceec4d978054",
+      "artifactSha256": "166be27cf81adbfff9dd1eaa2cb1aa3dfcd0b4b3922c0caeaa0a88b6bc6c5f92",
+      "sizeBytes": 121676,
+      "width": 800,
+      "height": 1000,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-shape-of-water.webp",
+      "r2Key": "cineprint/versions/optimized/the-shape-of-water/166be27cf81adbfff9dd1eaa2cb1aa3dfcd0b4b3922c0caeaa0a88b6bc6c5f92-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-substance-1",
+      "role": "original",
+      "sourceSha256": "f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb",
+      "artifactSha256": "f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb",
+      "sizeBytes": 3850566,
+      "width": 1179,
+      "height": 1817,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/the-substance-1.png",
+      "r2Key": "cineprint/versions/original/the-substance-1/f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-substance-1",
+      "role": "optimized",
+      "sourceSha256": "f131ca88c8cd723809aee834c89e770ad7912b86600249f8fd3bf1199c477bbb",
+      "artifactSha256": "e0738baa98448a95afd0b40e9afd0e58000ff7f76ca9ea9267a491523fdc7a8b",
+      "sizeBytes": 127052,
+      "width": 800,
+      "height": 1233,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-substance-1.webp",
+      "r2Key": "cineprint/versions/optimized/the-substance-1/e0738baa98448a95afd0b40e9afd0e58000ff7f76ca9ea9267a491523fdc7a8b-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-way-of-seeing-life",
+      "role": "original",
+      "sourceSha256": "440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a",
+      "artifactSha256": "440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a",
+      "sizeBytes": 334968,
+      "width": 1080,
+      "height": 1600,
+      "mimeType": "image/jpeg",
+      "localPath": "migration/cache/sources/the-way-of-seeing-life.jpg",
+      "r2Key": "cineprint/versions/original/the-way-of-seeing-life/440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a.jpg",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-way-of-seeing-life",
+      "role": "optimized",
+      "sourceSha256": "440e77ba555f6e21ea0d3ab110e9a823961ca72c477bf02d0a39abd3b7b7bb0a",
+      "artifactSha256": "ae484b69e68c76bdfba03ec71b63affb5df1ec21e3fef02e024835f2275c7254",
+      "sizeBytes": 111166,
+      "width": 800,
+      "height": 1185,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-way-of-seeing-life.webp",
+      "r2Key": "cineprint/versions/optimized/the-way-of-seeing-life/ae484b69e68c76bdfba03ec71b63affb5df1ec21e3fef02e024835f2275c7254-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "pbs-twimg",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-woman-who-ran",
+      "role": "original",
+      "sourceSha256": "0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d",
+      "artifactSha256": "0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d",
+      "sizeBytes": 634077,
+      "width": 704,
+      "height": 1024,
+      "mimeType": "image/png",
+      "localPath": "migration/cache/sources/the-woman-who-ran.png",
+      "r2Key": "cineprint/versions/original/the-woman-who-ran/0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d.png",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    },
+    {
+      "posterId": "the-woman-who-ran",
+      "role": "optimized",
+      "sourceSha256": "0d5de9c0b97a98dfbd75fd5227bb7609140137cf86b983a9698a5bbf2d03335d",
+      "artifactSha256": "9dd74e364fdeb91a007d94a36f58214214847d518be79ef15040a6f89b2735fe",
+      "sizeBytes": 52992,
+      "width": 704,
+      "height": 1024,
+      "mimeType": "image/webp",
+      "optimizer": {
+        "name": "sharp",
+        "version": "0.35.3",
+        "libvipsVersion": "8.18.3",
+        "slug": "sharp-0.35.3-libvips-8.18.3"
+      },
+      "transformation": {
+        "width": 800,
+        "quality": 80,
+        "format": "webp"
+      },
+      "localPath": "migration/cache/optimized/the-woman-who-ran.webp",
+      "r2Key": "cineprint/versions/optimized/the-woman-who-ran/9dd74e364fdeb91a007d94a36f58214214847d518be79ef15040a6f89b2735fe-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "sourceProvider": "raindrop-file",
+      "sourceVerified": true
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "manifestHash": "6e5a648341f5a4cd4a97c76da25e02441fdc64b2ccc7bd1bce6225972371c11a",
+  "createdAt": "2026-11-08T18:04:39.590Z",
+  "updatedAt": "2026-11-08T18:13:45.459Z",
+  "entries": {
+    "artwork-1824638987": {
+      "posterId": "artwork-1824638987",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:05:26.561Z",
+      "sourceSha256": "a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796",
+      "originalSha256": "a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796",
+      "optimizedSha256": "884c112a76d32c224957c4a2e3c3a1cf7404fec973281104a1081b3e5621be40",
+      "originalKey": "cineprint/versions/original/artwork-1824638987/a8575357818063ea749e14e5fe3693e7612a5af1677e8f80f09a0c5fd52b0796.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1824638987/884c112a76d32c224957c4a2e3c3a1cf7404fec973281104a1081b3e5621be40-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3454878,
+      "optimizedSizeBytes": 233916,
+      "originalDimensions": {
+        "width": 3277,
+        "height": 4096
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1000
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:05:26.561Z",
+      "incrementAttempts": true
+    },
+    "artwork-1824644552": {
+      "posterId": "artwork-1824644552",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:05:45.557Z",
+      "sourceSha256": "ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf",
+      "originalSha256": "ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf",
+      "optimizedSha256": "734e886b471e372882231247dd6701378d1a3f0ad1771fae442ff0d94353bd79",
+      "originalKey": "cineprint/versions/original/artwork-1824644552/ec3d0e150e7e24db6d6f400d97972b2299fdeb8537083247958ef5f822ea68bf.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1824644552/734e886b471e372882231247dd6701378d1a3f0ad1771fae442ff0d94353bd79-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2922282,
+      "optimizedSizeBytes": 99244,
+      "originalDimensions": {
+        "width": 2893,
+        "height": 4096
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1133
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:05:45.557Z",
+      "incrementAttempts": true
+    },
+    "artwork-1824648439": {
+      "posterId": "artwork-1824648439",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:05:59.767Z",
+      "sourceSha256": "c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5",
+      "originalSha256": "c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5",
+      "optimizedSha256": "48feb64201b2701c5ff668b5aa75b6cab623c1dbe35c334292125ee249591af8",
+      "originalKey": "cineprint/versions/original/artwork-1824648439/c8e59a081204e4b363e3be1d76b930fb1300307365795a4286825808cd61e2a5.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1824648439/48feb64201b2701c5ff668b5aa75b6cab623c1dbe35c334292125ee249591af8-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 674402,
+      "optimizedSizeBytes": 112486,
+      "originalDimensions": {
+        "width": 1188,
+        "height": 1782
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:05:59.767Z",
+      "incrementAttempts": true
+    },
+    "artwork-1824734129": {
+      "posterId": "artwork-1824734129",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:06:13.998Z",
+      "sourceSha256": "4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f",
+      "originalSha256": "4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f",
+      "optimizedSha256": "c5af65d817063d0b7426a8f5c37826f3dce0b2a57fe4018a9eeba82496fde829",
+      "originalKey": "cineprint/versions/original/artwork-1824734129/4866c5f4151c4a3c9153ecf822968044f1e660dd1e5bea395068a71323fc9e0f.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1824734129/c5af65d817063d0b7426a8f5c37826f3dce0b2a57fe4018a9eeba82496fde829-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1938142,
+      "optimizedSizeBytes": 166326,
+      "originalDimensions": {
+        "width": 3320,
+        "height": 4096
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 987
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:06:13.998Z",
+      "incrementAttempts": true
+    },
+    "artwork-1831537050": {
+      "posterId": "artwork-1831537050",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:06:54.751Z",
+      "sourceSha256": "ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a",
+      "originalSha256": "ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a",
+      "optimizedSha256": "a4e9c6373386e22c0840393abdd8a5c9beaf4141915c7609c514d76fd5d56a1a",
+      "originalKey": "cineprint/versions/original/artwork-1831537050/ea242c6ecfaf5af760371167547c684e05385b85496a129fea6d9755b803550a.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1831537050/a4e9c6373386e22c0840393abdd8a5c9beaf4141915c7609c514d76fd5d56a1a-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2235939,
+      "optimizedSizeBytes": 76096,
+      "originalDimensions": {
+        "width": 1350,
+        "height": 2000
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:06:54.751Z",
+      "incrementAttempts": true
+    },
+    "artwork-1831537996": {
+      "posterId": "artwork-1831537996",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:07:26.248Z",
+      "sourceSha256": "a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874",
+      "originalSha256": "a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874",
+      "optimizedSha256": "435921870eaf06e4afc9dc492933bb6c68e0f847f9b565cfc66ba9236bb125d8",
+      "originalKey": "cineprint/versions/original/artwork-1831537996/a761bf421d15ffd10e3c67a3e4fa28440008766e688ceb395639eaa0ade34874.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1831537996/435921870eaf06e4afc9dc492933bb6c68e0f847f9b565cfc66ba9236bb125d8-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 4733895,
+      "optimizedSizeBytes": 98808,
+      "originalDimensions": {
+        "width": 2000,
+        "height": 2963
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:07:26.248Z",
+      "incrementAttempts": true
+    },
+    "artwork-1831541280": {
+      "posterId": "artwork-1831541280",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:07:38.027Z",
+      "sourceSha256": "1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a",
+      "originalSha256": "1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a",
+      "optimizedSha256": "19dba5be14afb937b27c45b32f55ae672a3af1209d5d8d7b69f643539e9b037e",
+      "originalKey": "cineprint/versions/original/artwork-1831541280/1b0507e0d74eabde247aa11fb924c619e695391a52e0fc6f898ad7b79ee2180a.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1831541280/19dba5be14afb937b27c45b32f55ae672a3af1209d5d8d7b69f643539e9b037e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1267485,
+      "optimizedSizeBytes": 129864,
+      "originalDimensions": {
+        "width": 2000,
+        "height": 3000
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:07:38.027Z",
+      "incrementAttempts": true
+    },
+    "artwork-1831541566": {
+      "posterId": "artwork-1831541566",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:08:01.880Z",
+      "sourceSha256": "59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa",
+      "originalSha256": "59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa",
+      "optimizedSha256": "801b3ea3c44191029c21c6e520c30e9bd8560e03360d1c55086eaab41093351d",
+      "originalKey": "cineprint/versions/original/artwork-1831541566/59250553a2464d791210b886149b2f8af2a8331965dd5c224629c00eeb64e9aa.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1831541566/801b3ea3c44191029c21c6e520c30e9bd8560e03360d1c55086eaab41093351d-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 3557511,
+      "optimizedSizeBytes": 25460,
+      "originalDimensions": {
+        "width": 2000,
+        "height": 3000
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:08:01.880Z",
+      "incrementAttempts": true
+    },
+    "artwork-1831544424": {
+      "posterId": "artwork-1831544424",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:08:09.060Z",
+      "sourceSha256": "9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f",
+      "originalSha256": "9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f",
+      "optimizedSha256": "fe8e0de8fc7bd845492723d4f2ba57162c59889afe63bb4131117830b3b6c286",
+      "originalKey": "cineprint/versions/original/artwork-1831544424/9693ae72ed7add777cbc60b1981fa6f3206527554c6f342eebbe547da5ffbd5f.jpg",
+      "optimizedKey": "cineprint/versions/optimized/artwork-1831544424/fe8e0de8fc7bd845492723d4f2ba57162c59889afe63bb4131117830b3b6c286-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 383956,
+      "optimizedSizeBytes": 181962,
+      "originalDimensions": {
+        "width": 1010,
+        "height": 1350
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1069
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:08:09.060Z",
+      "incrementAttempts": true
+    },
+    "backrooms-1": {
+      "posterId": "backrooms-1",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:08:13.263Z",
+      "sourceSha256": "14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de",
+      "originalSha256": "14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de",
+      "optimizedSha256": "6d5018a14ea4cf6867dfed90ea6496ab47b36be5215b2d521ccc120f536cf92e",
+      "originalKey": "cineprint/versions/original/backrooms-1/14c34181a946428b40c0926fecf1fde5dc046de0587694e74527009d917717de.png",
+      "optimizedKey": "cineprint/versions/optimized/backrooms-1/6d5018a14ea4cf6867dfed90ea6496ab47b36be5215b2d521ccc120f536cf92e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 509343,
+      "optimizedSizeBytes": 29406,
+      "originalDimensions": {
+        "width": 674,
+        "height": 900
+      },
+      "optimizedDimensions": {
+        "width": 674,
+        "height": 900
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:08:13.263Z",
+      "incrementAttempts": true
+    },
+    "backrooms-2": {
+      "posterId": "backrooms-2",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:09:18.666Z",
+      "sourceSha256": "51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98",
+      "originalSha256": "51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98",
+      "optimizedSha256": "2f199b3d255ab1661b879412977fabf423c5fc5b2a44619015b2f99da29d2c36",
+      "originalKey": "cineprint/versions/original/backrooms-2/51c1fca6d0a9aa994c9170e5e81f7ee3cfec5b5e01e05d857f6cb921ca2d8e98.png",
+      "optimizedKey": "cineprint/versions/optimized/backrooms-2/2f199b3d255ab1661b879412977fabf423c5fc5b2a44619015b2f99da29d2c36-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 8293392,
+      "optimizedSizeBytes": 80800,
+      "originalDimensions": {
+        "width": 1701,
+        "height": 2551
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:09:18.666Z",
+      "incrementAttempts": true
+    },
+    "backrooms-3": {
+      "posterId": "backrooms-3",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:10:19.496Z",
+      "sourceSha256": "81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d",
+      "originalSha256": "81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d",
+      "optimizedSha256": "248a880596203352310081bd4a70e94992317ad4082e8a45f1a860d232d72cdf",
+      "originalKey": "cineprint/versions/original/backrooms-3/81ed38792c92611399e7d43158382b784dd283bcb6971ec3498850bc00c77b7d.png",
+      "optimizedKey": "cineprint/versions/optimized/backrooms-3/248a880596203352310081bd4a70e94992317ad4082e8a45f1a860d232d72cdf-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 6202243,
+      "optimizedSizeBytes": 205870,
+      "originalDimensions": {
+        "width": 1383,
+        "height": 2048
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1185
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:10:19.496Z",
+      "incrementAttempts": true
+    },
+    "black-widow": {
+      "posterId": "black-widow",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:10:36.759Z",
+      "sourceSha256": "839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720",
+      "originalSha256": "839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720",
+      "optimizedSha256": "aa4843514421b201a0d1a7ec6ae40fae1710c726a73bbdb93621a54a0ed439b7",
+      "originalKey": "cineprint/versions/original/black-widow/839c9eb528094e86ca57999e39f433613e3218458f91a9f6dbfdd6f530f23720.png",
+      "optimizedKey": "cineprint/versions/optimized/black-widow/aa4843514421b201a0d1a7ec6ae40fae1710c726a73bbdb93621a54a0ed439b7-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 1822693,
+      "optimizedSizeBytes": 74454,
+      "originalDimensions": {
+        "width": 1200,
+        "height": 1500
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1000
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:10:36.759Z",
+      "incrementAttempts": true
+    },
+    "cure-1997": {
+      "posterId": "cure-1997",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:11:18.021Z",
+      "sourceSha256": "36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9",
+      "originalSha256": "36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9",
+      "optimizedSha256": "10a4468a73c9b700025a1b347b334a3aa5057cc398530e5476c8375e0c5a56c1",
+      "originalKey": "cineprint/versions/original/cure-1997/36cc96dfea8d31f7b17916fbcfd6b6af664cbc4a3618ec4668ca41bb02dccac9.jpg",
+      "optimizedKey": "cineprint/versions/optimized/cure-1997/10a4468a73c9b700025a1b347b334a3aa5057cc398530e5476c8375e0c5a56c1-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 2732638,
+      "optimizedSizeBytes": 12280,
+      "originalDimensions": {
+        "width": 1701,
+        "height": 2551
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:11:18.021Z",
+      "incrementAttempts": true
+    },
+    "dune-part-one": {
+      "posterId": "dune-part-one",
+      "state": "VERIFIED",
+      "attempts": 1,
+      "lastError": null,
+      "updatedAt": "2026-11-08T18:13:45.459Z",
+      "sourceSha256": "53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019",
+      "originalSha256": "53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019",
+      "optimizedSha256": "2bc8d221f87032e42af5a4d2ccfdf55f87308bd165b75cd8c02a237625327b2b",
+      "originalKey": "cineprint/versions/original/dune-part-one/53367f21c721884110ae8833393c4614731f7f7e36f8960bad17d628d5142019.png",
+      "optimizedKey": "cineprint/versions/optimized/dune-part-one/2bc8d221f87032e42af5a4d2ccfdf55f87308bd165b75cd8c02a237625327b2b-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "originalSizeBytes": 17735235,
+      "optimizedSizeBytes": 161542,
+      "originalDimensions": {
+        "width": 2731,
+        "height": 4096
+      },
+      "optimizedDimensions": {
+        "width": 800,
+        "height": 1200
+      },
+      "originalUploaded": true,
+      "optimizedUploaded": true,
+      "verifiedAt": "2026-11-08T18:13:45.459Z",
+      "incrementAttempts": true
+    }
+  }
+}

@@ -62,8 +62,12 @@ function getSnapshot() {
   return snapshot;
 }
 
+// Stable server snapshot: useSyncExternalStore requires the same reference on
+// every call, otherwise React logs an infinite-loop warning during hydration.
+const SERVER_SNAPSHOT = readStateIdle<string[]>([]);
+
 function getServerSnapshot(): ReadState<string[]> {
-  return readStateIdle<string[]>([]);
+  return SERVER_SNAPSHOT;
 }
 
 /**

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-08T17:27:07.655Z",
+  "posterIds": [
+    "art-of-a-hit-2024",
+    "artwork-1812274995",
+    "artwork-1813721087",
+    "artwork-1824628665",
+    "artwork-1824637521"
+  ],
+  "objects": [
+    {
+      "posterId": "art-of-a-hit-2024",
+      "role": "original",
+      "r2Key": "cineprint/versions/original/art-of-a-hit-2024/ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d.png",
+      "expectedSha256": "ba2c8b80c4ca5eba8a2008b9c9391f1a59b5dc13c9f623cee1f6aab487fe995d",
+      "sizeBytes": 2950361,
+      "localPath": "migration/cache/sources/art-of-a-hit-2024.png"
+    },
+    {
+      "posterId": "art-of-a-hit-2024",
+      "role": "optimized",
+      "r2Key": "cineprint/versions/optimized/art-of-a-hit-2024/a0e5547368ecefca5a22bfcaa923920d88dd0e37458bcad2c5d8feda023c535e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "expectedSha256": "a0e5547368ecefca5a22bfcaa923920d88dd0e37458bcad2c5d8feda023c535e",
+      "sizeBytes": 116278,
+      "localPath": "migration/cache/optimized/art-of-a-hit-2024.webp"
+    },
+    {
+      "posterId": "artwork-1812274995",
+      "role": "original",
+      "r2Key": "cineprint/versions/original/artwork-1812274995/d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327.png",
+      "expectedSha256": "d0e491e359636fc8f1b0d88ef4f43be32696830f1705307236c91c8eab516327",
+      "sizeBytes": 3251321,
+      "localPath": "migration/cache/sources/artwork-1812274995.png"
+    },
+    {
+      "posterId": "artwork-1812274995",
+      "role": "optimized",
+      "r2Key": "cineprint/versions/optimized/artwork-1812274995/27d085597b93b9e964762e9a4c3f12d5516fd29dcae0be9b2e41c2ba7fe0d0ca-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "expectedSha256": "27d085597b93b9e964762e9a4c3f12d5516fd29dcae0be9b2e41c2ba7fe0d0ca",
+      "sizeBytes": 86718,
+      "localPath": "migration/cache/optimized/artwork-1812274995.webp"
+    },
+    {
+      "posterId": "artwork-1813721087",
+      "role": "original",
+      "r2Key": "cineprint/versions/original/artwork-1813721087/b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc.jpg",
+      "expectedSha256": "b7ee3bdf400d251fd23e25f7a195d9e5fa3b629769b09c11574f7de38b8304cc",
+      "sizeBytes": 225616,
+      "localPath": "migration/cache/sources/artwork-1813721087.jpg"
+    },
+    {
+      "posterId": "artwork-1813721087",
+      "role": "optimized",
+      "r2Key": "cineprint/versions/optimized/artwork-1813721087/a0ea2b38f7578268f3f9942a21a87c99fc4642843910b9d01e2a8b0fb60392d6-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "expectedSha256": "a0ea2b38f7578268f3f9942a21a87c99fc4642843910b9d01e2a8b0fb60392d6",
+      "sizeBytes": 60452,
+      "localPath": "migration/cache/optimized/artwork-1813721087.webp"
+    },
+    {
+      "posterId": "artwork-1824628665",
+      "role": "original",
+      "r2Key": "cineprint/versions/original/artwork-1824628665/c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb.jpg",
+      "expectedSha256": "c575086a2ddee8ab05a3096168a4750efbd0a88379a85797e692a23b5a8e9eeb",
+      "sizeBytes": 1414161,
+      "localPath": "migration/cache/sources/artwork-1824628665.jpg"
+    },
+    {
+      "posterId": "artwork-1824628665",
+      "role": "optimized",
+      "r2Key": "cineprint/versions/optimized/artwork-1824628665/e2df9cedf9f604c927daefdce565c409ebef39b00138d679807a25ab2380259e-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "expectedSha256": "e2df9cedf9f604c927daefdce565c409ebef39b00138d679807a25ab2380259e",
+      "sizeBytes": 119172,
+      "localPath": "migration/cache/optimized/artwork-1824628665.webp"
+    },
+    {
+      "posterId": "artwork-1824637521",
+      "role": "original",
+      "r2Key": "cineprint/versions/original/artwork-1824637521/635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af.jpg",
+      "expectedSha256": "635fecc53a405f7280db859dac164bf5e7838e2e186a02bc1e435b3d5f8fe1af",
+      "sizeBytes": 1905871,
+      "localPath": "migration/cache/sources/artwork-1824637521.jpg"
+    },
+    {
+      "posterId": "artwork-1824637521",
+      "role": "optimized",
+      "r2Key": "cineprint/versions/optimized/artwork-1824637521/1ee2d695fcc80ae87bbe1333a010fe533e6618e682f4e03b81ccaf4185f1fb58-sharp-0.35.3-libvips-8.18.3-w800-q80.webp",
+      "expectedSha256": "1ee2d695fcc80ae87bbe1333a010fe533e6618e682f4e03b81ccaf4185f1fb58",
+      "sizeBytes": 279194,
+      "localPath": "migration/cache/optimized/artwork-1824637521.webp"
+    }
+  ]
+}

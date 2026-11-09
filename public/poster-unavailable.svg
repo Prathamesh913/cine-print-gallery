@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200" viewBox="0 0 800 1200" role="img" aria-label="Image unavailable">
+  <rect width="800" height="1200" fill="#1e1e1e"/>
+  <g fill="none" stroke="#a3a3a3" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="300" y="500" width="200" height="150" rx="14"/>
+    <path d="M300 620l52-52 44 44 30-30 74 74"/>
+    <circle cx="430" cy="550" r="18" fill="#a3a3a3" stroke="none"/>
+    <path d="M300 720l200-200"/>
+  </g>
+  <text x="400" y="760" fill="#a3a3a3" font-family="system-ui, sans-serif" font-size="34" font-weight="600" letter-spacing="4" text-anchor="middle">IMAGE UNAVAILABLE</text>
+  <style>
+    @media (prefers-color-scheme: light) {
+      rect { fill: #e5e5e5; }
+      g { stroke: #525252; }
+      circle { fill: #525252; }
+      text { fill: #525252; }
+    }
+  </style>
+</svg>

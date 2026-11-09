@@ -1,0 +1,1241 @@
+{
+  "generatedAt": "2026-11-07T05:58:30.992Z",
+  "mode": "dry-run",
+  "publicBaseUrl": "https://images.cineprint.click",
+  "totals": {
+    "posters": 63,
+    "sourceImages": 63,
+    "expectedR2Objects": 126,
+    "originalBytes": 152882124,
+    "existingOptimizedBytes": 7344772,
+    "estimatedMissingOptimizedBytes": 2045902,
+    "estimatedOptimizedBytes": 9390674,
+    "estimatedTotalUploadBytes": 162272798,
+    "medianOptimizedRatio": 0.07924182133876383,
+    "missingObjects": 126,
+    "conflictingObjects": 0,
+    "alreadyVerifiedObjects": 0,
+    "presentObjects": 0
+  },
+  "providers": [
+    {
+      "provider": "pbs-twimg",
+      "entries": 32,
+      "originalBytes": 40361848,
+      "existingOptimizedBytes": 2635056,
+      "estimatedMissingOptimizedBytes": 2045902,
+      "estimatedTotalUploadBytes": 45042806
+    },
+    {
+      "provider": "raindrop-file",
+      "entries": 31,
+      "originalBytes": 112520276,
+      "existingOptimizedBytes": 4709716,
+      "estimatedMissingOptimizedBytes": 0,
+      "estimatedTotalUploadBytes": 117229992
+    }
+  ],
+  "objects": [
+    {
+      "posterId": "2001-a-space-odyssey",
+      "variant": "original",
+      "key": "cineprint/raindrop/1528361110.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "2001-a-space-odyssey",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/2001-a-space-odyssey.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "art-of-a-hit-2024",
+      "variant": "original",
+      "key": "cineprint/raindrop/1535262867.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "art-of-a-hit-2024",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/art-of-a-hit-2024.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1812274995",
+      "variant": "original",
+      "key": "cineprint/raindrop/1812274995.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1812274995",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1812274995.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1813721087",
+      "variant": "original",
+      "key": "cineprint/raindrop/1813721087.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1813721087",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1813721087.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824607248",
+      "variant": "original",
+      "key": "cineprint/raindrop/1824607248.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824607248",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1824607248.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824628665",
+      "variant": "original",
+      "key": "cineprint/raindrop/1824628665.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824628665",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1824628665.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824637521",
+      "variant": "original",
+      "key": "cineprint/raindrop/1824637521.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824637521",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1824637521.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824638987",
+      "variant": "original",
+      "key": "cineprint/raindrop/1824638987.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824638987",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1824638987.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824644552",
+      "variant": "original",
+      "key": "cineprint/raindrop/1824644552.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824644552",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1824644552.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824648439",
+      "variant": "original",
+      "key": "cineprint/raindrop/1824648439.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824648439",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1824648439.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824734129",
+      "variant": "original",
+      "key": "cineprint/raindrop/1824734129.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1824734129",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1824734129.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831537050",
+      "variant": "original",
+      "key": "cineprint/raindrop/1831537050.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831537050",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1831537050.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831537996",
+      "variant": "original",
+      "key": "cineprint/raindrop/1831537996.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831537996",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1831537996.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831541280",
+      "variant": "original",
+      "key": "cineprint/raindrop/1831541280.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831541280",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1831541280.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831541566",
+      "variant": "original",
+      "key": "cineprint/raindrop/1831541566.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831541566",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1831541566.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831544424",
+      "variant": "original",
+      "key": "cineprint/raindrop/1831544424.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "artwork-1831544424",
+      "variant": "optimized",
+      "key": "cineprint/optimized/1831544424.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "backrooms-1",
+      "variant": "original",
+      "key": "cineprint/raindrop/1779301125.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "backrooms-1",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/backrooms-1.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "backrooms-2",
+      "variant": "original",
+      "key": "cineprint/raindrop/1779304223.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "backrooms-2",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/backrooms-2.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "backrooms-3",
+      "variant": "original",
+      "key": "cineprint/raindrop/1786274036.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "backrooms-3",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/backrooms-3.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "black-widow",
+      "variant": "original",
+      "key": "cineprint/raindrop/1535263039.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "black-widow",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/black-widow.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "bugonia",
+      "variant": "original",
+      "key": "cineprint/external/bugonia.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "bugonia",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/bugonia.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "cure-1997",
+      "variant": "original",
+      "key": "cineprint/external/cure-1997.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "cure-1997",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/cure-1997.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "dune-part-one",
+      "variant": "original",
+      "key": "cineprint/raindrop/1790103802.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "dune-part-one",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/dune-part-one.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "everything-everywhere-all-at-once",
+      "variant": "original",
+      "key": "cineprint/external/everything-everywhere-all-at-once.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "everything-everywhere-all-at-once",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/everything-everywhere-all-at-once.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "frankenstein-2025",
+      "variant": "original",
+      "key": "cineprint/external/frankenstein-2025.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "frankenstein-2025",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/frankenstein-2025.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "friday-the-13th-2009",
+      "variant": "original",
+      "key": "cineprint/raindrop/1779300010.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "friday-the-13th-2009",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/friday-the-13th-2009.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "furiosa-a-mad-max-saga",
+      "variant": "original",
+      "key": "cineprint/raindrop/1530975794.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "furiosa-a-mad-max-saga",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/furiosa-a-mad-max-saga.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "hamnet",
+      "variant": "original",
+      "key": "cineprint/raindrop/1786287206.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "hamnet",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/hamnet.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "heat-1995",
+      "variant": "original",
+      "key": "cineprint/raindrop/1531827396.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "heat-1995",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/heat-1995.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "her",
+      "variant": "original",
+      "key": "cineprint/external/her.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "her",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/her.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "kill-bill-vol-1-1",
+      "variant": "original",
+      "key": "cineprint/raindrop/1606171492.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "kill-bill-vol-1-1",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/kill-bill-vol-1-1.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "kill-bill-vol-1-2",
+      "variant": "original",
+      "key": "cineprint/raindrop/1606171578.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "kill-bill-vol-1-2",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/kill-bill-vol-1-2.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "lady-vengeance",
+      "variant": "original",
+      "key": "cineprint/external/lady-vengeance.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "lady-vengeance",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/lady-vengeance.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "marty-supreme",
+      "variant": "original",
+      "key": "cineprint/raindrop/1779298270.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "marty-supreme",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/marty-supreme.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "metropolis-1927",
+      "variant": "original",
+      "key": "cineprint/raindrop/1528364793.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "metropolis-1927",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/metropolis-1927.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "midsommar",
+      "variant": "original",
+      "key": "cineprint/external/midsommar.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "midsommar",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/midsommar.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mighty-morphin-power-rangers-the-movie",
+      "variant": "original",
+      "key": "cineprint/raindrop/1528227517.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mighty-morphin-power-rangers-the-movie",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/mighty-morphin-power-rangers-the-movie.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mother-2009",
+      "variant": "original",
+      "key": "cineprint/external/mother-2009.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mother-2009",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/mother-2009.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mother-2017",
+      "variant": "original",
+      "key": "cineprint/external/mother-2017.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mother-2017",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/mother-2017.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mullholland-drive",
+      "variant": "original",
+      "key": "cineprint/external/mullholland-drive.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "mullholland-drive",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/mullholland-drive.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "no-other-choice-2025-1",
+      "variant": "original",
+      "key": "cineprint/raindrop/1563985378.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "no-other-choice-2025-1",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/no-other-choice-2025-1.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "no-other-choice-2025-2",
+      "variant": "original",
+      "key": "cineprint/raindrop/1563985321.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "no-other-choice-2025-2",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/no-other-choice-2025-2.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "nope",
+      "variant": "original",
+      "key": "cineprint/raindrop/1786278781.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "nope",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/nope.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "nosferatu-2024",
+      "variant": "original",
+      "key": "cineprint/raindrop/1530975868.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "nosferatu-2024",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/nosferatu-2024.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "obsession-2025",
+      "variant": "original",
+      "key": "cineprint/external/obsession-2025.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "obsession-2025",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/obsession-2025.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "one-battle-after-another",
+      "variant": "original",
+      "key": "cineprint/raindrop/1535266643.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "one-battle-after-another",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/one-battle-after-another.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "parasite",
+      "variant": "original",
+      "key": "cineprint/external/parasite.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "parasite",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/parasite.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "peacemaker",
+      "variant": "original",
+      "key": "cineprint/raindrop/1779292357.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "peacemaker",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/peacemaker.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "project-hail-mary",
+      "variant": "original",
+      "key": "cineprint/external/project-hail-mary.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "project-hail-mary",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/project-hail-mary.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "rogue-one-a-star-wars-story",
+      "variant": "original",
+      "key": "cineprint/raindrop/1530975832.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "rogue-one-a-star-wars-story",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/rogue-one-a-star-wars-story.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "stranger-things-1",
+      "variant": "original",
+      "key": "cineprint/raindrop/1532498759.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "stranger-things-1",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/stranger-things-1.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "stranger-things-2",
+      "variant": "original",
+      "key": "cineprint/external/stranger-things-2.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "stranger-things-2",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/stranger-things-2.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "stranger-things-3",
+      "variant": "original",
+      "key": "cineprint/raindrop/1528195848.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "stranger-things-3",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/stranger-things-3.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "tenet",
+      "variant": "original",
+      "key": "cineprint/external/tenet.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "tenet",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/tenet.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-handmaiden",
+      "variant": "original",
+      "key": "cineprint/raindrop/1529611344.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-handmaiden",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/the-handmaiden.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-killer-2023",
+      "variant": "original",
+      "key": "cineprint/raindrop/1535262520.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-killer-2023",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/the-killer-2023.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-mummy-1999",
+      "variant": "original",
+      "key": "cineprint/external/the-mummy-1999.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-mummy-1999",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/the-mummy-1999.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-platform",
+      "variant": "original",
+      "key": "cineprint/raindrop/1535263689.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-platform",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/the-platform.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-shape-of-water",
+      "variant": "original",
+      "key": "cineprint/external/the-shape-of-water.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-shape-of-water",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/the-shape-of-water.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-substance-1",
+      "variant": "original",
+      "key": "cineprint/raindrop/1530975924.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-substance-1",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/the-substance-1.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-substance-2",
+      "variant": "original",
+      "key": "cineprint/external/the-substance-2.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-substance-2",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/the-substance-2.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-way-of-seeing-life",
+      "variant": "original",
+      "key": "cineprint/external/the-way-of-seeing-life.jpg",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-way-of-seeing-life",
+      "variant": "optimized",
+      "key": "cineprint/optimized/external/the-way-of-seeing-life.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-woman-who-ran",
+      "variant": "original",
+      "key": "cineprint/raindrop/1566640397.png",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    },
+    {
+      "posterId": "the-woman-who-ran",
+      "variant": "optimized",
+      "key": "cineprint/optimized/legacy/the-woman-who-ran.webp",
+      "status": "MISSING",
+      "sizeBytes": null,
+      "contentType": null,
+      "reason": null
+    }
+  ],
+  "blocked": [
+    {
+      "posterId": "stranger-things-2",
+      "identityConfidence": "medium",
+      "reason": "Identity confidence is medium; explicit approval is required"
+    },
+    {
+      "posterId": "the-substance-2",
+      "identityConfidence": "medium",
+      "reason": "Identity confidence is medium; explicit approval is required"
+    }
+  ],
+  "regeneration": [
+    "artwork-1824607248",
+    "artwork-1824628665",
+    "artwork-1824637521",
+    "artwork-1824638987",
+    "artwork-1824644552",
+    "artwork-1824648439",
+    "artwork-1824734129",
+    "artwork-1831537050",
+    "artwork-1831537996",
+    "artwork-1831541280",
+    "artwork-1831541566",
+    "artwork-1831544424"
+  ],
+  "canary": [
+    {
+      "posterId": "2001-a-space-odyssey",
+      "provider": "raindrop-file",
+      "originalKey": "cineprint/raindrop/1528361110.png",
+      "optimizedKey": "cineprint/optimized/legacy/2001-a-space-odyssey.webp",
+      "optimizedAction": "reuse-existing",
+      "identityConfidence": "high",
+      "blocked": false,
+      "blockedReason": null
+    },
+    {
+      "posterId": "bugonia",
+      "provider": "pbs-twimg",
+      "originalKey": "cineprint/external/bugonia.jpg",
+      "optimizedKey": "cineprint/optimized/external/bugonia.webp",
+      "optimizedAction": "reuse-existing",
+      "identityConfidence": "high",
+      "blocked": false,
+      "blockedReason": null
+    },
+    {
+      "posterId": "artwork-1824607248",
+      "provider": "pbs-twimg",
+      "originalKey": "cineprint/raindrop/1824607248.jpg",
+      "optimizedKey": "cineprint/optimized/1824607248.webp",
+      "optimizedAction": "regenerate",
+      "identityConfidence": "high",
+      "blocked": false,
+      "blockedReason": null
+    }
+  ],
+  "notes": [
+    "Dry-run only: no R2 objects were uploaded or modified.",
+    "Original size is taken from the Phase 1 manifest sourceSizeBytes.",
+    "Existing optimized size is taken from the Phase 1 Blob inventory.",
+    "Missing optimized size is estimated from the median optimized/source byte ratio of the 51 existing optimized assets.",
+    "Phase 2 regenerates every optimized WebP from the verified source; it does not read or copy optimized objects from Vercel Blob.",
+    "optimizedAction records whether a Blob optimized object existed in Phase 1; it is provenance, not a Phase 2 copy instruction.",
+    "Optimized checksums cannot be predicted without generating the WebP; dry-run verifies existence and size only."
+  ]
+}

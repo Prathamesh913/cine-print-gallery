@@ -5,7 +5,7 @@ import { pageHead, robotsMeta } from "@/lib/seo";
 import { GENRE_DIMENSION, resolveTaxonomySlug, type TaxonomyEntry } from "@/lib/taxonomy";
 import { buildFilmGroups, MIN_FILM_POSTERS } from "@/lib/films";
 import type { Poster } from "@/lib/posters";
-import { getPosterImageUrl } from "@/lib/poster-images";
+import { getPosterSeoImageUrl } from "@/lib/poster-images";
 import { breadcrumbEntity, webpageEntity, withJsonLd } from "@/lib/structured-data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -77,7 +77,7 @@ export const Route = createFileRoute("/genre/$slug")({
         path: `/genre/${group.slug}`,
         title: copy.title,
         description: copy.description,
-        image: getPosterImageUrl(group.representative, "detail"),
+        image: getPosterSeoImageUrl(group.representative),
       }),
       [
         webpageEntity(`/genre/${group.slug}`, copy.title, copy.description),

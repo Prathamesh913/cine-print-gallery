@@ -67,3 +67,9 @@ migrate-to-firebase.cjs
 
 # CodeAtlas
 .codeatlas
+
+# Local migration cache (large source/optimized images; not runtime artifacts)
+migration/cache/
+
+# Raw migration audit run logs (summarized in migration reports/state)
+migration/audit/

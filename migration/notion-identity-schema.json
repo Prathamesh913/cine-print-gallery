@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 1,
+  "status": "SCHEMA_CREATED_AND_BACKFILL_COMPLETE",
+  "createdInNotion": true,
+  "notionSdkVersion": "5.22.0",
+  "database": {
+    "id": "38c890a5-f3e2-8007-83f8-da7b81a268e4",
+    "posterLibraryDataSourceId": "38c890a5-f3e2-808b-a395-000b9b97e9db",
+    "existingPropertyCount": 23
+  },
+  "posterLibraryProperty": {
+    "name": "CinePrint Poster ID",
+    "type": "rich_text",
+    "purpose": "Immutable canonical Firestore poster ID for a single-poster editorial page",
+    "required": true,
+    "currentLiveValue": null,
+    "currentLiveExists": false,
+    "payload": {
+      "type": "rich_text",
+      "rich_text": {}
+    }
+  },
+  "posterIdentitiesDataSource": {
+    "name": "Poster Identities",
+    "parent": {
+      "type": "database_id",
+      "database_id": "38c890a5-f3e2-8007-83f8-da7b81a268e4"
+    },
+    "title": [
+      {
+        "type": "text",
+        "text": {
+          "content": "Poster Identities"
+        }
+      }
+    ],
+    "properties": {
+      "Poster ID": {
+        "type": "title",
+        "title": {},
+        "purpose": "Immutable canonical Firestore poster ID"
+      },
+      "Grouping Page": {
+        "type": "relation",
+        "relation": {
+          "data_source_id": "38c890a5-f3e2-808b-a395-000b9b97e9db",
+          "type": "single_property",
+          "single_property": {}
+        },
+        "purpose": "Authoritative editorial grouping page relation"
+      },
+      "Image URL": {
+        "type": "url",
+        "url": {},
+        "purpose": "Exact image/source association for this poster"
+      },
+      "Raindrop ID": {
+        "type": "rich_text",
+        "rich_text": {},
+        "purpose": "Optional Raindrop source bookmark ID"
+      },
+      "Source Provider": {
+        "type": "select",
+        "select": {
+          "options": [
+            {
+              "name": "raindrop-file"
+            },
+            {
+              "name": "pbs-twimg"
+            },
+            {
+              "name": "other"
+            }
+          ]
+        },
+        "purpose": "Source provider classification"
+      },
+      "Source SHA-256": {
+        "type": "rich_text",
+        "rich_text": {},
+        "purpose": "Verified source byte fingerprint"
+      },
+      "Source Revision": {
+        "type": "number",
+        "number": {
+          "format": "number"
+        },
+        "purpose": "Source revision number"
+      },
+      "Status": {
+        "type": "select",
+        "select": {
+          "options": [
+            {
+              "name": "active"
+            },
+            {
+              "name": "unresolved"
+            },
+            {
+              "name": "superseded"
+            }
+          ]
+        },
+        "purpose": "Identity record lifecycle state"
+      },
+      "Verified At": {
+        "type": "date",
+        "date": {},
+        "purpose": "Last identity/source verification date"
+      }
+    },
+    "optionalFallback": {
+      "name": "Grouping Page ID",
+      "type": "rich_text",
+      "when": "Only if live relation creation is rejected or unavailable. The Phase 7B adapter supports this fallback.",
+      "doNotCreateByDefault": true
+    }
+  },
+  "capabilities": {
+    "addRichTextPropertyToExistingDataSource": {
+      "sdkValidated": true,
+      "liveTested": false,
+      "evidence": "UpdateDataSourceParameters.properties accepts RichTextPropertyConfigurationRequest"
+    },
+    "createDataSource": {
+      "sdkValidated": true,
+      "liveTested": false,
+      "evidence": "CreateDataSourceParameters.parent accepts database_id; properties accepts PropertyConfigurationRequest"
+    },
+    "createRelationProperty": {
+      "sdkValidated": true,
+      "liveTested": false,
+      "evidence": "RelationPropertyConfigurationRequest accepts data_source_id and single_property/dual_property"
+    },
+    "readRelationTargets": {
+      "sdkValidated": true,
+      "liveTested": false,
+      "evidence": "RelationItemPropertyValueResponse is Array<{id}>"
+    },
+    "createRows": {
+      "sdkValidated": true,
+      "liveTested": false,
+      "evidence": "CreatePageParameters.parent accepts data_source_id; properties accepts title/rich_text/url/select/number/date/relation"
+    },
+    "updateExistingPages": {
+      "sdkValidated": true,
+      "liveTested": false,
+      "evidence": "UpdatePageParameters.properties accepts the same property value shapes"
+    },
+    "paginatedQueries": {
+      "sdkValidated": true,
+      "liveTested": true,
+      "evidence": "dataSources.query pagination returned 57 pages during Phase 7A/7C-A reads"
+    },
+    "multiSegmentRichText": {
+      "sdkValidated": true,
+      "liveTested": true,
+      "evidence": "Phase 7B adapter joins all rich_text segments"
+    }
+  },
+  "operationPayloads": {
+    "addPosterLibraryProperty": {
+      "operation": "dataSources.update",
+      "parameters": {
+        "data_source_id": "38c890a5-f3e2-808b-a395-000b9b97e9db",
+        "properties": {
+          "CinePrint Poster ID": {
+            "type": "rich_text",
+            "rich_text": {}
+          }
+        }
+      }
+    },
+    "createPosterIdentitiesDataSource": {
+      "operation": "dataSources.create",
+      "parameters": {
+        "parent": {
+          "type": "database_id",
+          "database_id": "38c890a5-f3e2-8007-83f8-da7b81a268e4"
+        },
+        "title": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Poster Identities"
+            }
+          }
+        ],
+        "properties": {
+          "Poster ID": {
+            "type": "title",
+            "title": {}
+          },
+          "Grouping Page": {
+            "type": "relation",
+            "relation": {
+              "data_source_id": "38c890a5-f3e2-808b-a395-000b9b97e9db",
+              "type": "single_property",
+              "single_property": {}
+            }
+          },
+          "Image URL": {
+            "type": "url",
+            "url": {}
+          },
+          "Raindrop ID": {
+            "type": "rich_text",
+            "rich_text": {}
+          },
+          "Source Provider": {
+            "type": "select",
+            "select": {
+              "options": [
+                {
+                  "name": "raindrop-file"
+                },
+                {
+                  "name": "pbs-twimg"
+                },
+                {
+                  "name": "other"
+                }
+              ]
+            }
+          },
+          "Source SHA-256": {
+            "type": "rich_text",
+            "rich_text": {}
+          },
+          "Source Revision": {
+            "type": "number",
+            "number": {
+              "format": "number"
+            }
+          },
+          "Status": {
+            "type": "select",
+            "select": {
+              "options": [
+                {
+                  "name": "active"
+                },
+                {
+                  "name": "unresolved"
+                },
+                {
+                  "name": "superseded"
+                }
+              ]
+            }
+          },
+          "Verified At": {
+            "type": "date",
+            "date": {}
+          }
+        }
+      }
+    },
+    "updateSinglePosterPage": {
+      "operation": "pages.update",
+      "parametersExample": {
+        "page_id": "38c890a5-f3e2-8091-87c8-ea7df6db569f",
+        "properties": {
+          "CinePrint Poster ID": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "2001-a-space-odyssey"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "createPosterIdentityRow": {
+      "operation": "pages.create",
+      "parametersExample": {
+        "parent": {
+          "type": "data_source_id",
+          "data_source_id": "<created Poster Identities data source id>"
+        },
+        "properties": {
+          "Poster ID": {
+            "title": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "backrooms-1"
+                }
+              }
+            ]
+          },
+          "Grouping Page": {
+            "relation": [
+              {
+                "id": "38d890a5-f3e2-8002-bd6d-d95cf0f42567"
+              }
+            ]
+          },
+          "Image URL": {
+            "url": "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/1779301125.png"
+          },
+          "Raindrop ID": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "1779301125"
+                }
+              }
+            ]
+          },
+          "Source Provider": {
+            "select": {
+              "name": "raindrop-file"
+            }
+          },
+          "Source SHA-256": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "<verified sha256>"
+                }
+              }
+            ]
+          },
+          "Source Revision": {
+            "number": 1
+          },
+          "Status": {
+            "select": {
+              "name": "active"
+            }
+          }
+        }
+      }
+    }
+  },
+  "limitations": [
+    "No schema creation or Notion write was performed in Phase 7C-A.",
+    "The existing database parent block is not shared with the integration; creating a new database under it is not validated. dataSources.create under the existing database is the preferred path.",
+    "Live multi-data-source creation, relation creation, row creation and page property updates are NOT TESTED.",
+    "The Grouping Page ID text fallback is supported by the adapter but is not part of the default schema."
+  ],
+  "liveState": {
+    "verifiedAt": "2026-11-08",
+    "posterLibrary": {
+      "dataSourceId": "38c890a5-f3e2-808b-a395-000b9b97e9db",
+      "parentDatabaseId": "38c890a5-f3e2-8007-83f8-da7b81a268e4",
+      "propertyCount": 24,
+      "canonicalProperty": {
+        "name": "CinePrint Poster ID",
+        "id": "wRCR",
+        "type": "rich_text"
+      }
+    },
+    "posterIdentities": {
+      "dataSourceId": "412890a5-f3e2-81bb-a5fc-000b21b7ba8a",
+      "parentDatabaseId": "38c890a5-f3e2-8007-83f8-da7b81a268e4",
+      "title": "Poster Identities",
+      "propertyCount": 9,
+      "relationTarget": "38c890a5-f3e2-808b-a395-000b9b97e9db",
+      "properties": {
+        "Poster ID": {
+          "id": "title",
+          "type": "title"
+        },
+        "Grouping Page": {
+          "id": "%3DE%3C%3F",
+          "type": "relation"
+        },
+        "Image URL": {
+          "id": "%3DYd%3F",
+          "type": "url"
+        },
+        "Raindrop ID": {
+          "id": "%3FlKq",
+          "type": "rich_text"
+        },
+        "Source Provider": {
+          "id": "%3AFrE",
+          "type": "select"
+        },
+        "Source SHA-256": {
+          "id": "MFCL",
+          "type": "rich_text"
+        },
+        "Source Revision": {
+          "id": "XhWJ",
+          "type": "number"
+        },
+        "Status": {
+          "id": "u%3FW%3F",
+          "type": "select"
+        },
+        "Verified At": {
+          "id": "qrWg",
+          "type": "date"
+        }
+      }
+    },
+    "backfill": {
+      "singlePagePropertyAssignments": 51,
+      "multiImageIdentityRowsCreated": 10,
+      "approvedIdentitiesResolved": 61,
+      "unresolvedMediumIdentities": [
+        "stranger-things-2",
+        "the-substance-2"
+      ],
+      "duplicateIds": 0,
+      "conflicts": 0,
+      "missingApprovedIdentities": 0,
+      "positionalFallbackUsage": 0,
+      "firestoreWrites": 0,
+      "firestoreSyncRun": false
+    },
+    "canonicalDryRun": {
+      "totalPosterIdentities": 63,
+      "resolvedNotionProperty": 51,
+      "resolvedPerImageRelation": 10,
+      "unresolved": 2,
+      "conflicts": 0,
+      "potentialFirestoreCreates": 0,
+      "potentialFirestoreUpdates": 61,
+      "exitStatus": 1,
+      "note": "Non-zero exit is expected because the two medium-confidence images remain unresolved."
+    },
+    "r2Canary": {
+      "allowlistCount": 3,
+      "mapCount": 3,
+      "migrationStateVerifiedCount": 3,
+      "bucketObjectCount": 6,
+      "publicCdnChecks": "6/6 exact size and SHA-256",
+      "activationDefaults": {
+        "browser": false,
+        "downloads": false,
+        "seo": false
+      }
+    },
+    "remainingHumanDecisions": [
+      "Visually confirm or reject stranger-things-2 (pbs G9gZV6dWEAAOjjU; bookmark 1521167165).",
+      "Visually confirm or reject the-substance-2 (pbs HMtwlGHXgAAYt0L; bookmark 1786264374) and accept 690x1024 or re-source higher resolution."
+    ],
+    "nextStep": "Phase 7C-D identity verification complete. Firestore synchronization requires separate explicit authorization after the two medium-confidence decisions."
+  }
+}

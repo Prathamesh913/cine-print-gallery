@@ -1,6 +1,6 @@
 import { slugifyArtist } from "./posters";
 import type { Poster } from "./posters";
-import { getPosterImageUrl } from "./poster-images";
+import { getPosterSeoImageUrl } from "./poster-images";
 import { SITE_ORIGIN } from "./seo";
 
 /**
@@ -56,7 +56,11 @@ function isValidId(id: unknown): id is string {
   return typeof id === "string" && id.length > 0 && !id.includes("/");
 }
 
-function imageOf(data: Record<string, unknown>, id: string): string | undefined {
+function imageOf(
+  data: Record<string, unknown>,
+  id: string,
+  resolveImage: (poster: Poster) => string,
+): string | undefined {
   const image =
     (typeof data.image === "string" && data.image.trim()) ||
     (typeof data.posterImageUrl === "string" && data.posterImageUrl.trim()) ||
@@ -64,7 +68,7 @@ function imageOf(data: Record<string, unknown>, id: string): string | undefined 
   const raw = image ? image.trim() : undefined;
   if (!raw) return undefined;
   try {
-    const optimized = getPosterImageUrl({ id, image: raw } as Poster, "detail");
+    const optimized = resolveImage({ id, image: raw } as Poster);
     return optimized.trim() ? optimized.trim() : raw;
   } catch {
     return raw;
@@ -107,12 +111,15 @@ export function toLastmod(value: unknown): string | undefined {
  * only for a non-empty id with artwork. Duplicates collapse to one URL.
  * Sorted by id for deterministic output.
  */
-export function posterUrlEntries(rows: readonly RawPosterRow[]): SitemapUrlEntry[] {
+export function posterUrlEntries(
+  rows: readonly RawPosterRow[],
+  resolveImage: (poster: Poster) => string = getPosterSeoImageUrl,
+): SitemapUrlEntry[] {
   const seen = new Set<string>();
   const entries: SitemapUrlEntry[] = [];
   for (const row of rows) {
     if (!isValidId(row.id) || seen.has(row.id)) continue;
-    const image = imageOf(row.data, row.id);
+    const image = imageOf(row.data, row.id, resolveImage);
     if (!image) continue;
     seen.add(row.id);
     const entry: SitemapUrlEntry = { loc: `${SITE_ORIGIN}/poster/${row.id}`, image };

@@ -47,14 +47,20 @@ export async function optimizeImage(
   }
 
   try {
-    const source = sharp(input);
-    const metadata = await source.metadata();
+    const original = sharp(input);
+    const metadata = await original.metadata();
 
     if (!metadata.width || !metadata.height) {
       throw new ImageOptimizationError("image dimensions are unavailable");
     }
 
-    const output = await source
+    const orientation = metadata.orientation ?? 1;
+    const swapDimensions = orientation >= 5 && orientation <= 8;
+    const sourceWidth = swapDimensions ? metadata.height : metadata.width;
+    const sourceHeight = swapDimensions ? metadata.width : metadata.height;
+
+    const output = await original
+      .rotate()
       .resize({ width: maxWidth, withoutEnlargement: true })
       .webp({ quality })
       .toBuffer({ resolveWithObject: true });
@@ -68,8 +74,8 @@ export async function optimizeImage(
       contentType: WEBP_CONTENT_TYPE,
       width: output.info.width,
       height: output.info.height,
-      sourceWidth: metadata.width,
-      sourceHeight: metadata.height,
+      sourceWidth,
+      sourceHeight,
     };
   } catch (error) {
     if (error instanceof ImageOptimizationError) {
