@@ -122,4 +122,28 @@ npm run build
 
 ---
 
+## 🤖 Poster Automation
+
+New posters can be ingested from a designated Raindrop collection, enriched with
+TMDB, optimized and hosted on Cloudflare R2, and created as Notion Drafts.
+Publishing a Draft in Notion synchronizes it to Firestore for the public site.
+
+- Architecture: `docs/raindrop-automation-architecture.md`
+- Operations and activation: `docs/raindrop-automation-operations.md`
+- Failure recovery: `docs/raindrop-automation-failure-recovery.md`
+- Audit: `docs/raindrop-automation-audit.md`
+
+Dry runs are the default and never write to R2, Notion, or Firestore:
+
+```bash
+npm run automation:ingest:dry
+npm run automation:publish:dry
+```
+
+Scheduled GitHub Actions are committed **disabled** behind the
+`AUTOMATION_ENABLED` repository variable. See the operations document before
+activating them.
+
+---
+
 _CinePrint is curated and maintained by [Prathamesh](https://github.com/Prathamesh913)._

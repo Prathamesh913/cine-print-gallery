@@ -105,6 +105,45 @@ export class TMDBEnrichmentService {
     }
   }
 
+  /**
+   * Enriches using an explicitly reviewed TMDB identity. This is only used after
+   * a human resolves an ambiguous match; the pipeline never calls it on its own.
+   */
+  async enrichDraftWithTmdbId(draft: CinePrintDraft, tmdbId: number): Promise<EnrichedDraft> {
+    if (!Number.isInteger(tmdbId) || tmdbId <= 0) {
+      return { ...draft, status: "needs_review", reason: "Reviewed TMDB ID is invalid" };
+    }
+
+    const key = buildCacheKey(draft.mediaType, draft.title, draft.year);
+    try {
+      const details = await this.client.getDetails(draft.mediaType, tmdbId);
+      if (!details.imdbId) {
+        return {
+          ...draft,
+          status: "needs_review",
+          reason: "Reviewed TMDB identity has no IMDb ID",
+        };
+      }
+
+      const metadata = mapToMetadata({
+        draftTitle: draft.title,
+        draftYear: draft.year,
+        mediaType: draft.mediaType,
+        tmdbId,
+        imdbId: details.imdbId,
+        genres: details.genres,
+      });
+
+      this.cache.set(key, metadata);
+      this.printMatch(draft, metadata, false);
+      return { ...draft, status: "enriched", tmdb: metadata };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(`✗ TMDB error for "${draft.title}": ${message}`);
+      return { ...draft, status: "failed", reason: message };
+    }
+  }
+
   async enrichDrafts(drafts: CinePrintDraft[]): Promise<EnrichedDraft[]> {
     const results: EnrichedDraft[] = [];
     for (const draft of drafts) {

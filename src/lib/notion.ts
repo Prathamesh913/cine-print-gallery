@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { type Poster } from "./posters";
 import { fetchImageDataUrl } from "./image-data-url";
+import { validateR2ImageReference } from "./r2-image-reference";
 // Public path: reads go through the CLIENT Firestore SDK. Firestore rules grant
 // public read on /posters/* (`allow read: if true`), so no Admin privileges are
 // needed — keeping firebase-admin off the homepage request graph entirely.
@@ -21,7 +22,7 @@ export class PosterFetchError extends Error {
   }
 }
 
-function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
+export function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
   let artists = Array.isArray(raw.artists)
     ? raw.artists.map((a: any) => ({
         name: String(a?.name || "Unknown").trim(),
@@ -44,6 +45,7 @@ function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
     (raw.slug ? String(raw.slug).trim() : undefined) ||
     title.toLowerCase().trim().replace(/\s+/g, "-") ||
     "untitled";
+  const r2Image = raw.r2Image === undefined ? null : validateR2ImageReference(raw.r2Image, id);
 
   return {
     id,
@@ -70,6 +72,7 @@ function toPlainPoster(id: string, raw: Record<string, unknown>): Poster {
       ? raw.libraryNames.map((l) => String(l).trim())
       : undefined,
     slug,
+    ...(r2Image?.ok ? { r2Image: r2Image.value } : r2Image ? { r2ImageInvalid: true } : {}),
   };
 }
 

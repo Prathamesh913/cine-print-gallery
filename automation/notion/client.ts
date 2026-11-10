@@ -27,6 +27,7 @@ export interface NotionApiClientOptions {
   apiKey: string;
   databaseId: string;
   retries?: number;
+  timeoutMs?: number;
 }
 
 const RAINDROP_ID_PROPERTY = "Raindrop ID";
@@ -74,7 +75,7 @@ export class NotionApiClient implements NotionClient {
     if (!options.databaseId) {
       throw new Error("NOTION_DATABASE_ID is required");
     }
-    this.client = new Client({ auth: options.apiKey });
+    this.client = new Client({ auth: options.apiKey, timeoutMs: options.timeoutMs ?? 30_000 });
     this.databaseId = options.databaseId;
     this.retries = options.retries ?? 3;
   }

@@ -1,3 +1,5 @@
+import type { R2ImageReference } from "./r2-image-reference";
+
 export type PosterStyle = string;
 export type PosterGenre = string;
 
@@ -29,6 +31,16 @@ export interface Poster {
   backgroundUrl?: string;
   libraryNames?: string[];
   slug?: string;
+  /**
+   * Verified R2 image references for posters created after the one-time
+   * migration. Existing posters are served from the generated runtime map.
+   */
+  r2Image?: R2ImageReference;
+  /**
+   * True when Firestore supplied an `r2Image` value that failed validation.
+   * The resolver must fail closed rather than treating this as "no mapping".
+   */
+  r2ImageInvalid?: boolean;
 }
 
 export function slugifyArtist(name: string): string {
