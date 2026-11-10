@@ -73,3 +73,6 @@ migration/cache/
 
 # Raw migration audit run logs (summarized in migration reports/state)
 migration/audit/
+
+# Automation run artifacts (summaries uploaded by CI, never committed)
+artifacts/

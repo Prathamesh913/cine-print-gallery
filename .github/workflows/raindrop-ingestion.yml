@@ -1,0 +1,112 @@
+name: Raindrop ingestion
+
+# Configured but gated. Scheduled execution does nothing until the repository
+# variable AUTOMATION_ENABLED is set to "true" after dry-run and integration
+# verification are approved.
+
+on:
+  schedule:
+    - cron: "*/20 * * * *"
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Perform external writes (R2, Notion, Firestore)"
+        type: boolean
+        default: false
+      limit:
+        description: "Maximum posters processed this run"
+        type: string
+        default: "10"
+      max_pages:
+        description: "Maximum Raindrop pages fetched"
+        type: string
+        default: "4"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Shared with the publishing sync: the two workflows must never overlap.
+  group: cineprint-catalog-automation
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    if: vars.AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run ingestion
+        env:
+          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
+          LIMIT: ${{ inputs.limit || '10' }}
+          MAX_PAGES: ${{ inputs.max_pages || '4' }}
+          RUN_ID: ingest-${{ github.run_id }}-${{ github.run_attempt }}
+          RAINDROP_ACCESS_TOKEN: ${{ secrets.RAINDROP_ACCESS_TOKEN }}
+          RAINDROP_COLLECTION_ID: ${{ vars.RAINDROP_COLLECTION_ID }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          NOTION_KEY: ${{ secrets.NOTION_KEY }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ vars.R2_BUCKET_NAME }}
+          R2_PUBLIC_BASE_URL: ${{ vars.R2_PUBLIC_BASE_URL }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          args=(--mode ingest --run-id "$RUN_ID" --limit "$LIMIT" --max-pages "$MAX_PAGES" --summary-out artifacts/ingest-summary.json)
+          if [ "$APPLY" = "true" ]; then
+            args+=(--apply)
+          fi
+          npx tsx automation/ingestion/cli.ts "${args[@]}"
+
+      - name: Publish execution summary
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -f artifacts/ingest-summary.json ]; then
+            node -e '
+              const s = require("./artifacts/ingest-summary.json");
+              const c = s.counts || {};
+              const lines = [
+                "## Raindrop ingestion",
+                "",
+                `- Mode: ${s.dryRun ? "dry-run" : "apply"}`,
+                `- Bookmarks discovered: ${c.bookmarksDiscovered ?? 0}`,
+                `- Already processed: ${c.alreadyProcessed ?? 0}`,
+                `- New candidates: ${c.newCandidates ?? 0}`,
+                `- TMDB matches: ${c.tmdbMatches ?? 0}`,
+                `- Needs review: ${c.needsReview ?? 0}`,
+                `- R2 uploads verified: ${c.uploadsVerified ?? 0}`,
+                `- Notion Drafts created: ${c.notionDraftsCreated ?? 0}`,
+                `- Notion Drafts updated: ${c.notionDraftsUpdated ?? 0}`,
+                `- Failed: ${c.failed ?? 0}`,
+              ];
+              require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");
+            '
+          else
+            echo "No summary was produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload summary artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: raindrop-ingestion-summary
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14

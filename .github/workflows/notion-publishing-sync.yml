@@ -1,0 +1,97 @@
+name: Notion publishing sync
+
+# Configured but gated. Scheduled execution does nothing until the repository
+# variable AUTOMATION_ENABLED is set to "true" after dry-run and integration
+# verification are approved.
+
+on:
+  schedule:
+    - cron: "5,25,45 * * * *"
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Write eligible records to Firestore"
+        type: boolean
+        default: false
+      limit:
+        description: "Maximum published records processed this run"
+        type: string
+        default: "50"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Shared with Raindrop ingestion: the two workflows must never overlap.
+  group: cineprint-catalog-automation
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: vars.AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run publishing sync
+        env:
+          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
+          LIMIT: ${{ inputs.limit || '50' }}
+          RUN_ID: publish-${{ github.run_id }}-${{ github.run_attempt }}
+          NOTION_KEY: ${{ secrets.NOTION_KEY }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+          NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          args=(--mode publish --run-id "$RUN_ID" --limit "$LIMIT" --summary-out artifacts/publish-summary.json)
+          if [ "$APPLY" = "true" ]; then
+            args+=(--apply)
+          fi
+          npx tsx automation/ingestion/cli.ts "${args[@]}"
+
+      - name: Publish execution summary
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -f artifacts/publish-summary.json ]; then
+            node -e '
+              const s = require("./artifacts/publish-summary.json");
+              const c = s.counts || {};
+              const lines = [
+                "## Notion publishing sync",
+                "",
+                `- Mode: ${s.dryRun ? "dry-run" : "apply"}`,
+                `- Published records discovered: ${c.publishedRecordsDiscovered ?? 0}`,
+                `- Firestore records created: ${c.firestoreRecordsCreated ?? 0}`,
+                `- Firestore records updated: ${c.firestoreRecordsUpdated ?? 0}`,
+                `- Already synchronized: ${c.alreadySynchronized ?? 0}`,
+                `- Needs review: ${c.needsReview ?? 0}`,
+                `- Failed: ${c.failed ?? 0}`,
+              ];
+              require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");
+            '
+          else
+            echo "No summary was produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload summary artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: notion-publishing-summary
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14

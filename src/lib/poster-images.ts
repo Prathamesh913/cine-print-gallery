@@ -1,6 +1,7 @@
 import type { Poster } from "./posters";
 import { isPosterImageUnavailable } from "./poster-availability";
 import { R2_IMAGE_MAP, type R2ImageMapEntry } from "./r2-image-map.generated";
+import { validateR2ImageReference } from "./r2-image-reference";
 import {
   R2_BROWSER_IMAGES_ENABLED,
   R2_DOWNLOADS_ENABLED,
@@ -95,18 +96,50 @@ function rawEntryFor(poster: Poster, map: R2ImageMap, enabled: boolean): R2Image
   return entry;
 }
 
+type DynamicLookup =
+  { kind: "none" } | { kind: "invalid" } | { kind: "entry"; entry: R2ImageMapEntry };
+
 /**
- * R2 mappings are usable only when the relevant switch is enabled, the poster
- * ID has an exact entry, and the poster still points at the exact Blob image
- * the mapping was verified against. No R2 URL or key is ever inferred here.
+ * Dynamic references are attached to posters created by the automation
+ * pipeline. They are validated with the shared strict validator so a malformed
+ * document can never render another poster's bytes or an untrusted host.
  */
-function r2EntryFor(poster: Poster, map: R2ImageMap, enabled: boolean): R2ImageMapEntry | null {
+function dynamicEntryFor(poster: Poster, enabled: boolean): DynamicLookup {
+  // A supplied-but-invalid reference is a data-integrity signal. Fail closed
+  // even when the relevant delivery switch is disabled so the record can never
+  // silently fall back to an unverified Blob or raw image URL.
+  if (poster.r2ImageInvalid) return { kind: "invalid" };
+  if (!enabled || poster.r2Image === undefined) return { kind: "none" };
+
+  const result = validateR2ImageReference(poster.r2Image, poster.id);
+  if (!result.ok) return { kind: "invalid" };
+
+  const reference = result.value;
+  return {
+    kind: "entry",
+    entry: {
+      blobImageUrl: reference.blobImageUrl ?? poster.image,
+      originalUrl: reference.original.url,
+      optimizedUrl: reference.optimized.url,
+      originalKey: reference.original.key,
+      optimizedKey: reference.optimized.key,
+      verifiedAt: reference.verifiedAt,
+    },
+  };
+}
+
+type EntryLookup =
+  { kind: "none" } | { kind: "invalid" } | { kind: "entry"; entry: R2ImageMapEntry };
+
+/**
+ * Static map first (existing catalogue), then a validated dynamic reference.
+ * An invalid dynamic reference fails closed instead of silently using the raw
+ * image URL or the legacy Blob path.
+ */
+function lookupEntryFor(poster: Poster, map: R2ImageMap, enabled: boolean): EntryLookup {
   const entry = rawEntryFor(poster, map, enabled);
-  if (!entry) return null;
-  if (!isTrustedR2Url(entry.originalUrl) || !isTrustedR2Url(entry.optimizedUrl)) {
-    return null;
-  }
-  return entry;
+  if (entry) return { kind: "entry", entry };
+  return dynamicEntryFor(poster, enabled);
 }
 
 function uniqueUrls(urls: Array<string | null | undefined>): string[] {
@@ -117,17 +150,31 @@ export function createPosterImageResolver(
   map: R2ImageMap,
   options: PosterImageResolverOptions,
 ): PosterImageResolver {
-  const browserEntryFor = (poster: Poster) => r2EntryFor(poster, map, options.browserEnabled);
-  const rawBrowserEntryFor = (poster: Poster) => rawEntryFor(poster, map, options.browserEnabled);
-  const seoEntryFor = (poster: Poster) => r2EntryFor(poster, map, options.seoEnabled);
-  const downloadEntryFor = (poster: Poster) => r2EntryFor(poster, map, options.downloadsEnabled);
-  const downloadUrlFor = (poster: Poster) =>
-    downloadEntryFor(poster)?.originalUrl || poster.posterImageUrl || poster.image;
+  const trustedEntry = (lookup: EntryLookup): R2ImageMapEntry | null => {
+    if (lookup.kind !== "entry") return null;
+    const entry = lookup.entry;
+    if (!isTrustedR2Url(entry.originalUrl) || !isTrustedR2Url(entry.optimizedUrl)) {
+      return null;
+    }
+    return entry;
+  };
+  const browserLookup = (poster: Poster) => lookupEntryFor(poster, map, options.browserEnabled);
+  const seoLookup = (poster: Poster) => lookupEntryFor(poster, map, options.seoEnabled);
+  const downloadLookup = (poster: Poster) => lookupEntryFor(poster, map, options.downloadsEnabled);
+  const browserEntryFor = (poster: Poster) => trustedEntry(browserLookup(poster));
+  const seoEntryFor = (poster: Poster) => trustedEntry(seoLookup(poster));
+  const downloadUrlFor = (poster: Poster) => {
+    const lookup = downloadLookup(poster);
+    if (lookup.kind === "invalid") return "";
+    return trustedEntry(lookup)?.originalUrl || poster.posterImageUrl || poster.image;
+  };
 
   return {
     getOptimizedPosterImageUrl(poster: Poster): string | null {
       if (isPosterImageUnavailable(poster.id)) return null;
-      return browserEntryFor(poster)?.optimizedUrl ?? blobOptimizedUrl(poster);
+      const lookup = browserLookup(poster);
+      if (lookup.kind === "invalid") return null;
+      return trustedEntry(lookup)?.optimizedUrl ?? blobOptimizedUrl(poster);
     },
 
     getPosterImageUrl(poster: Poster, purpose: PosterImagePurpose = "gallery"): string {
@@ -138,7 +185,11 @@ export function createPosterImageResolver(
         return downloadUrlFor(poster);
       }
 
-      const entry = browserEntryFor(poster);
+      const lookup = browserLookup(poster);
+      if (lookup.kind === "invalid") {
+        return POSTER_UNAVAILABLE_URL;
+      }
+      const entry = trustedEntry(lookup);
       if (purpose === "original") {
         return entry?.originalUrl ?? poster.image;
       }
@@ -157,9 +208,10 @@ export function createPosterImageResolver(
         return [downloadUrlFor(poster)];
       }
 
-      const rawEntry = rawBrowserEntryFor(poster);
-      if (rawEntry) {
-        const entry = browserEntryFor(poster);
+      const lookup = browserLookup(poster);
+      if (lookup.kind === "invalid") return [];
+      if (lookup.kind === "entry") {
+        const entry = trustedEntry(lookup);
         // A mapped poster with malformed URLs fails closed to the neutral
         // placeholder instead of falling back to Blob or unrelated artwork.
         if (!entry) return [];
@@ -182,6 +234,8 @@ export function createPosterImageResolver(
       if (isPosterImageUnavailable(poster.id)) {
         return POSTER_UNAVAILABLE_ABSOLUTE_URL;
       }
+      const lookup = seoLookup(poster);
+      if (lookup.kind === "invalid") return POSTER_UNAVAILABLE_ABSOLUTE_URL;
       return seoEntryFor(poster)?.optimizedUrl ?? blobOptimizedUrl(poster) ?? poster.image;
     },
 
@@ -202,6 +256,7 @@ export function createPosterImageResolver(
      */
     getPosterImageFallbackUrl(poster: Poster): string {
       if (isPosterImageUnavailable(poster.id)) return POSTER_UNAVAILABLE_URL;
+      if (poster.r2ImageInvalid) return POSTER_UNAVAILABLE_URL;
       return poster.image;
     },
   };

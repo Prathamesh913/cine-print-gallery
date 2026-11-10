@@ -12,6 +12,7 @@ export const ARTIST_PROPERTY = "Artist";
 export const IMAGE_URL_PROPERTY = "Image URL";
 export const SOURCE_URL_PROPERTY = "Source URL";
 export const RAINDROP_ID_PROPERTY = "Raindrop ID";
+export const CANONICAL_POSTER_ID_PROPERTY = "CinePrint Poster ID";
 export const STATUS_PROPERTY = "Status";
 export const DRAFT_STATUS = "Draft";
 
@@ -23,6 +24,8 @@ interface FieldMapping {
   property: string;
   build: (draft: EnrichedDraftWithTmdb) => unknown;
   value: (draft: EnrichedDraftWithTmdb) => unknown;
+  /** Only participate when the draft carries this optional value. */
+  requires?: "posterId";
 }
 
 function textProperty(content: string) {
@@ -98,7 +101,21 @@ const FIELD_MAPPINGS: FieldMapping[] = [
     build: (draft) => ({ rich_text: textProperty(draft.raindropId) }),
     value: (draft) => draft.raindropId,
   },
+  {
+    property: CANONICAL_POSTER_ID_PROPERTY,
+    build: (draft) => ({ rich_text: textProperty(draft.posterId!) }),
+    value: (draft) => draft.posterId ?? null,
+    requires: "posterId",
+  },
 ];
+
+function activeMappings(draft: EnrichedDraft): FieldMapping[] {
+  const enriched = requireTmdb(draft);
+  return FIELD_MAPPINGS.filter((mapping) => {
+    if (mapping.requires === "posterId") return Boolean(enriched.posterId);
+    return true;
+  });
+}
 
 function requireTmdb(draft: EnrichedDraft): EnrichedDraftWithTmdb {
   if (!draft.tmdb) {
@@ -113,7 +130,7 @@ export function buildCreateProperties(draft: EnrichedDraft) {
   const enriched = requireTmdb(draft);
   const properties: Record<string, unknown> = {};
 
-  for (const mapping of FIELD_MAPPINGS) {
+  for (const mapping of activeMappings(enriched)) {
     properties[mapping.property] = mapping.build(enriched);
   }
 
@@ -206,10 +223,12 @@ export function changedFields(
   draft: EnrichedDraft,
   existingProperties: Record<string, unknown>,
 ): string[] {
-  return FIELD_MAPPINGS.filter((mapping) => {
-    const current = propertyToValue(existingProperties[mapping.property]);
-    const next = mappedPropertyValue(draft, mapping.property);
+  return activeMappings(draft)
+    .filter((mapping) => {
+      const current = propertyToValue(existingProperties[mapping.property]);
+      const next = mappedPropertyValue(draft, mapping.property);
 
-    return JSON.stringify(current) !== JSON.stringify(next);
-  }).map((mapping) => mapping.property);
+      return JSON.stringify(current) !== JSON.stringify(next);
+    })
+    .map((mapping) => mapping.property);
 }
