@@ -1,97 +1,110 @@
 name: Notion publishing sync
 
-# Configured but gated. Scheduled execution does nothing until the repository
-# variable AUTOMATION_ENABLED is set to "true" after dry-run and integration
-# verification are approved.
+# Three independent lanes:
+#   - manual dry-run: always available, never writes, no activation variable;
+#   - manual apply: requires AUTOMATION_MANUAL_APPLY_ENABLED, the confirmation
+#     phrase and a limit of exactly 1, and runs in the protected
+#     `automation-manual-apply` environment;
+#   - scheduled apply: requires AUTOMATION_ENABLED and the schedule event.
+#
+# Enabling AUTOMATION_ENABLED therefore arms only the cron lane and never makes
+# a manual dispatch writable. Enabling the manual lane never arms cron.
 
 on:
   schedule:
     - cron: "5,25,45 * * * *"
   workflow_dispatch:
     inputs:
-      apply:
-        description: "Write eligible records to Firestore"
-        type: boolean
-        default: false
-      limit:
-        description: "Maximum published records processed this run"
+      action:
+        description: "dry-run (read-only preview) or apply (Firestore writes; requires confirmation)"
+        type: choice
+        options:
+          - dry-run
+          - apply
+        default: dry-run
+      confirm_apply:
+        description: "Required for apply: type APPLY-ONE-POSTER to authorize exactly one record"
         type: string
-        default: "50"
+        default: ""
+      limit:
+        description: "Maximum published records processed this run (apply requires exactly 1)"
+        type: string
+        default: "1"
 
 permissions:
   contents: read
 
 concurrency:
   # Shared with Raindrop ingestion: the two workflows must never overlap.
+  # This does not protect against local CLI runs or other independent runners.
   group: cineprint-catalog-automation
   cancel-in-progress: false
 
 jobs:
-  publish:
-    if: vars.AUTOMATION_ENABLED == 'true'
+  validate:
+    name: Validate dispatch inputs
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Set up Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci --no-audit --no-fund
-
-      - name: Run publishing sync
+      - name: Validate manual authorization
         env:
-          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
-          LIMIT: ${{ inputs.limit || '50' }}
-          RUN_ID: publish-${{ github.run_id }}-${{ github.run_attempt }}
-          NOTION_KEY: ${{ secrets.NOTION_KEY }}
-          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
-          NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID }}
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-        run: |
-          set -euo pipefail
-          mkdir -p artifacts
-          args=(--mode publish --run-id "$RUN_ID" --limit "$LIMIT" --summary-out artifacts/publish-summary.json)
-          if [ "$APPLY" = "true" ]; then
-            args+=(--apply)
-          fi
-          npx tsx automation/ingestion/cli.ts "${args[@]}"
+          GATE_ACTION: ${{ inputs.action }}
+          GATE_EVENT_NAME: ${{ github.event_name }}
+          GATE_LIMIT: ${{ inputs.limit }}
+          GATE_CONFIRMATION: ${{ inputs.confirm_apply }}
+          GATE_ENVIRONMENT: ${{ inputs.action == 'apply' && 'automation-manual-apply' || 'automation-manual-dry-run' }}
+          GATE_REPOSITORY: ${{ github.repository }}
+          GATE_EVENT_REPOSITORY: ${{ github.event.repository.full_name }}
+          GATE_MANUAL_APPLY_ENABLED: ${{ vars.AUTOMATION_MANUAL_APPLY_ENABLED }}
+        run: node automation/ingestion/run-authorization.mjs dispatch
 
-      - name: Publish execution summary
-        if: always()
-        run: |
-          set -euo pipefail
-          if [ -f artifacts/publish-summary.json ]; then
-            node -e '
-              const s = require("./artifacts/publish-summary.json");
-              const c = s.counts || {};
-              const lines = [
-                "## Notion publishing sync",
-                "",
-                `- Mode: ${s.dryRun ? "dry-run" : "apply"}`,
-                `- Published records discovered: ${c.publishedRecordsDiscovered ?? 0}`,
-                `- Firestore records created: ${c.firestoreRecordsCreated ?? 0}`,
-                `- Firestore records updated: ${c.firestoreRecordsUpdated ?? 0}`,
-                `- Already synchronized: ${c.alreadySynchronized ?? 0}`,
-                `- Needs review: ${c.needsReview ?? 0}`,
-                `- Failed: ${c.failed ?? 0}`,
-              ];
-              require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");
-            '
-          else
-            echo "No summary was produced." >> "$GITHUB_STEP_SUMMARY"
-          fi
+  manual-dry-run:
+    name: Manual dry-run
+    needs: validate
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'dry-run'
+    uses: ./.github/workflows/automation-publish-run.yml
+    with:
+      apply: false
+      limit: ${{ inputs.limit }}
+      source: manual
+      confirmation: ""
+      environment: automation-manual-dry-run
+    secrets:
+      # Read-only credentials only: a dry-run must never need write access.
+      NOTION_KEY: ${{ secrets.NOTION_KEY }}
 
-      - name: Upload summary artifact
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: notion-publishing-summary
-          path: artifacts/
-          if-no-files-found: warn
-          retention-days: 14
+  manual-apply:
+    name: Manual apply (one record)
+    needs: validate
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.action == 'apply' &&
+      vars.AUTOMATION_MANUAL_APPLY_ENABLED == 'true'
+    uses: ./.github/workflows/automation-publish-run.yml
+    with:
+      apply: true
+      limit: ${{ inputs.limit }}
+      source: manual
+      confirmation: ${{ inputs.confirm_apply }}
+      environment: automation-manual-apply
+    secrets:
+      NOTION_KEY: ${{ secrets.NOTION_KEY }}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+
+  scheduled:
+    name: Scheduled apply
+    if: github.event_name == 'schedule' && vars.AUTOMATION_ENABLED == 'true'
+    uses: ./.github/workflows/automation-publish-run.yml
+    with:
+      apply: true
+      limit: "50"
+      source: schedule
+      confirmation: ""
+      environment: automation-scheduled
+    secrets:
+      NOTION_KEY: ${{ secrets.NOTION_KEY }}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}

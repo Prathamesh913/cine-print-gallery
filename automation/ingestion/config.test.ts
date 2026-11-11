@@ -40,6 +40,17 @@ describe("pipeline configuration", () => {
       expect(String(error)).not.toContain("raindrop-secret");
     }
   });
+
+  it("treats the poster identities data source as optional", () => {
+    const without = loadPipelineConfig(BASE_ENV, { requireR2: false });
+    expect(without.notion.identitiesDataSourceId).toBeNull();
+
+    const withId = loadPipelineConfig(
+      { ...BASE_ENV, NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID: "ds-identities" },
+      { requireR2: false },
+    );
+    expect(withId.notion.identitiesDataSourceId).toBe("ds-identities");
+  });
 });
 
 describe("structured logger", () => {

@@ -23,7 +23,11 @@ export interface TmdbConfig {
 export interface NotionConfig {
   apiKey: string;
   databaseId: string;
-  /** Optional `Poster Identities` data source for multi-image pages. */
+  /**
+   * Optional `Poster Identities` data source. When absent, identity records are
+   * not fetched and multi-image pages are reported for review instead of being
+   * resolved from a guessed mapping.
+   */
   identitiesDataSourceId: string | null;
   timeoutMs: number;
 }

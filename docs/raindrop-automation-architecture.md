@@ -293,14 +293,27 @@ Full matrices are in `docs/raindrop-automation-failure-recovery.md`.
 
 ## 8. Execution model
 
-- Two GitHub Actions workflows, one shared concurrency group.
+- Two GitHub Actions entry workflows, one shared concurrency group, plus a
+  `workflow_call`-only run body each.
+- Three independent lanes: manual dry-run (no activation variable), manual apply
+  (`AUTOMATION_MANUAL_APPLY_ENABLED` + `APPLY-ONE-POSTER` confirmation + limit 1),
+  scheduled apply (`AUTOMATION_ENABLED` + `schedule` event only).
 - Schedule: ingestion every 20 minutes; publishing at `:05`, `:25`, `:45`.
-- Manual `workflow_dispatch` defaults to dry-run.
-- Scheduled runs apply only after `AUTOMATION_ENABLED=true` is set.
-- Bounded batches: default 10 (workflow input) / 25 (CLI default) ingestion, 50
-  publishing.
+- Manual `workflow_dispatch` defaults to dry-run; a missing action or confirmation
+  is never interpreted as permission to write.
+- Scheduled runs apply only after `AUTOMATION_ENABLED=true` is set and the event
+  is `schedule`; a manual dispatch can never satisfy that check.
+- The reusable run body re-verifies the resolved authorization before `npm ci`
+  and before any credential reaches a step, including the source repository,
+  event name, environment, apply flag and limit.
+- Reusable run bodies accept no other repository; the check uses both
+  `github.repository` and `github.event.repository.full_name`.
+- Bounded batches: scheduled 10 ingestion / 50 publishing; manual apply is exactly
+  1; dry-run uses the operator-selected limit (1–100).
 - Concurrency inside a run: 2 posters by default.
 - Explicit job timeouts: 20 minutes ingestion, 15 minutes publishing.
+
+GitHub concurrency does not protect local CLI executions or independent runners.
 
 ---
 
@@ -308,6 +321,8 @@ Full matrices are in `docs/raindrop-automation-failure-recovery.md`.
 
 - Credentials only in GitHub Actions secrets; non-secret configuration in
   repository variables.
+- Manual apply uses the protected `automation-manual-apply` GitHub Environment;
+  dry-runs never receive R2 or Firebase write credentials.
 - Logs are JSON lines with bearer-token and credential-query redaction.
 - Downloads are HTTPS-only, credential-free, private-host rejected, bounded by
   bytes and time; image signatures are validated.
@@ -317,6 +332,10 @@ Full matrices are in `docs/raindrop-automation-failure-recovery.md`.
 - No privileged workflow runs on `pull_request`.
 - Workflows use `permissions: contents: read` and pinned action SHAs.
 - Pipeline state collections are server-only (rules above).
+- Local `--apply` requires `--confirm-apply` and an explicit `--limit`.
+- A read-only `automation-safety.yml` CI workflow validates the gates, workflow
+  conditions and credential scoping on pull requests and `main` pushes; it has no
+  secrets, environments or deployment access.
 
 Known limitation: external image downloads use the platform DNS resolver, so a
 public hostname resolving to a private address is not pinned. The migration

@@ -413,6 +413,28 @@ describe("publishing sync", () => {
     expect(await catalog.get("artwork-456")).toBeTruthy();
   });
 
+  it("reports multi-image pages for review when no identity data source is configured", async () => {
+    const secondImage =
+      "https://images.cineprint.click/cineprint/versions/original/artwork-456/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.png";
+    const multi = page({
+      id: "page-multi",
+      posterId: null,
+      raindropId: null,
+      images: [IMAGE, secondImage],
+    });
+
+    // The identities data source is optional; without it the sync must fail
+    // closed instead of inventing an image-to-poster mapping.
+    const { summary, catalog } = await run({ pages: [multi], identities: [] });
+
+    expect(summary.counts.firestoreRecordsCreated).toBe(0);
+    expect(summary.counts.needsReview).toBeGreaterThan(0);
+    expect(summary.failures.some((failure) => /No identity record/.test(failure.reason))).toBe(
+      true,
+    );
+    expect(writes(catalog)).toHaveLength(0);
+  });
+
   it("reuses a legacy document already associated with the Notion page", async () => {
     const legacyImage =
       "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/raindrop/999.png";
