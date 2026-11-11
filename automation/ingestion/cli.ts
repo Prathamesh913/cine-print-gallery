@@ -2,10 +2,14 @@
 /**
  * Automation entry point.
  *
- * Safety default: dry-run. Writes require an explicit `--apply` and only the
- * `apply` branch ever constructs write-capable adapters.
+ * Safety default: dry-run. Writes require all three of `--apply`,
+ * `--confirm-apply` and an explicit `--limit`, and only the `apply` branch ever
+ * constructs write-capable adapters. The confirmation flag exists so a local
+ * shell history entry, npm script or copy-pasted command cannot silently write
+ * to production.
  *
- * Exit codes: 0 success (including dry-run findings), 1 fatal or apply failures.
+ * Exit codes: 0 success (including dry-run findings), 1 fatal or apply failures,
+ * 2 rejected invocation (no work performed).
  */
 
 import "dotenv/config";
@@ -43,6 +47,7 @@ type Mode = "ingest" | "publish" | "all";
 interface CliOptions {
   mode: Mode;
   apply: boolean;
+  confirmApply: boolean;
   limit: number | null;
   maxPages: number | null;
   runId: string;
@@ -53,17 +58,20 @@ const USAGE = `Usage: tsx automation/ingestion/cli.ts [options]
 
   --mode <ingest|publish|all>   Work to run (default: ingest)
   --apply                       Perform external writes (default: dry-run)
-  --limit <n>                   Maximum posters processed this run
+  --confirm-apply               Required with --apply; explicit local confirmation
+  --limit <n>                   Maximum posters processed this run (required with --apply)
   --max-pages <n>               Maximum Raindrop pages fetched
   --run-id <id>                 Stable run identifier for logs
   --summary-out <path>          Also write the JSON summary to a file
   --help                        Show this help
 
-Dry-run reads are allowed; no R2, Notion, or Firestore writes occur.`;
+Dry-run reads are allowed; no R2, Notion, or Firestore writes occur.
+Apply requires --confirm-apply and an explicit --limit.`;
 
 export function parseCliArgs(argv: string[]): CliOptions {
   let mode: Mode = "ingest";
   let apply = false;
+  let confirmApply = false;
   let limit: number | null = null;
   let maxPages: number | null = null;
   let runId = `run-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
@@ -89,6 +97,9 @@ export function parseCliArgs(argv: string[]): CliOptions {
       }
       case "--apply":
         apply = true;
+        break;
+      case "--confirm-apply":
+        confirmApply = true;
         break;
       case "--limit": {
         const value = Number(next());
@@ -118,7 +129,19 @@ export function parseCliArgs(argv: string[]): CliOptions {
     }
   }
 
-  return { mode, apply, limit, maxPages, runId, summaryOut };
+  if (confirmApply && !apply) {
+    throw new Error("--confirm-apply is only valid together with --apply");
+  }
+  if (apply && !confirmApply) {
+    throw new Error(
+      "--apply requires --confirm-apply. Re-run with --apply --confirm-apply --limit 1 after reviewing a dry-run.",
+    );
+  }
+  if (apply && limit === null) {
+    throw new Error("--apply requires an explicit --limit (use --limit 1 for a controlled test)");
+  }
+
+  return { mode, apply, confirmApply, limit, maxPages, runId, summaryOut };
 }
 
 interface Runtime {
@@ -358,7 +381,16 @@ function fatalSummary(options: CliOptions, startedAt: Date, message: string): Ex
 }
 
 async function main() {
-  const options = parseCliArgs(process.argv.slice(2));
+  let options: CliOptions;
+  try {
+    options = parseCliArgs(process.argv.slice(2));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Automation invocation rejected: ${message}`);
+    process.exitCode = 2;
+    return;
+  }
+
   const startedAt = new Date();
   const logger = createLogger({
     runId: options.runId,

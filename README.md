@@ -141,8 +141,11 @@ npm run automation:publish:dry
 ```
 
 Scheduled GitHub Actions are committed **disabled** behind the
-`AUTOMATION_ENABLED` repository variable. See the operations document before
-activating them.
+`AUTOMATION_ENABLED` repository variable. Manual applies use a separate switch,
+`AUTOMATION_MANUAL_APPLY_ENABLED`, plus the `APPLY-ONE-POSTER` confirmation and a
+limit of exactly one item; dry-runs need neither. Writing locally requires
+`--apply --confirm-apply --limit 1`. See the operations document before
+activating any lane.
 
 ---
 

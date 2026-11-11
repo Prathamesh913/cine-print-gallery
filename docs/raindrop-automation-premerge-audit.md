@@ -6,6 +6,10 @@ Base: `origin/main` @ `ad1851c`
 Worktree: `/tmp/opencode/wt-raindrop-auto-ingestion`
 Date: 2026-11-10
 
+> Activation sequencing in §7 is superseded by
+> `docs/raindrop-automation-operations.md` §8, which uses separate manual-apply
+> and scheduled gates. The findings and remediation record below are unchanged.
+
 The earlier pre-merge audit found four critical blockers. This revision records
 the original findings, the root causes, the focused remediations, the regression
 tests that prove them, the verification results, and the new verdict.

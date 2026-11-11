@@ -147,7 +147,9 @@ await db.collection("automationIngestionJobs").doc("artwork-123").update({
 });
 ```
 
-Then run the ingestion workflow manually with `apply: true` and `limit: 1`.
+Then run the ingestion workflow manually with `action: apply`,
+`confirm_apply: APPLY-ONE-POSTER` and `limit: 1` (with
+`AUTOMATION_MANUAL_APPLY_ENABLED=true` and the environment approved).
 
 ### Resolve an ambiguous TMDB match
 
@@ -174,7 +176,8 @@ The next run uses that exact TMDB ID instead of re-ranking candidates.
 ### Retry a publishing record
 
 The publishing sync retries automatically each run. To force it, ensure the
-Notion page is still `Published` and run the publish workflow with `apply: true`.
+Notion page is still `Published` and run the publish workflow manually with
+`action: apply`, `confirm_apply: APPLY-ONE-POSTER` and `limit: 1`.
 
 If a Firestore document is associated with the wrong Notion page, the sync fails
 closed. Correct `notionPageId` only after confirming the canonical identity
@@ -186,8 +189,9 @@ contract; do not delete either document until the audit trail is captured.
 
 ### Pause automation
 
-Set repository variable `AUTOMATION_ENABLED=false` (or delete it). No new
-scheduled jobs start; an in-flight run finishes.
+Set repository variable `AUTOMATION_ENABLED=false` (or delete it) to stop
+scheduled runs. Set `AUTOMATION_MANUAL_APPLY_ENABLED=false` (or delete it) to
+disarm manual apply. The two switches are independent; an in-flight run finishes.
 
 ### Bad image uploaded for one poster
 
@@ -237,7 +241,7 @@ for the existing catalogue are unaffected, and Firestore records keep their
 
 | Symptom                                 | Diagnosis                                | Action                              |
 | --------------------------------------- | ---------------------------------------- | ----------------------------------- |
-| Workflow skipped                        | `AUTOMATION_ENABLED` not `true`          | Expected until activation           |
+| Workflow skipped                        | Scheduled lane: `AUTOMATION_ENABLED` not `true`; manual apply: `AUTOMATION_MANUAL_APPLY_ENABLED` not `true` | Expected until the relevant lane is activated |
 | `Missing required environment variable` | Secret/variable absent                   | Add it; the name is in the error    |
 | `R2 bucket/domain` error                | Partial R2 configuration                 | Set all five R2 values              |
 | `Missing Firebase...`                   | Admin credential absent                  | Add `FIREBASE_SERVICE_ACCOUNT_JSON` |

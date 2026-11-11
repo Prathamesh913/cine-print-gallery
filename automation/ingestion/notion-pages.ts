@@ -156,6 +156,12 @@ export class NotionPollingSource implements NotionPageSource {
     return pages;
   }
 
+  /**
+   * Identity rows are optional. Without a configured data source this returns
+   * an empty list and does not query the catalogue data source as a fallback;
+   * the publishing sync then reports multi-image pages for review instead of
+   * guessing an image-to-poster mapping.
+   */
   async listIdentityRecords(): Promise<IdentityRecord[]> {
     const dataSourceId = this.options.identitiesDataSourceId?.trim();
     if (!dataSourceId) return [];

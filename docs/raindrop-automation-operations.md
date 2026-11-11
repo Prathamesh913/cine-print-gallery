@@ -1,7 +1,8 @@
 # CinePrint Raindrop Automation — Operations
 
-Status: configured, **not activated**. Scheduled workflows perform no work until
-`AUTOMATION_ENABLED` is set to `true`.
+Status: configured, **not activated**. Nothing writes until an operator explicitly
+authorizes it. Manual dry-runs are always available; manual applies and
+scheduled applies have separate, independent gates (see §1.1).
 
 Related:
 
@@ -13,23 +14,46 @@ Related:
 
 ## 1. Workflows
 
-| Workflow               | File                                           | Schedule (UTC)    | Manual              | Timeout |
+| Workflow (entry point) | File                                           | Schedule (UTC)    | Manual              | Timeout |
 | ---------------------- | ---------------------------------------------- | ----------------- | ------------------- | ------- |
 | Raindrop ingestion     | `.github/workflows/raindrop-ingestion.yml`     | `*/20 * * * *`    | `workflow_dispatch` | 20 min  |
 | Notion publishing sync | `.github/workflows/notion-publishing-sync.yml` | `5,25,45 * * * *` | `workflow_dispatch` | 15 min  |
 
-Both share `concurrency.group: cineprint-catalog-automation` with
-`cancel-in-progress: false`, so they never overlap. A queued run waits for the
-current one to finish.
+Both entry points share a single non-cancelling concurrency group. The run body
+for each integration lives in a `workflow_call`-only reusable workflow
+(`automation-ingest-run.yml`, `automation-publish-run.yml`), which re-checks the
+resolved authorization before `npm ci` and before any credential is exposed to a
+step.
 
-Both jobs are guarded by:
+### 1.1 Activation lanes
 
-```yaml
-if: vars.AUTOMATION_ENABLED == 'true'
-```
+| Lane | Trigger | Required gate | Limit | Writes | Environment |
+| --- | --- | --- | --- | --- | --- |
+| Manual dry-run | `workflow_dispatch`, `action=dry-run` | None — runs while both activation variables are unset | Operator-selected, 1–100 | Never | `automation-manual-dry-run` |
+| Manual apply | `workflow_dispatch`, `action=apply` | `AUTOMATION_MANUAL_APPLY_ENABLED == 'true'` **and** `confirm_apply == 'APPLY-ONE-POSTER'` | Exactly `1` | Yes | `automation-manual-apply` (protect with required reviewers) |
+| Scheduled apply | `schedule` | `AUTOMATION_ENABLED == 'true'` **and** `github.event_name == 'schedule'` | `10` (ingestion) / `50` (publish) | Yes | `automation-scheduled` |
 
-Until that repository variable exists and equals `true`, scheduled and manual
-runs are skipped.
+The gates never overlap:
+
+- `AUTOMATION_ENABLED` cannot make a manual dispatch writable.
+- `AUTOMATION_MANUAL_APPLY_ENABLED` cannot arm a cron run.
+- A manual dispatch can never satisfy the scheduled event check, and a scheduled
+  event can never satisfy the manual event check.
+- Setting either variable does not change the other, and neither is inferred from
+  a missing input.
+- Each lane is bound to its own environment (`automation-manual-dry-run`,
+  `automation-manual-apply`, `automation-scheduled`); the gate rejects a run that
+  tries to reuse another lane's environment.
+
+Invalid dispatch input (unknown action, non-numeric or out-of-range limit, apply
+without the confirmation phrase, apply without the manual gate) fails in the
+`Validate dispatch inputs` job. The write job depends on that validation and is
+skipped when it fails.
+
+Concurrency note: `concurrency.group: cineprint-catalog-automation` with
+`cancel-in-progress: false` only serializes GitHub Actions runs of these two
+workflows. It does **not** protect against local CLI runs, other repositories, or
+any independent runner. Do not run a local `--apply` while a workflow is active.
 
 ---
 
@@ -54,22 +78,75 @@ only as step environment variables.
 
 Set in **Settings → Secrets and variables → Actions → Variables**:
 
-| Variable                                  | Example                          | Purpose                                    |
-| ----------------------------------------- | -------------------------------- | ------------------------------------------ |
-| `AUTOMATION_ENABLED`                      | `true`                           | Activation gate (absent/false = disabled)  |
-| `RAINDROP_COLLECTION_ID`                  | `12345678`                       | Designated ingestion collection            |
-| `NOTION_DATABASE_ID`                      | UUID                             | Poster Library database                    |
-| `NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID` | UUID                             | Optional multi-image identity rows         |
-| `R2_BUCKET_NAME`                          | bucket name                      | Never change without an approved migration |
-| `R2_PUBLIC_BASE_URL`                      | `https://images.cineprint.click` | Must stay the production domain            |
+| Variable                                  | Example                          | Purpose                                                        |
+| ----------------------------------------- | -------------------------------- | -------------------------------------------------------------- |
+| `AUTOMATION_ENABLED`                      | `true`                           | Scheduled-lane gate only (absent/false = cron disabled)         |
+| `AUTOMATION_MANUAL_APPLY_ENABLED`         | `true`                           | Manual-apply-lane gate only (absent/false = apply dispatch skipped) |
+| `RAINDROP_COLLECTION_ID`                  | `12345678`                       | Designated ingestion collection                                |
+| `NOTION_DATABASE_ID`                      | UUID                             | Poster Library database                                        |
+| `NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID` | UUID                             | Optional multi-image identity rows (see §3.1)                  |
+| `R2_BUCKET_NAME`                          | bucket name                      | Never change without an approved migration                     |
+| `R2_PUBLIC_BASE_URL`                      | `https://images.cineprint.click` | Must stay the production domain                                |
+
+### 3.1 Poster identities data source is optional
+
+`NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID` is **optional**, consistently across the
+code and workflows:
+
+- `automation/ingestion/config.ts` reads it with `optional(...)`; absence yields
+  `null`.
+- `NotionPollingSource.listIdentityRecords()` returns `[]` immediately when the
+  id is unset or blank; it does not query the catalogue data source as a
+  substitute and does not invent another data source.
+- The publishing sync then resolves single-image pages normally, while a
+  multi-image page with no identity records is reported as `needs review` (or a
+  conflict) instead of guessing an image-to-poster mapping.
+- Ingestion does not use this id at all (it creates drafts through
+  `NotionApiClient`, which discovers the catalogue data source from the database).
+
+Only the publishing sync passes the variable. Removing it is a supported
+degraded mode for single-image catalogues, not a silent fallback.
+
+### 3.2 Environments
+
+The reusable run bodies select a GitHub Environment from the lane:
+
+| Environment | Used by | Required protection |
+| --- | --- | --- |
+| `automation-manual-dry-run` | manual dry-run | None. Do not add reviewers: dry-runs are read-only and should stay frictionless. |
+| `automation-manual-apply` | manual apply | **Required reviewers** (at least one) and, if available, restrict deployment branches to `main`. |
+| `automation-scheduled` | scheduled apply | None. Keep this environment free of reviewers so cron runs are not blocked. |
+
+These environments cannot be configured from workflow code. Before authorizing
+the first manual apply, an administrator must open **Settings → Environments →
+`automation-manual-apply`** and add at least one required reviewer. Until that is
+done, GitHub auto-creates the environment without protection, so the confirmation
+phrase and the `AUTOMATION_MANUAL_APPLY_ENABLED` variable remain the only gates.
+
+There is no unprotected fallback: the reusable run body rejects a manual apply
+that does not use `automation-manual-apply`, including an attempt to reuse
+`automation-manual-dry-run` or `automation-scheduled`.
+
 
 ---
 
 ## 4. Running manually
 
-### Dry-run (default)
+### 4.1 Dispatch inputs
 
-GitHub → Actions → select workflow → **Run workflow** → leave `apply` unchecked.
+| Input | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `action` | choice: `dry-run` / `apply` | `dry-run` | The only way to request writes. A missing action is never interpreted as apply. |
+| `confirm_apply` | string | empty | Must be exactly `APPLY-ONE-POSTER` for `apply`. Ignored for dry-runs. |
+| `limit` | string | `1` | 1–100. `apply` requires exactly `1`. Invalid or empty values fail validation. |
+| `max_pages` | string | `4` | Ingestion only; 1–20. |
+
+### 4.2 Dry-run
+
+GitHub → Actions → select the workflow → **Run workflow** → `action: dry-run`
+(the default). This works while `AUTOMATION_ENABLED` and
+`AUTOMATION_MANUAL_APPLY_ENABLED` are both unset, and it does not receive any R2
+or Firebase write credential.
 
 Or locally:
 
@@ -77,6 +154,7 @@ Or locally:
 npm run automation:ingest:dry
 npm run automation:publish:dry
 npm run automation:all:dry
+npx tsx automation/ingestion/cli.ts --mode all --limit 5 --max-pages 2
 ```
 
 Dry-run rules:
@@ -89,13 +167,25 @@ Dry-run rules:
 - Exit code is `0` even when records need review or fail, unless the process
   itself fails.
 
-### Apply run
+### 4.3 Manual apply (one poster / one record)
 
-GitHub → Run workflow → check `apply`, or locally:
+Preconditions:
+
+1. `automation-manual-apply` has at least one required reviewer.
+2. `AUTOMATION_MANUAL_APPLY_ENABLED` is set to `true` immediately before the run.
+3. The dry-run report was reviewed and one specific poster/record was approved.
+
+GitHub → Run workflow → `action: apply`, `confirm_apply: APPLY-ONE-POSTER`,
+`limit: 1`. The run waits for environment approval and then writes.
+
+Locally, the CLI requires both the confirmation flag and an explicit limit;
+without them it exits `2` and performs no work:
 
 ```bash
-npm run automation:ingest
-npm run automation:publish
+npx tsx automation/ingestion/cli.ts \
+  --mode ingest --apply --confirm-apply --limit 1 \
+  --run-id local-apply-1 \
+  --summary-out /tmp/ingest-apply.json
 ```
 
 `--apply` requires:
@@ -107,26 +197,27 @@ npm run automation:publish
 
 Apply runs exit `1` when any record failed, after writing the summary.
 
-### CLI reference
+After the single-poster run, set `AUTOMATION_MANUAL_APPLY_ENABLED` to `false` or
+delete it. It is not a schedule switch, but leaving it set keeps the manual apply
+lane armed. The former `npm run automation:ingest` / `automation:publish`
+convenience scripts were removed so that no single command can write by itself.
+
+### 4.4 CLI reference
 
 ```text
-tsx automation/ingestion/cli.ts --mode ingest|publish|all [--apply]
-                                [--limit N] [--max-pages N]
+tsx automation/ingestion/cli.ts --mode ingest|publish|all
+                                [--apply --confirm-apply --limit N]
+                                [--max-pages N]
                                 [--run-id ID] [--summary-out PATH]
 ```
 
+- Dry-run is the default. `--apply` without `--confirm-apply` exits `2`.
+- `--apply` without an explicit `--limit` exits `2`.
+- `--confirm-apply` without `--apply` exits `2`.
 - stdout: one JSON summary document.
 - stderr: structured JSON logs.
 - `--summary-out` also writes the summary to a file (CI uses `artifacts/`).
 
-Example:
-
-```bash
-npx tsx automation/ingestion/cli.ts \
-  --mode ingest --limit 5 --max-pages 2 \
-  --run-id local-dry-1 \
-  --summary-out /tmp/ingest.json
-```
 
 ---
 
@@ -219,7 +310,8 @@ Never query or export these collections from a browser client.
 1. Reviewer opens the Notion Draft created by ingestion.
 2. Verify title, year, media type, artist, genre, library and image.
 3. Set `Status` to `Published`.
-4. Wait for the next publishing sync (≤ 20 minutes) or run it manually.
+4. Wait for the next publishing sync (≤ 20 minutes) or run the publishing
+   workflow's one-record apply lane to verify without waiting for cron.
 5. Confirm the record exists in Firestore with `status: "published"` and an
    image URL.
 6. The public site refreshes within its existing 2-minute in-memory cache.
@@ -232,38 +324,62 @@ Firestore document's `status` accordingly and the public query stops serving it.
 
 ## 8. Activation checklist
 
-Nothing below has been executed. Activation requires explicit approval.
+Nothing below has been executed. Each step requires explicit approval.
 
-1. **Merge authorization and deployment** — this branch is not committed,
-   pushed, or deployed. The dynamic resolver change only takes effect when the
-   frontend is deployed.
-2. **Firestore rules** — add server-only denial rules for
-   `automationIngestionJobs` and `automationIngestionRuns`. Admin SDK access is
-   unaffected.
-3. **Secrets and variables** — add every name in sections 2 and 3.
-4. **Dry-run verification** — run both workflows manually with `apply`
-   unchecked and compare the report with the Notion catalogue.
-5. **Integration approval** — if an integration test needs real R2/Notion/
-   Firestore writes, obtain explicit approval first; do not run it as part of
-   implementation.
-6. **First apply batch** — run ingestion manually with `apply: true` and
-   `limit: 1`. Confirm the Notion Draft, both R2 objects, and the CDN response.
-7. **Publish one record** — set its Notion Status to Published, run the
-   publishing workflow with `apply: true`, and confirm the Firestore document
-   and public page.
-8. **Enable schedules** — set `AUTOMATION_ENABLED=true` only after steps 1–7
-   pass.
+1. **Manual dry-run** — run both workflows with `action: dry-run` (works with
+   both activation variables unset) or run the CLI dry-run commands locally.
+2. **Review output** — compare `bookmarksDiscovered`, `newCandidates`,
+   `needsReview`, `publishedRecordsDiscovered` and `alreadySynchronized` with the
+   Raindrop collection, Notion catalogue and Firestore posters. Resolve
+   `needsReview` entries before proceeding.
+3. **Configure credentials** — add every secret in §2 and every non-activation
+   variable in §3 (leave `AUTOMATION_ENABLED` and
+   `AUTOMATION_MANUAL_APPLY_ENABLED` unset). Add the required reviewer to
+   `automation-manual-apply` (§3.2), and confirm Firestore rules keep
+   `automationIngestionJobs` and `automationIngestionRuns` client-inaccessible.
+4. **Obtain explicit approval for one-poster apply** — name the poster, the
+   expected R2 keys, the expected Notion Draft and the rollback step. Only then
+   set `AUTOMATION_MANUAL_APPLY_ENABLED=true`.
+5. **Run the one-poster integration test** — `action: apply`,
+   `confirm_apply: APPLY-ONE-POSTER`, `limit: 1`. Confirm the Notion Draft, both
+   R2 objects and the CDN response. Set `AUTOMATION_MANUAL_APPLY_ENABLED=false`
+   immediately afterwards.
+6. **Verify publication separately** — set the Draft's Notion `Status` to
+   `Published`, then run the publishing workflow's one-record apply lane
+   (`action: apply`, `confirm_apply: APPLY-ONE-POSTER`, `limit: 1`). Confirm the
+   Firestore document, `r2Image` reference, public page and sitemap after the next
+   deployment.
+7. **Enable schedules only after recurring-operation prerequisites are complete**
+   — the distributed-lock decision, atomic Firestore creation, permanent-error
+   retry handling and a passed live end-to-end run. Then set
+   `AUTOMATION_ENABLED=true`. The manual variables must stay unset.
 
 To pause automation at any time, set `AUTOMATION_ENABLED` to `false` or delete
-it. In-flight runs finish; queued runs skip.
+it. In-flight runs finish; queued runs skip. To disarm manual apply, do the same
+with `AUTOMATION_MANUAL_APPLY_ENABLED`; this never affects cron and vice versa.
 
 ---
 
 ## 9. Security model
 
 - Least privilege: `permissions: contents: read`; no PR trigger.
-- Actions are pinned to commit SHAs.
+- Actions are pinned to commit SHAs; the only unpinned `uses:` is the local
+  reusable workflow reference.
 - Explicit timeouts and a shared non-cancelling concurrency group.
+- Independent authorization gates: schedule vs manual apply, checked both in the
+  caller job condition and again before dependency installation in the reusable
+  run body.
+- Reusable run bodies are restricted to the `Prathamesh913/cine-print-gallery`
+  repository using both `github.repository` and
+  `github.event.repository.full_name`; because this is a public repository,
+  `workflow_call` bodies are otherwise callable from other repositories.
+- `.github/workflows/automation-safety.yml` runs the gate tests, ingestion tests,
+  ESLint and actionlint on pull requests and `main` pushes. It has no secrets,
+  environments, deployment or dispatch and uses `permissions: contents: read`.
+- Manual apply requires an exact confirmation phrase, a single-item limit and
+  the protected `automation-manual-apply` environment.
+- Dry-runs receive no R2/Firebase write credentials; R2 variables are blanked for
+  non-apply runs.
 - Secrets are injected per step; the CLI never prints environment values.
 - Logs redact bearer tokens and credential query parameters.
 - R2 public base URL is fixed to `https://images.cineprint.click`; `.r2.dev` is
@@ -278,8 +394,12 @@ it. In-flight runs finish; queued runs skip.
 ## 10. Known operational limitations
 
 - Dry-run without Admin credentials cannot read durable state.
+- GitHub concurrency does not protect local CLI executions or independent
+  runners; coordinate them manually.
 - `RAINDROP_COLLECTION_ID` is a variable, not a secret; changing it starts a new
   source namespace. Existing poster identities remain stable.
+- Without `NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID`, multi-image pages are
+  reported for review instead of being resolved from identity rows (§3.1).
 - Batch limits mean a large backlog drains over several runs.
 - The publishing sync scans at most 1,000 rows per run (10 × 100).
 - The sitemap is generated at build time; newly published posters enter it on
