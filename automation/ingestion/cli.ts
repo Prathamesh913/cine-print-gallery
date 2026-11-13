@@ -248,13 +248,16 @@ async function runIngest(
     timeoutMs: config.tmdb.timeoutMs,
     logger: tmdbLogger(logger),
   });
-  const drafts = new NotionDraftSync(
-    new NotionApiClient({
-      apiKey: config.notion.apiKey,
-      databaseId: config.notion.databaseId,
-      timeoutMs: config.notion.timeoutMs,
-    }),
-  );
+  const notionClient = new NotionApiClient({
+    apiKey: config.notion.apiKey,
+    databaseId: config.notion.databaseId,
+    posterDataSourceId: config.notion.posterDataSourceId,
+    timeoutMs: config.notion.timeoutMs,
+  });
+  // Validate the Notion data source before downloading, enriching or writing
+  // anything. A database ID or an ambiguous database fails here, not per draft.
+  await notionClient.preflight();
+  const drafts = new NotionDraftSync(notionClient);
 
   const needsR2 = options.apply && config.r2;
   const r2 = needsR2

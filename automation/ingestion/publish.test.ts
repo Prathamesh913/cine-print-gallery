@@ -692,4 +692,24 @@ describe("dry-run state handling", () => {
     const { summary } = await run({ pages: [page()] });
     expect(summary.stateSource).toBe("memory");
   });
+
+  it("plans an unpublish in a dry run without touching Firestore", async () => {
+    const first = await run({ pages: [page()], jobs: [job()] });
+    const writesAfterApply = writes(first.catalog).length;
+
+    const dry = await runPublishingSync(
+      {
+        source: source([page({ status: "Draft" })]),
+        catalog: first.catalog,
+        jobs: new InMemoryJobStore(),
+        logger: logger(),
+        stateSource: "firestore",
+      },
+      { runId: "run-2", dryRun: true },
+    );
+
+    expect(dry.counts.firestoreRecordsUpdated).toBe(1);
+    expect((await first.catalog.get("artwork-123"))?.data.status).toBe("published");
+    expect(writes(first.catalog)).toHaveLength(writesAfterApply);
+  });
 });

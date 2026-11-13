@@ -100,18 +100,23 @@ database ID where a data source ID is expected produces:
 object_not_found: Could not find data_source with ID: <database id>
 ```
 
-The publishing sync therefore resolves and validates every Notion object before
-reading a record:
+The publishing and ingestion pipelines therefore resolve and validate every
+Notion object before reading or writing a record:
 
 - `NOTION_DATABASE_ID` is the database used by `databases.retrieve`.
 - `NOTION_POSTER_DATA_SOURCE_ID` is the catalogue data source. When it is set it
   is used directly. When it is absent and the database exposes exactly one data
   source, that one is used. When the database exposes several, the run fails with
   a configuration error that names the candidates; it never guesses.
-- The resolved catalogue data source must expose the `Status` and `Image URL`
-  properties, which prevents accidentally polling the Poster Identities table.
+- The resolved catalogue data source must expose the properties each pipeline
+  writes: `Status` and `Image URL` for publishing, plus `Raindrop ID` for
+  ingestion. This prevents accidentally polling the Poster Identities table.
+- Page creation targets the resolved data source (`parent.data_source_id`), which
+  is required by the Notion `2025-09-03` API when a database has several data
+  sources.
 - `NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID` must be a data source, must be
-  readable, and must not be the catalogue data source.
+  readable, and must not be the catalogue data source. Publishing reads identity
+  rows from it; ingestion does not use it.
 
 Configuration errors name the variable and the offending ID (never a secret),
 and distinguish an inaccessible ID from a missing optional one.
@@ -410,6 +415,10 @@ with `AUTOMATION_MANUAL_APPLY_ENABLED`; this never affects cron and vice versa.
   runs. The publishing dry-run does receive `FIREBASE_SERVICE_ACCOUNT_JSON` so it
   can read existing state, but the CLI wraps the Firestore adapters in read-only
   proxies whose `create`, `update` and `save` methods throw.
+- Firestore security rules do not apply to Admin SDK credentials, so the dry-run
+  read-only guarantee is enforced in code, not by rules. For defence in depth a
+  dedicated service account with `roles/datastore.viewer` can serve the same
+  reads; Firestore IAM is project-wide, so it cannot be limited to a collection.
 - Secrets are injected per step; the CLI never prints environment values.
 - Logs redact bearer tokens and credential query parameters.
 - R2 public base URL is fixed to `https://images.cineprint.click`; `.r2.dev` is

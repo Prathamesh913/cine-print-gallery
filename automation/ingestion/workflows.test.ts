@@ -313,6 +313,13 @@ describe("reusable write-credential scoping", () => {
     );
   });
 
+  it("passes the explicit poster data source to the ingestion sync", () => {
+    const text = readWorkflow("automation-ingest-run.yml");
+    expect(text).toContain(
+      "NOTION_POSTER_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_DATA_SOURCE_ID }}",
+    );
+  });
+
   it("names the poster data source explicitly and lets dry-runs read Firestore", () => {
     const text = readWorkflow("automation-publish-run.yml");
     const runStep = text.slice(text.indexOf("Run publishing sync"));

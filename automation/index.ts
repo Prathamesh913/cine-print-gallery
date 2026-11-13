@@ -266,6 +266,7 @@ async function main() {
     const collectionId = getRequiredEnv("RAINDROP_COLLECTION_ID");
     const notionKey = getRequiredEnv("NOTION_KEY");
     const notionDatabaseId = getRequiredEnv("NOTION_DATABASE_ID");
+    const notionPosterDataSourceId = process.env.NOTION_POSTER_DATA_SOURCE_ID?.trim() || null;
 
     const { oidcToken, storeId, readWriteToken } = getBlobCredentials();
 
@@ -338,7 +339,9 @@ async function main() {
     const notionClient = new NotionApiClient({
       apiKey: notionKey,
       databaseId: notionDatabaseId,
+      posterDataSourceId: notionPosterDataSourceId,
     });
+    await notionClient.preflight();
     const sync = new NotionDraftSync(notionClient);
     const outcomes = await sync.syncMany(enrichedDrafts, { dryRun });
 
