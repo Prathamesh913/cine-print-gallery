@@ -148,8 +148,9 @@ await db.collection("automationIngestionJobs").doc("artwork-123").update({
 ```
 
 Then run the ingestion workflow manually with `action: apply`,
-`confirm_apply: APPLY-ONE-POSTER` and `limit: 1` (with
-`AUTOMATION_MANUAL_APPLY_ENABLED=true` and the environment approved).
+`confirm_apply: APPLY-ONE-POSTER` and `limit: 1` from `main` (with
+`AUTOMATION_MANUAL_APPLY_ENABLED=true`). No GitHub Environment approval is
+required; editorial approval is the Notion `Published` status.
 
 ### Resolve an ambiguous TMDB match
 
@@ -189,9 +190,11 @@ contract; do not delete either document until the audit trail is captured.
 
 ### Pause automation
 
-Set repository variable `AUTOMATION_ENABLED=false` (or delete it) to stop
-scheduled runs. Set `AUTOMATION_MANUAL_APPLY_ENABLED=false` (or delete it) to
-disarm manual apply. The two switches are independent; an in-flight run finishes.
+Set `AUTOMATION_INGESTION_ENABLED=false` (or delete it) to stop scheduled
+ingestion, and `AUTOMATION_PUBLISHING_ENABLED=false` (or delete it) to stop
+scheduled publishing. Set `AUTOMATION_MANUAL_APPLY_ENABLED=false` (or delete it)
+to disarm manual apply. The three switches are independent; an in-flight run
+finishes. The retired `AUTOMATION_ENABLED` variable no longer controls anything.
 
 ### Bad image uploaded for one poster
 
@@ -239,18 +242,18 @@ for the existing catalogue are unaffected, and Firestore records keep their
 
 ## 6. Run-level failures
 
-| Symptom                                 | Diagnosis                                | Action                              |
-| --------------------------------------- | ---------------------------------------- | ----------------------------------- |
-| Workflow skipped                        | Scheduled lane: `AUTOMATION_ENABLED` not `true`; manual apply: `AUTOMATION_MANUAL_APPLY_ENABLED` not `true` | Expected until the relevant lane is activated |
-| `Missing required environment variable` | Secret/variable absent                   | Add it; the name is in the error    |
-| `R2 bucket/domain` error                | Partial R2 configuration                 | Set all five R2 values              |
-| `Missing Firebase...`                   | Admin credential absent                  | Add `FIREBASE_SERVICE_ACCOUNT_JSON` |
-| `Notion authentication failed (401)`    | Token revoked                            | Rotate `NOTION_KEY`                 |
-| `Raindrop authentication failed`        | Token revoked                            | Rotate `RAINDROP_ACCESS_TOKEN`      |
-| Zero published records                  | Notion `Status` value differs            | Confirm exact value `Published`     |
-| All records `needsReview`               | Canonical ID and Raindrop ID both absent | Fix the Notion page                 |
-| Exit code 1 with `failed > 0`           | Per-record failures                      | Read `failures[]` and use section 4 |
-| Summary looks all-new in dry-run        | No Admin credentials locally             | Expected; see operations doc        |
+| Symptom                                 | Diagnosis                                                                                                                                                                   | Action                                        |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Workflow skipped                        | Scheduled lane: its own variable (`AUTOMATION_INGESTION_ENABLED` or `AUTOMATION_PUBLISHING_ENABLED`) not `true`; manual apply: `AUTOMATION_MANUAL_APPLY_ENABLED` not `true` | Expected until the relevant lane is activated |
+| `Missing required environment variable` | Secret/variable absent                                                                                                                                                      | Add it; the name is in the error              |
+| `R2 bucket/domain` error                | Partial R2 configuration                                                                                                                                                    | Set all five R2 values                        |
+| `Missing Firebase...`                   | Admin credential absent                                                                                                                                                     | Add `FIREBASE_SERVICE_ACCOUNT_JSON`           |
+| `Notion authentication failed (401)`    | Token revoked                                                                                                                                                               | Rotate `NOTION_KEY`                           |
+| `Raindrop authentication failed`        | Token revoked                                                                                                                                                               | Rotate `RAINDROP_ACCESS_TOKEN`                |
+| Zero published records                  | Notion `Status` value differs                                                                                                                                               | Confirm exact value `Published`               |
+| All records `needsReview`               | Canonical ID and Raindrop ID both absent                                                                                                                                    | Fix the Notion page                           |
+| Exit code 1 with `failed > 0`           | Per-record failures                                                                                                                                                         | Read `failures[]` and use section 4           |
+| Summary looks all-new in dry-run        | No Admin credentials locally                                                                                                                                                | Expected; see operations doc                  |
 
 ---
 

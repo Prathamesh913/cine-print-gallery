@@ -1,8 +1,10 @@
 name: Notion publishing sync (run)
 
-# Reusable run body. Callers own the activation gates and the environment.
+# Reusable run body. Callers own the activation gates.
 # This workflow re-checks the resolved authorization before installing
-# dependencies or exposing any credential to a step.
+# dependencies or exposing any credential to a step. It deliberately does not
+# attach a GitHub Environment: manual apply must not wait for a second human
+# reviewer, because editorial approval already happened in Notion.
 
 on:
   workflow_call:
@@ -24,10 +26,16 @@ on:
         required: false
         type: string
         default: ""
-      environment:
-        description: "GitHub Environment that scopes this run"
-        required: true
+      scheduled-gate:
+        description: "Repository variable that arms the scheduled lane (schedule runs only)"
+        required: false
         type: string
+        default: ""
+      scheduled-enabled:
+        description: "Resolved value of the scheduled-lane variable"
+        required: false
+        type: string
+        default: ""
     secrets:
       NOTION_KEY:
         required: false
@@ -41,8 +49,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment:
-      name: ${{ inputs.environment }}
     steps:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -54,10 +60,11 @@ jobs:
           GATE_APPLY: ${{ inputs.apply }}
           GATE_LIMIT: ${{ inputs.limit }}
           GATE_CONFIRMATION: ${{ inputs.confirmation }}
-          GATE_ENVIRONMENT: ${{ inputs.environment }}
+          GATE_REF: ${{ github.ref }}
           GATE_REPOSITORY: ${{ github.repository }}
           GATE_EVENT_REPOSITORY: ${{ github.event.repository.full_name }}
-          GATE_AUTOMATION_ENABLED: ${{ vars.AUTOMATION_ENABLED }}
+          GATE_SCHEDULED_ENABLED: ${{ inputs.scheduled-enabled }}
+          GATE_SCHEDULED_GATE: ${{ inputs.scheduled-gate }}
           GATE_MANUAL_APPLY_ENABLED: ${{ vars.AUTOMATION_MANUAL_APPLY_ENABLED }}
         run: node automation/ingestion/run-authorization.mjs authorize
 

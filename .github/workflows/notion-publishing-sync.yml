@@ -3,12 +3,16 @@ name: Notion publishing sync
 # Three independent lanes:
 #   - manual dry-run: always available, never writes, no activation variable;
 #   - manual apply: requires AUTOMATION_MANUAL_APPLY_ENABLED, the confirmation
-#     phrase and a limit of exactly 1, and runs in the protected
-#     `automation-manual-apply` environment;
-#   - scheduled apply: requires AUTOMATION_ENABLED and the schedule event.
+#     phrase, a limit of exactly 1 and the default branch. It intentionally does
+#     not use a GitHub Environment reviewer: editorial approval happens once, in
+#     Notion, when a Draft is moved to Published;
+#   - scheduled apply: requires AUTOMATION_PUBLISHING_ENABLED and the schedule
+#     event.
 #
-# Enabling AUTOMATION_ENABLED therefore arms only the cron lane and never makes
-# a manual dispatch writable. Enabling the manual lane never arms cron.
+# Enabling AUTOMATION_PUBLISHING_ENABLED therefore arms only the publishing cron
+# lane. It never makes a manual dispatch writable, and it does not arm the
+# ingestion cron lane, which has its own AUTOMATION_INGESTION_ENABLED switch.
+# Enabling the manual lane never arms cron.
 
 on:
   schedule:
@@ -56,7 +60,7 @@ jobs:
           GATE_EVENT_NAME: ${{ github.event_name }}
           GATE_LIMIT: ${{ inputs.limit }}
           GATE_CONFIRMATION: ${{ inputs.confirm_apply }}
-          GATE_ENVIRONMENT: ${{ inputs.action == 'apply' && 'automation-manual-apply' || 'automation-manual-dry-run' }}
+          GATE_REF: ${{ github.ref }}
           GATE_REPOSITORY: ${{ github.repository }}
           GATE_EVENT_REPOSITORY: ${{ github.event.repository.full_name }}
           GATE_MANUAL_APPLY_ENABLED: ${{ vars.AUTOMATION_MANUAL_APPLY_ENABLED }}
@@ -72,7 +76,6 @@ jobs:
       limit: ${{ inputs.limit }}
       source: manual
       confirmation: ""
-      environment: automation-manual-dry-run
     secrets:
       # Read-only credentials: NOTION_KEY can only query, and the Firestore
       # adapters are wrapped so a dry-run cannot write.
@@ -92,21 +95,21 @@ jobs:
       limit: ${{ inputs.limit }}
       source: manual
       confirmation: ${{ inputs.confirm_apply }}
-      environment: automation-manual-apply
     secrets:
       NOTION_KEY: ${{ secrets.NOTION_KEY }}
       FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
 
   scheduled:
     name: Scheduled apply
-    if: github.event_name == 'schedule' && vars.AUTOMATION_ENABLED == 'true'
+    if: github.event_name == 'schedule' && vars.AUTOMATION_PUBLISHING_ENABLED == 'true'
     uses: ./.github/workflows/automation-publish-run.yml
     with:
       apply: true
       limit: "50"
       source: schedule
       confirmation: ""
-      environment: automation-scheduled
+      scheduled-gate: AUTOMATION_PUBLISHING_ENABLED
+      scheduled-enabled: ${{ vars.AUTOMATION_PUBLISHING_ENABLED }}
     secrets:
       NOTION_KEY: ${{ secrets.NOTION_KEY }}
       FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}

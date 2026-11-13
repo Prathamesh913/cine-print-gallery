@@ -140,12 +140,15 @@ npm run automation:ingest:dry
 npm run automation:publish:dry
 ```
 
-Scheduled GitHub Actions are committed **disabled** behind the
-`AUTOMATION_ENABLED` repository variable. Manual applies use a separate switch,
-`AUTOMATION_MANUAL_APPLY_ENABLED`, plus the `APPLY-ONE-POSTER` confirmation and a
-limit of exactly one item; dry-runs need neither. Writing locally requires
-`--apply --confirm-apply --limit 1`. See the operations document before
-activating any lane.
+Scheduled GitHub Actions are committed **disabled** behind two independent
+repository variables: `AUTOMATION_INGESTION_ENABLED` arms only the Raindrop cron
+lane, and `AUTOMATION_PUBLISHING_ENABLED` arms only the Notion publishing cron
+lane. Manual applies use a separate switch, `AUTOMATION_MANUAL_APPLY_ENABLED`,
+plus the `APPLY-ONE-POSTER` confirmation, a limit of exactly one item and a
+dispatch from `main`; dry-runs need neither. No automation lane requires a GitHub
+Environment reviewer — editorial approval is the Notion `Draft → Published`
+status. Writing locally requires `--apply --confirm-apply --limit 1`. See the
+operations document before activating any lane.
 
 ---
 
