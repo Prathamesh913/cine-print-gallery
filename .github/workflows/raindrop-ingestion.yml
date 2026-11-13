@@ -3,12 +3,16 @@ name: Raindrop ingestion
 # Three independent lanes:
 #   - manual dry-run: always available, never writes, no activation variable;
 #   - manual apply: requires AUTOMATION_MANUAL_APPLY_ENABLED, the confirmation
-#     phrase and a limit of exactly 1, and runs in the protected
-#     `automation-manual-apply` environment;
-#   - scheduled apply: requires AUTOMATION_ENABLED and the schedule event.
+#     phrase, a limit of exactly 1 and the default branch. It intentionally does
+#     not use a GitHub Environment reviewer: editorial approval happens once, in
+#     Notion, when a Draft is moved to Published;
+#   - scheduled apply: requires AUTOMATION_INGESTION_ENABLED and the schedule
+#     event.
 #
-# Enabling AUTOMATION_ENABLED therefore arms only the cron lane and never makes
-# a manual dispatch writable. Enabling the manual lane never arms cron.
+# Enabling AUTOMATION_INGESTION_ENABLED therefore arms only the ingestion cron
+# lane. It never makes a manual dispatch writable, and it does not arm the
+# publishing cron lane, which has its own AUTOMATION_PUBLISHING_ENABLED switch.
+# Enabling the manual lane never arms cron.
 
 on:
   schedule:
@@ -61,7 +65,7 @@ jobs:
           GATE_LIMIT: ${{ inputs.limit }}
           GATE_MAX_PAGES: ${{ inputs.max_pages }}
           GATE_CONFIRMATION: ${{ inputs.confirm_apply }}
-          GATE_ENVIRONMENT: ${{ inputs.action == 'apply' && 'automation-manual-apply' || 'automation-manual-dry-run' }}
+          GATE_REF: ${{ github.ref }}
           GATE_REPOSITORY: ${{ github.repository }}
           GATE_EVENT_REPOSITORY: ${{ github.event.repository.full_name }}
           GATE_MANUAL_APPLY_ENABLED: ${{ vars.AUTOMATION_MANUAL_APPLY_ENABLED }}
@@ -78,7 +82,6 @@ jobs:
       max-pages: ${{ inputs.max_pages }}
       source: manual
       confirmation: ""
-      environment: automation-manual-dry-run
     secrets:
       # Read-only credentials only: a dry-run must never need write access.
       RAINDROP_ACCESS_TOKEN: ${{ secrets.RAINDROP_ACCESS_TOKEN }}
@@ -99,7 +102,6 @@ jobs:
       max-pages: ${{ inputs.max_pages }}
       source: manual
       confirmation: ${{ inputs.confirm_apply }}
-      environment: automation-manual-apply
     secrets:
       RAINDROP_ACCESS_TOKEN: ${{ secrets.RAINDROP_ACCESS_TOKEN }}
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
@@ -111,7 +113,7 @@ jobs:
 
   scheduled:
     name: Scheduled apply
-    if: github.event_name == 'schedule' && vars.AUTOMATION_ENABLED == 'true'
+    if: github.event_name == 'schedule' && vars.AUTOMATION_INGESTION_ENABLED == 'true'
     uses: ./.github/workflows/automation-ingest-run.yml
     with:
       apply: true
@@ -119,7 +121,8 @@ jobs:
       max-pages: "4"
       source: schedule
       confirmation: ""
-      environment: automation-scheduled
+      scheduled-gate: AUTOMATION_INGESTION_ENABLED
+      scheduled-enabled: ${{ vars.AUTOMATION_INGESTION_ENABLED }}
     secrets:
       RAINDROP_ACCESS_TOKEN: ${{ secrets.RAINDROP_ACCESS_TOKEN }}
       TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}

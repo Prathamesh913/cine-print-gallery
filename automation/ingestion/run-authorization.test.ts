@@ -4,22 +4,22 @@ import { describe, expect, it } from "vitest";
 import {
   APPLY_CONFIRMATION,
   AUTHORIZED_REPOSITORY,
+  MANUAL_APPLY_REF,
   MAX_LIMIT,
   authorizeRun,
   evaluateDispatch,
   runGateCli,
 } from "./run-authorization.mjs";
 
-const DRY_RUN_ENVIRONMENT = "automation-manual-dry-run";
-const APPLY_ENVIRONMENT = "automation-manual-apply";
-const SCHEDULED_ENVIRONMENT = "automation-scheduled";
+const INGESTION_GATE = "AUTOMATION_INGESTION_ENABLED";
+const PUBLISHING_GATE = "AUTOMATION_PUBLISHING_ENABLED";
 
 const MANUAL_DRY_RUN = {
   source: "manual",
   eventName: "workflow_dispatch",
   apply: false,
   limit: "1",
-  environment: DRY_RUN_ENVIRONMENT,
+  ref: MANUAL_APPLY_REF,
   repository: AUTHORIZED_REPOSITORY,
   eventRepository: AUTHORIZED_REPOSITORY,
 };
@@ -28,7 +28,6 @@ const MANUAL_APPLY = {
   ...MANUAL_DRY_RUN,
   apply: true,
   confirmation: APPLY_CONFIRMATION,
-  environment: APPLY_ENVIRONMENT,
   manualApplyEnabled: "true",
 };
 
@@ -37,16 +36,18 @@ const SCHEDULED = {
   eventName: "schedule",
   apply: true,
   limit: "10",
-  environment: SCHEDULED_ENVIRONMENT,
+  ref: MANUAL_APPLY_REF,
   repository: AUTHORIZED_REPOSITORY,
   eventRepository: AUTHORIZED_REPOSITORY,
-  automationEnabled: "true",
+  scheduledGate: INGESTION_GATE,
+  scheduledEnabled: "true",
 };
 
 const DISPATCH = {
   action: "dry-run",
   eventName: "workflow_dispatch",
   limit: "1",
+  ref: MANUAL_APPLY_REF,
   repository: AUTHORIZED_REPOSITORY,
   eventRepository: AUTHORIZED_REPOSITORY,
 };
@@ -60,10 +61,10 @@ function codes(result: { errors: Array<{ code: string }> }) {
 }
 
 describe("manual dry-run gate", () => {
-  it("is allowed while AUTOMATION_ENABLED is unset", () => {
+  it("is allowed while both scheduled lane variables are unset", () => {
     const result = authorizeRun(MANUAL_DRY_RUN);
     expect(result).toMatchObject({ ok: true, errors: [] });
-    expect(MANUAL_DRY_RUN).not.toHaveProperty("automationEnabled");
+    expect(MANUAL_DRY_RUN).not.toHaveProperty("scheduledEnabled");
     expect(MANUAL_DRY_RUN).not.toHaveProperty("manualApplyEnabled");
   });
 
@@ -75,10 +76,9 @@ describe("manual dry-run gate", () => {
     expect(dispatch({ manualApplyEnabled: undefined }).ok).toBe(true);
   });
 
-  it("requires its own environment", () => {
-    const result = authorizeRun({ ...MANUAL_DRY_RUN, environment: "" });
-    expect(result.ok).toBe(false);
-    expect(codes(result)).toContain("environment_missing");
+  it("does not attach a GitHub Environment approval", () => {
+    const result = authorizeRun({ ...MANUAL_DRY_RUN, environment: "automation-manual-apply" });
+    expect(result).toMatchObject({ ok: true, errors: [] });
   });
 });
 
@@ -113,22 +113,37 @@ describe("manual apply gate", () => {
     expect(result).toMatchObject({ ok: true, errors: [] });
   });
 
+  it("requires no GitHub Environment reviewer approval", () => {
+    // The gate has no environment input at all. A stale value on the request is
+    // ignored, and the run is authorized by the manual switch plus confirmation.
+    const result = authorizeRun({
+      ...MANUAL_APPLY,
+      environment: "automation-manual-apply",
+    });
+    expect(result).toMatchObject({ ok: true, errors: [] });
+  });
+
+  it("requires no GitHub Environment input", () => {
+    expect(MANUAL_APPLY).not.toHaveProperty("environment");
+    expect(authorizeRun(MANUAL_APPLY).ok).toBe(true);
+  });
+
+  it("rejects a dispatch from a feature branch", () => {
+    const result = authorizeRun({ ...MANUAL_APPLY, ref: "refs/heads/feature/test" });
+    expect(result.ok).toBe(false);
+    expect(codes(result)).toContain("manual_apply_branch_mismatch");
+  });
+
+  it("rejects a missing ref", () => {
+    const result = authorizeRun({ ...MANUAL_APPLY, ref: undefined });
+    expect(result.ok).toBe(false);
+    expect(codes(result)).toContain("manual_apply_branch_mismatch");
+  });
+
   it("cannot be authorized by a scheduled event", () => {
     const result = authorizeRun({ ...MANUAL_APPLY, eventName: "schedule" });
     expect(result.ok).toBe(false);
     expect(codes(result)).toContain("event_source_mismatch");
-  });
-
-  it("rejects an environment that belongs to another lane", () => {
-    const result = authorizeRun({ ...MANUAL_APPLY, environment: SCHEDULED_ENVIRONMENT });
-    expect(result.ok).toBe(false);
-    expect(codes(result)).toContain("environment_mismatch");
-  });
-
-  it("rejects a missing environment", () => {
-    const result = authorizeRun({ ...MANUAL_APPLY, environment: undefined });
-    expect(result.ok).toBe(false);
-    expect(codes(result)).toContain("environment_missing");
   });
 
   it("rejects a run from another repository", () => {
@@ -139,17 +154,64 @@ describe("manual apply gate", () => {
 });
 
 describe("scheduled gate", () => {
-  it("is skipped unless AUTOMATION_ENABLED is exactly 'true'", () => {
-    for (const automationEnabled of [undefined, "", "false", "TRUE", "1"]) {
-      const result = authorizeRun({ ...SCHEDULED, automationEnabled });
+  it("is skipped unless its lane variable is exactly 'true'", () => {
+    for (const scheduledEnabled of [undefined, "", "false", "TRUE", "1"]) {
+      const result = authorizeRun({ ...SCHEDULED, scheduledEnabled });
       expect(result.ok).toBe(false);
       expect(codes(result)).toContain("scheduled_gate_disabled");
     }
   });
 
-  it("is allowed for a schedule event when the gate is enabled", () => {
+  it("is allowed for a schedule event when the ingestion gate is enabled", () => {
     const result = authorizeRun(SCHEDULED);
     expect(result).toMatchObject({ ok: true, errors: [] });
+  });
+
+  it("is allowed for a schedule event when the publishing gate is enabled", () => {
+    const result = authorizeRun({ ...SCHEDULED, scheduledGate: PUBLISHING_GATE });
+    expect(result).toMatchObject({ ok: true, errors: [] });
+  });
+
+  it("does not accept a lane-neutral or manual variable as a scheduled gate", () => {
+    for (const scheduledGate of ["AUTOMATION_ENABLED", "AUTOMATION_MANUAL_APPLY_ENABLED", ""]) {
+      const result = authorizeRun({ ...SCHEDULED, scheduledGate });
+      expect(result.ok).toBe(false);
+      expect(codes(result)).toContain("scheduled_gate_unconfigured");
+    }
+  });
+
+  it("keeps ingestion and publishing activation independent", () => {
+    // The ingestion lane reads its own variable; a publishing value cannot arm it
+    // and vice versa, because the caller resolves the variable and the gate
+    // verifies the exact lane name.
+    expect(
+      authorizeRun({
+        ...SCHEDULED,
+        scheduledGate: INGESTION_GATE,
+        scheduledEnabled: "true",
+      }).ok,
+    ).toBe(true);
+    expect(
+      authorizeRun({
+        ...SCHEDULED,
+        scheduledGate: PUBLISHING_GATE,
+        scheduledEnabled: "true",
+      }).ok,
+    ).toBe(true);
+    expect(
+      authorizeRun({
+        ...SCHEDULED,
+        scheduledGate: INGESTION_GATE,
+        scheduledEnabled: "false",
+      }).ok,
+    ).toBe(false);
+    expect(
+      authorizeRun({
+        ...SCHEDULED,
+        scheduledGate: PUBLISHING_GATE,
+        scheduledEnabled: "",
+      }).ok,
+    ).toBe(false);
   });
 
   it("cannot be reached from a manual dispatch", () => {
@@ -166,12 +228,6 @@ describe("scheduled gate", () => {
 
   it("does not depend on the manual apply gate", () => {
     expect(authorizeRun({ ...SCHEDULED, manualApplyEnabled: undefined }).ok).toBe(true);
-  });
-
-  it("rejects an environment that belongs to another lane", () => {
-    const result = authorizeRun({ ...SCHEDULED, environment: APPLY_ENVIRONMENT });
-    expect(result.ok).toBe(false);
-    expect(codes(result)).toContain("environment_mismatch");
   });
 
   it("rejects a run whose event repository does not match", () => {
@@ -229,6 +285,17 @@ describe("dispatch input validation", () => {
     expect(result.ok).toBe(true);
   });
 
+  it("rejects apply from a feature branch", () => {
+    const result = dispatch({
+      action: "apply",
+      confirmation: APPLY_CONFIRMATION,
+      manualApplyEnabled: "true",
+      ref: "refs/heads/feature/test",
+    });
+    expect(result.ok).toBe(false);
+    expect(codes(result)).toContain("manual_apply_branch_mismatch");
+  });
+
   it("rejects apply from another repository", () => {
     const result = dispatch({
       action: "apply",
@@ -252,6 +319,7 @@ describe("gate CLI", () => {
         GATE_EVENT_NAME: "workflow_dispatch",
         GATE_LIMIT: "2",
         GATE_CONFIRMATION: "",
+        GATE_REF: MANUAL_APPLY_REF,
         GATE_REPOSITORY: AUTHORIZED_REPOSITORY,
         GATE_EVENT_REPOSITORY: AUTHORIZED_REPOSITORY,
       },
@@ -263,7 +331,7 @@ describe("gate CLI", () => {
     expect(errors.join("\n")).toContain("confirmation");
   });
 
-  it("accepts a fully authorized manual apply", () => {
+  it("accepts a fully authorized manual apply without an environment", () => {
     const lines: string[] = [];
     const exitCode = runGateCli(
       "authorize",
@@ -273,7 +341,7 @@ describe("gate CLI", () => {
         GATE_APPLY: "true",
         GATE_LIMIT: "1",
         GATE_CONFIRMATION: APPLY_CONFIRMATION,
-        GATE_ENVIRONMENT: APPLY_ENVIRONMENT,
+        GATE_REF: MANUAL_APPLY_REF,
         GATE_REPOSITORY: AUTHORIZED_REPOSITORY,
         GATE_EVENT_REPOSITORY: AUTHORIZED_REPOSITORY,
         GATE_MANUAL_APPLY_ENABLED: "true",
@@ -295,7 +363,7 @@ describe("gate CLI", () => {
         GATE_APPLY: "true",
         GATE_LIMIT: "1",
         GATE_CONFIRMATION: APPLY_CONFIRMATION,
-        GATE_ENVIRONMENT: APPLY_ENVIRONMENT,
+        GATE_REF: MANUAL_APPLY_REF,
         GATE_REPOSITORY: "attacker/fork",
         GATE_EVENT_REPOSITORY: "attacker/fork",
         GATE_MANUAL_APPLY_ENABLED: "true",
@@ -324,7 +392,7 @@ describe("gate CLI entrypoint", () => {
       GATE_EVENT_NAME: "workflow_dispatch",
       GATE_APPLY: "false",
       GATE_LIMIT: "5",
-      GATE_ENVIRONMENT: DRY_RUN_ENVIRONMENT,
+      GATE_REF: MANUAL_APPLY_REF,
       GATE_REPOSITORY: AUTHORIZED_REPOSITORY,
       GATE_EVENT_REPOSITORY: AUTHORIZED_REPOSITORY,
     });
@@ -332,17 +400,18 @@ describe("gate CLI entrypoint", () => {
     expect(result.stdout).toContain("manual dry-run");
   });
 
-  it("exits non-zero when the scheduled gate is absent", () => {
+  it("exits non-zero when the scheduled lane gate is absent", () => {
     const result = runEntry({
       GATE_SOURCE: "schedule",
       GATE_EVENT_NAME: "schedule",
       GATE_APPLY: "true",
       GATE_LIMIT: "10",
-      GATE_ENVIRONMENT: SCHEDULED_ENVIRONMENT,
+      GATE_REF: MANUAL_APPLY_REF,
+      GATE_SCHEDULED_GATE: INGESTION_GATE,
       GATE_REPOSITORY: AUTHORIZED_REPOSITORY,
       GATE_EVENT_REPOSITORY: AUTHORIZED_REPOSITORY,
     });
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain("AUTOMATION_ENABLED");
+    expect(result.stderr).toContain(INGESTION_GATE);
   });
 });

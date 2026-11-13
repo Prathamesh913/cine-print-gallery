@@ -6,10 +6,15 @@
  *
  * - Manual dry-run: always allowed, never writes, no recurring switch.
  * - Manual apply: requires AUTOMATION_MANUAL_APPLY_ENABLED, the exact
- *   confirmation phrase and a limit of exactly one poster.
- * - Scheduled runs: require AUTOMATION_ENABLED, the `schedule` event and an
- *   apply run. A manual dispatch can never satisfy the scheduled gate, and a
- *   scheduled event can never satisfy the manual gate.
+ *   confirmation phrase, a limit of exactly one poster, and the default branch.
+ *   It deliberately runs without a GitHub Environment, so it cannot require a
+ *   second human reviewer: editorial approval happens once, in Notion, by moving
+ *   a Draft to Published.
+ * - Scheduled runs: require their own lane variable
+ *   (AUTOMATION_INGESTION_ENABLED or AUTOMATION_PUBLISHING_ENABLED), the
+ *   `schedule` event and an apply run. A manual dispatch can never satisfy the
+ *   scheduled gate, a scheduled event can never satisfy the manual gate, and
+ *   neither scheduled lane can arm the other.
  *
  * This module is plain ESM so the GitHub Actions gate step can run it with
  * `node` before dependencies are installed. Tests import the same functions, so
@@ -23,11 +28,26 @@ export const MAX_LIMIT = 100;
 export const MAX_PAGES = 20;
 
 /**
+ * Manual apply is restricted to the default branch even though it no longer
+ * uses a GitHub Environment. This replaces the environment's deployment branch
+ * policy: a dispatch from a feature branch must not receive production write
+ * credentials, because that branch could contain arbitrary code.
+ */
+export const MANUAL_APPLY_REF = "refs/heads/main";
+
+/**
  * Reusable workflows in a public repository can be called from other
  * repositories. Production automation must only ever run from this repository,
  * so both the workflow repository and the event repository must match.
  */
 export const AUTHORIZED_REPOSITORY = "Prathamesh913/cine-print-gallery";
+
+/**
+ * Each scheduled lane is armed by its own repository variable. The gate only
+ * accepts these names, so a caller cannot substitute the manual-apply variable
+ * or a lane-neutral switch for a lane-specific one.
+ */
+export const SCHEDULED_GATES = ["AUTOMATION_INGESTION_ENABLED", "AUTOMATION_PUBLISHING_ENABLED"];
 
 const RULES = {
   manual: {
@@ -67,10 +87,11 @@ function error(code, message) {
  *   limit: number | string,
  *   maxPages?: number | string | null,
  *   confirmation?: string,
- *   environment?: string,
+ *   ref?: string,
  *   repository?: string,
  *   eventRepository?: string,
- *   automationEnabled?: string | null,
+ *   scheduledEnabled?: string | null,
+ *   scheduledGate?: string | null,
  *   manualApplyEnabled?: string | null,
  * }} input
  * @returns {{ ok: boolean, errors: Array<{code: string, message: string}> }}
@@ -85,9 +106,10 @@ export function authorizeRun(input) {
     input.maxPages !== undefined && input.maxPages !== null && String(input.maxPages).trim() !== "";
   const maxPages = hasMaxPages ? parsePositiveInteger(input.maxPages) : undefined;
   const confirmation = String(input.confirmation ?? "");
-  const environment = String(input.environment ?? "").trim();
+  const ref = String(input.ref ?? "").trim();
   const repository = String(input.repository ?? "").trim();
   const eventRepository = String(input.eventRepository ?? "").trim();
+  const scheduledGate = String(input.scheduledGate ?? "").trim();
 
   if (!SOURCES.includes(source)) {
     errors.push(
@@ -128,11 +150,19 @@ export function authorizeRun(input) {
     }
 
     if (source === "schedule") {
-      if (input.automationEnabled !== "true") {
+      if (!SCHEDULED_GATES.includes(scheduledGate)) {
+        errors.push(
+          error(
+            "scheduled_gate_unconfigured",
+            `scheduled runs require one of these lane variables: ${SCHEDULED_GATES.join(", ")}`,
+          ),
+        );
+      }
+      if (input.scheduledEnabled !== "true") {
         errors.push(
           error(
             "scheduled_gate_disabled",
-            "scheduled runs require the repository variable AUTOMATION_ENABLED to be exactly 'true'",
+            `scheduled runs require the repository variable ${scheduledGate || "for this lane"} to be exactly 'true'`,
           ),
         );
       }
@@ -168,31 +198,11 @@ export function authorizeRun(input) {
           ),
         );
       }
-    }
-
-    // The environment is part of the authorization: a manual apply that tries to
-    // reuse the unprotected scheduled environment is rejected.
-    const expectedEnvironment =
-      source === "schedule"
-        ? "automation-scheduled"
-        : apply === true
-          ? "automation-manual-apply"
-          : apply === false
-            ? "automation-manual-dry-run"
-            : null;
-    if (expectedEnvironment) {
-      if (!environment) {
+      if (ref !== MANUAL_APPLY_REF) {
         errors.push(
           error(
-            "environment_missing",
-            `a ${source}${apply === true ? " apply" : ""} run requires the ${expectedEnvironment} environment`,
-          ),
-        );
-      } else if (environment !== expectedEnvironment) {
-        errors.push(
-          error(
-            "environment_mismatch",
-            `a ${source}${apply === true ? " apply" : ""} run requires the ${expectedEnvironment} environment; received "${environment}"`,
+            "manual_apply_branch_mismatch",
+            `manual apply must run from ${MANUAL_APPLY_REF}; received "${ref || "no ref"}"`,
           ),
         );
       }
@@ -211,6 +221,7 @@ export function authorizeRun(input) {
  *   limit: number | string,
  *   maxPages?: number | string | null,
  *   confirmation?: string,
+ *   ref?: string,
  *   repository?: string,
  *   eventRepository?: string,
  *   manualApplyEnabled?: string | null,
@@ -237,9 +248,9 @@ export function evaluateDispatch(input) {
     limit: input.limit,
     maxPages: input.maxPages,
     confirmation: input.confirmation,
+    ref: input.ref,
     repository: input.repository,
     eventRepository: input.eventRepository,
-    environment: action === "apply" ? "automation-manual-apply" : "automation-manual-dry-run",
     manualApplyEnabled: input.manualApplyEnabled,
   });
 }
@@ -252,10 +263,11 @@ function readEnv(env) {
     limit: env.GATE_LIMIT,
     maxPages: env.GATE_MAX_PAGES,
     confirmation: env.GATE_CONFIRMATION,
-    environment: env.GATE_ENVIRONMENT,
+    ref: env.GATE_REF,
     repository: env.GATE_REPOSITORY,
     eventRepository: env.GATE_EVENT_REPOSITORY,
-    automationEnabled: env.GATE_AUTOMATION_ENABLED,
+    scheduledEnabled: env.GATE_SCHEDULED_ENABLED,
+    scheduledGate: env.GATE_SCHEDULED_GATE,
     manualApplyEnabled: env.GATE_MANUAL_APPLY_ENABLED,
   };
 }
@@ -283,6 +295,7 @@ export function runGateCli(
       limit: inputs.limit,
       maxPages: inputs.maxPages,
       confirmation: inputs.confirmation,
+      ref: inputs.ref,
       repository: inputs.repository,
       eventRepository: inputs.eventRepository,
       manualApplyEnabled: inputs.manualApplyEnabled,

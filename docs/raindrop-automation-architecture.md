@@ -296,18 +296,24 @@ Full matrices are in `docs/raindrop-automation-failure-recovery.md`.
 - Two GitHub Actions entry workflows, one shared concurrency group, plus a
   `workflow_call`-only run body each.
 - Three independent lanes: manual dry-run (no activation variable), manual apply
-  (`AUTOMATION_MANUAL_APPLY_ENABLED` + `APPLY-ONE-POSTER` confirmation + limit 1),
-  scheduled apply (`AUTOMATION_ENABLED` + `schedule` event only).
+  (`AUTOMATION_MANUAL_APPLY_ENABLED` + `APPLY-ONE-POSTER` confirmation + limit 1
+  - default branch), scheduled ingestion (`AUTOMATION_INGESTION_ENABLED` +
+    `schedule` event), scheduled publishing (`AUTOMATION_PUBLISHING_ENABLED` +
+    `schedule` event).
 - Schedule: ingestion every 20 minutes; publishing at `:05`, `:25`, `:45`.
 - Manual `workflow_dispatch` defaults to dry-run; a missing action or confirmation
   is never interpreted as permission to write.
-- Scheduled runs apply only after `AUTOMATION_ENABLED=true` is set and the event
-  is `schedule`; a manual dispatch can never satisfy that check.
+- Scheduled runs apply only after their own lane variable is `true` and the event
+  is `schedule`; a manual dispatch can never satisfy that check, and one lane's
+  variable cannot arm the other lane.
 - The reusable run body re-verifies the resolved authorization before `npm ci`
   and before any credential reaches a step, including the source repository,
-  event name, environment, apply flag and limit.
+  event name, ref, apply flag, limit and lane gate.
 - Reusable run bodies accept no other repository; the check uses both
   `github.repository` and `github.event.repository.full_name`.
+- No automation lane uses a GitHub Environment, so no run waits for a human
+  environment approval. Editorial approval is the Notion `Draft → Published`
+  transition.
 - Bounded batches: scheduled 10 ingestion / 50 publishing; manual apply is exactly
   1; dry-run uses the operator-selected limit (1–100).
 - Concurrency inside a run: 2 posters by default.
@@ -321,7 +327,8 @@ GitHub concurrency does not protect local CLI executions or independent runners.
 
 - Credentials only in GitHub Actions secrets; non-secret configuration in
   repository variables.
-- Manual apply uses the protected `automation-manual-apply` GitHub Environment;
+- Manual apply requires the manual switch, confirmation phrase, limit 1 and the
+  default branch. It does not use a GitHub Environment or a required reviewer;
   dry-runs never receive R2 or Firebase write credentials.
 - Logs are JSON lines with bearer-token and credential-query redaction.
 - Downloads are HTTPS-only, credential-free, private-host rejected, bounded by

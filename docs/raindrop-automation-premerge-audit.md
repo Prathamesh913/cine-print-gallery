@@ -27,15 +27,15 @@ in §7. All four original critical blockers are fixed and have dedicated
 regression tests. The remaining findings are non-blocking hardening/documentation
 items.
 
-| Area | Original | Current |
-|---|---|---|
-| Security | **FAIL** — token leak | **PASS** — token origin isolation |
-| Dynamic R2 resolution | **FAIL** — invalid refs masked | **PASS** — invalid refs fail closed |
-| Idempotency/recovery | NEEDS ATTENTION | **PASS for the four blockers**; remaining hardening |
-| GitHub Actions | PASS with caveats | **PASS with caveats** (unchanged) |
-| Data correctness | NEEDS ATTENTION — blank status | **PASS for blank/unknown status**; schema caveat remains |
-| Testing | NEEDS ATTENTION | **PASS for blocker regressions**; external boundaries remain mocked |
-| Build/deployment | NEEDS ATTENTION | App build + map check PASS; full prebuild not run |
+| Area                  | Original                       | Current                                                             |
+| --------------------- | ------------------------------ | ------------------------------------------------------------------- |
+| Security              | **FAIL** — token leak          | **PASS** — token origin isolation                                   |
+| Dynamic R2 resolution | **FAIL** — invalid refs masked | **PASS** — invalid refs fail closed                                 |
+| Idempotency/recovery  | NEEDS ATTENTION                | **PASS for the four blockers**; remaining hardening                 |
+| GitHub Actions        | PASS with caveats              | **PASS with caveats** (unchanged)                                   |
+| Data correctness      | NEEDS ATTENTION — blank status | **PASS for blank/unknown status**; schema caveat remains            |
+| Testing               | NEEDS ATTENTION                | **PASS for blocker regressions**; external boundaries remain mocked |
+| Build/deployment      | NEEDS ATTENTION                | App build + map check PASS; full prebuild not run                   |
 
 ---
 
@@ -264,19 +264,19 @@ interactions in this test are mocks/fixtures.
 
 ## 4. Re-run verification
 
-| Check | Result |
-|---|---|
-| Focused blocker tests (download, dynamic resolver, publish, poster catalog, e2e, runner) | **85 passed** |
-| Full suite | **100 files, 1,154 passed, 4 skipped** (1,158 total) |
-| `npx tsc --noEmit` | 1 pre-existing error (`src/routes/__root.tsx:148`) |
-| Scoped ingestion typecheck | no errors in new ingestion/dynamic files; pre-existing `automation/notion` SDK typing errors remain |
-| Scoped ESLint on changed/new files | exit 0 |
-| Repo-wide `npm run lint` | pre-existing 749 errors / 19 warnings; unrelated to this feature |
-| `npx vite build` | exit 0 |
-| Client bundle secret scan | no automation/Admin secret references in `.output/public` |
-| `npm run r2:map:check` | pass; generated map unchanged |
-| `git diff --check` | pass |
-| External writes | none |
+| Check                                                                                    | Result                                                                                              |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Focused blocker tests (download, dynamic resolver, publish, poster catalog, e2e, runner) | **85 passed**                                                                                       |
+| Full suite                                                                               | **100 files, 1,154 passed, 4 skipped** (1,158 total)                                                |
+| `npx tsc --noEmit`                                                                       | 1 pre-existing error (`src/routes/__root.tsx:148`)                                                  |
+| Scoped ingestion typecheck                                                               | no errors in new ingestion/dynamic files; pre-existing `automation/notion` SDK typing errors remain |
+| Scoped ESLint on changed/new files                                                       | exit 0                                                                                              |
+| Repo-wide `npm run lint`                                                                 | pre-existing 749 errors / 19 warnings; unrelated to this feature                                    |
+| `npx vite build`                                                                         | exit 0                                                                                              |
+| Client bundle secret scan                                                                | no automation/Admin secret references in `.output/public`                                           |
+| `npm run r2:map:check`                                                                   | pass; generated map unchanged                                                                       |
+| `git diff --check`                                                                       | pass                                                                                                |
+| External writes                                                                          | none                                                                                                |
 
 The 4 skipped tests are the pre-existing conditional
 `tests/security/firebase-admin-packaging.test.ts` cases.
@@ -285,15 +285,15 @@ The 4 skipped tests are the pre-existing conditional
 
 ## 5. Security assessment after remediation
 
-| Check | Verdict |
-|---|---|
-| Token attachment to untrusted hosts | **PASS** — exact host allowlist, no substring matching, no cross-origin forwarding. |
-| Redirect protocol/port validation | **PASS** — HTTPS and default port enforced before each request. |
-| Log redaction | **PASS** — Bearer and credential-query redaction; no URL/token logging in download errors. |
-| Firestore automation collections | **PASS** — no client rules; default deny. Admin SDK only. No rules change required; explicit deny is optional defense-in-depth. |
-| Public poster metadata | **NEEDS ATTENTION (low)** — `contentHash` remains on public poster documents. It is not a credential, but it is unnecessary ingestion metadata. Move to a private collection or omit when convenient. |
-| Dynamic R2 validation | **PASS** — valid, invalid and absent states are distinct; invalid refs fail closed. |
-| Credential boundary in client bundle | **PASS** — no automation/Admin references in the public build. |
+| Check                                | Verdict                                                                                                                                                                                               |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Token attachment to untrusted hosts  | **PASS** — exact host allowlist, no substring matching, no cross-origin forwarding.                                                                                                                   |
+| Redirect protocol/port validation    | **PASS** — HTTPS and default port enforced before each request.                                                                                                                                       |
+| Log redaction                        | **PASS** — Bearer and credential-query redaction; no URL/token logging in download errors.                                                                                                            |
+| Firestore automation collections     | **PASS** — no client rules; default deny. Admin SDK only. No rules change required; explicit deny is optional defense-in-depth.                                                                       |
+| Public poster metadata               | **NEEDS ATTENTION (low)** — `contentHash` remains on public poster documents. It is not a credential, but it is unnecessary ingestion metadata. Move to a private collection or omit when convenient. |
+| Dynamic R2 validation                | **PASS** — valid, invalid and absent states are distinct; invalid refs fail closed.                                                                                                                   |
+| Credential boundary in client bundle | **PASS** — no automation/Admin references in the public build.                                                                                                                                        |
 
 ---
 
@@ -349,7 +349,9 @@ The 4 skipped tests are the pre-existing conditional
 5. Run both workflows manually with `apply` unchecked.
 6. Run the approved single-poster ingestion and publishing rehearsal from the
    operations document.
-7. Set `AUTOMATION_ENABLED=true` only after those steps pass.
+7. Set `AUTOMATION_INGESTION_ENABLED=true` and/or
+   `AUTOMATION_PUBLISHING_ENABLED=true` independently, only after those steps
+   pass.
 
 No workflow was activated, no schedule was enabled, and no production data was
 changed during this remediation.

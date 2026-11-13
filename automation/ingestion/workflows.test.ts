@@ -34,7 +34,7 @@ function jobBlock(text: string, id: string): string {
 /**
  * Return the exact `if:` expression of a job, folding `>-` blocks. This is
  * intentionally strict: both a substring match and a comment would let a
- * condition such as `event == 'schedule' || vars.AUTOMATION_ENABLED == 'true'`
+ * condition such as `event == 'schedule' || vars.AUTOMATION_PUBLISHING_ENABLED == 'true'`
  * pass a weaker test.
  */
 function jobCondition(block: string): string {
@@ -77,14 +77,14 @@ function jobMapping(block: string, key: string, indent = 4): Record<string, stri
   return mapping;
 }
 
-const REPO = "Prathamesh913/cine-print-gallery";
-
 const CALLERS = [
   {
     name: "raindrop-ingestion.yml",
     cron: 'cron: "*/20 * * * *"',
     reusable: "./.github/workflows/automation-ingest-run.yml",
     scheduledLimit: "10",
+    scheduledGate: "AUTOMATION_INGESTION_ENABLED",
+    otherScheduledGate: "AUTOMATION_PUBLISHING_ENABLED",
     maxPages: true,
     dryRunSecrets: ["NOTION_KEY", "RAINDROP_ACCESS_TOKEN", "TMDB_API_KEY"],
     dryRunReadsFirestore: false,
@@ -103,6 +103,8 @@ const CALLERS = [
     cron: 'cron: "5,25,45 * * * *"',
     reusable: "./.github/workflows/automation-publish-run.yml",
     scheduledLimit: "50",
+    scheduledGate: "AUTOMATION_PUBLISHING_ENABLED",
+    otherScheduledGate: "AUTOMATION_INGESTION_ENABLED",
     maxPages: false,
     dryRunSecrets: ["FIREBASE_SERVICE_ACCOUNT_JSON", "NOTION_KEY"],
     dryRunReadsFirestore: true,
@@ -122,6 +124,8 @@ describe.each(CALLERS)(
     cron,
     reusable,
     scheduledLimit,
+    scheduledGate,
+    otherScheduledGate,
     maxPages,
     dryRunSecrets,
     dryRunReadsFirestore,
@@ -136,6 +140,7 @@ describe.each(CALLERS)(
       expect(text).toContain("cancel-in-progress: false");
       expect(text).not.toContain("pull_request");
       expect(text).not.toContain("secrets: inherit");
+      expect(text).not.toContain("environment:");
     });
 
     it("keeps every action pinned to a commit SHA and uses only local reusable workflows", () => {
@@ -171,24 +176,24 @@ describe.each(CALLERS)(
         GATE_ACTION: "${{ inputs.action }}",
         GATE_EVENT_NAME: "${{ github.event_name }}",
         GATE_LIMIT: "${{ inputs.limit }}",
-        GATE_ENVIRONMENT:
-          "${{ inputs.action == 'apply' && 'automation-manual-apply' || 'automation-manual-dry-run' }}",
         GATE_CONFIRMATION: "${{ inputs.confirm_apply }}",
+        GATE_REF: "${{ github.ref }}",
         GATE_MANUAL_APPLY_ENABLED: "${{ vars.AUTOMATION_MANUAL_APPLY_ENABLED }}",
         GATE_REPOSITORY: "${{ github.repository }}",
         GATE_EVENT_REPOSITORY: "${{ github.event.repository.full_name }}",
       });
+      expect(env).not.toHaveProperty("GATE_ENVIRONMENT");
       if (maxPages) expect(env.GATE_MAX_PAGES).toBe("${{ inputs.max_pages }}");
     });
 
-    it("allows a manual dry-run while both activation variables are absent", () => {
+    it("allows a manual dry-run while every activation variable is absent", () => {
       const dryRun = jobBlock(text, "manual-dry-run");
       expect(jobCondition(dryRun)).toBe(
         "github.event_name == 'workflow_dispatch' && inputs.action == 'dry-run'",
       );
       expect(dryRun).toContain("needs: validate");
-      expect(dryRun).not.toMatch(/AUTOMATION_ENABLED/);
-      expect(dryRun).not.toMatch(/AUTOMATION_MANUAL_APPLY_ENABLED/);
+      expect(dryRun).not.toMatch(/AUTOMATION_/);
+      expect(dryRun).not.toContain("environment:");
       expect(dryRun).not.toContain("R2_");
       // A dry-run reads existing Firestore state; the CLI's read-only adapters
       // make every write throw, so the credential is read-only in practice.
@@ -200,19 +205,20 @@ describe.each(CALLERS)(
         limit: "${{ inputs.limit }}",
         source: "manual",
         confirmation: '""',
-        environment: "automation-manual-dry-run",
       };
       if (maxPages) expected["max-pages"] = "${{ inputs.max_pages }}";
       expect(withInputs).toEqual(expected);
       expect(Object.keys(jobMapping(dryRun, "secrets")).sort()).toEqual(dryRunSecrets);
     });
 
-    it("gates manual apply on its own variable, confirmation, limit and environment", () => {
+    it("gates manual apply on its own variable, confirmation and limit without a reviewer environment", () => {
       const apply = jobBlock(text, "manual-apply");
       expect(jobCondition(apply)).toBe(
         "github.event_name == 'workflow_dispatch' && inputs.action == 'apply' && vars.AUTOMATION_MANUAL_APPLY_ENABLED == 'true'",
       );
       expect(apply).toContain("needs: validate");
+      expect(apply).not.toContain("environment:");
+      expect(apply).not.toMatch(/AUTOMATION_(INGESTION|PUBLISHING)_ENABLED/);
 
       const withInputs = jobMapping(apply, "with");
       expect(withInputs).toEqual({
@@ -220,30 +226,36 @@ describe.each(CALLERS)(
         limit: "${{ inputs.limit }}",
         source: "manual",
         confirmation: "${{ inputs.confirm_apply }}",
-        environment: "automation-manual-apply",
         ...(maxPages ? { "max-pages": "${{ inputs.max_pages }}" } : {}),
       });
       expect(Object.keys(jobMapping(apply, "secrets")).sort()).toEqual(writeSecrets);
     });
 
-    it("keeps scheduled execution independently gated on the schedule event", () => {
+    it("keeps scheduled execution independently gated on its own lane variable", () => {
       const scheduled = jobBlock(text, "scheduled");
       expect(jobCondition(scheduled)).toBe(
-        "github.event_name == 'schedule' && vars.AUTOMATION_ENABLED == 'true'",
+        `github.event_name == 'schedule' && vars.${scheduledGate} == 'true'`,
       );
       expect(scheduled).not.toMatch(/workflow_dispatch/);
       expect(scheduled).not.toMatch(/AUTOMATION_MANUAL_APPLY_ENABLED/);
+      expect(scheduled).not.toMatch(new RegExp(otherScheduledGate));
       expect(scheduled).not.toContain("needs:");
+      expect(scheduled).not.toContain("environment:");
 
       expect(jobMapping(scheduled, "with")).toEqual({
         apply: "true",
         limit: `"${scheduledLimit}"`,
         source: "schedule",
         confirmation: '""',
-        environment: "automation-scheduled",
+        "scheduled-gate": scheduledGate,
+        "scheduled-enabled": `\${{ vars.${scheduledGate} }}`,
         ...(maxPages ? { "max-pages": '"4"' } : {}),
       });
       expect(Object.keys(jobMapping(scheduled, "secrets")).sort()).toEqual(writeSecrets);
+    });
+
+    it("never reintroduces the retired lane-neutral activation variable", () => {
+      expect(withoutComments(text)).not.toMatch(/\bAUTOMATION_ENABLED\b/);
     });
   },
 );
@@ -255,7 +267,7 @@ describe.each(REUSABLES)("$name reusable body", ({ name, timeout }) => {
     expect(text).toContain("workflow_call:");
     expect(text).not.toContain("workflow_dispatch:");
     expect(text).not.toContain("schedule:");
-    expect(text).toContain("environment:\n      name: ${{ inputs.environment }}");
+    expect(text).not.toContain("environment:");
     expect(text).toMatch(/run: node automation\/ingestion\/run-authorization\.mjs authorize/);
 
     const authorizeIndex = text.indexOf("Authorize run");
@@ -271,11 +283,15 @@ describe.each(REUSABLES)("$name reusable body", ({ name, timeout }) => {
     expect(runIndex).toBeGreaterThan(authorizeIndex);
   });
 
-  it("passes repository, event and environment details to the gate", () => {
+  it("passes repository, event, ref and lane details to the gate", () => {
     const authorize = text.slice(text.indexOf("Authorize run"));
-    expect(authorize).toContain("GATE_ENVIRONMENT: ${{ inputs.environment }}");
+    expect(authorize).toContain("GATE_REF: ${{ github.ref }}");
     expect(authorize).toContain("GATE_REPOSITORY: ${{ github.repository }}");
     expect(authorize).toContain("GATE_EVENT_REPOSITORY: ${{ github.event.repository.full_name }}");
+    expect(authorize).toContain("GATE_SCHEDULED_ENABLED: ${{ inputs.scheduled-enabled }}");
+    expect(authorize).toContain("GATE_SCHEDULED_GATE: ${{ inputs.scheduled-gate }}");
+    expect(authorize).not.toContain("GATE_ENVIRONMENT");
+    expect(authorize).not.toContain("GATE_AUTOMATION_ENABLED");
   });
 
   it("keeps the original timeout and pinned actions", () => {
@@ -288,6 +304,29 @@ describe.each(REUSABLES)("$name reusable body", ({ name, timeout }) => {
 
   it("requires confirmation for the CLI apply branch", () => {
     expect(text).toMatch(/args\+=\(--apply --confirm-apply\)/);
+  });
+});
+
+describe("approval-model simplification", () => {
+  it("removes every GitHub Environment and required-reviewer reference from automation workflows", () => {
+    for (const name of [
+      "raindrop-ingestion.yml",
+      "notion-publishing-sync.yml",
+      "automation-ingest-run.yml",
+      "automation-publish-run.yml",
+    ]) {
+      const code = withoutComments(readWorkflow(name));
+      expect(code).not.toContain("environment:");
+      expect(code).not.toContain("required_reviewers");
+      expect(code).not.toContain("automation-manual-apply");
+      expect(code).not.toContain("automation-scheduled");
+    }
+  });
+
+  it("keeps the safety CI workflow free of environments and deployment access", () => {
+    const code = withoutComments(readWorkflow("automation-safety.yml"));
+    expect(code).not.toContain("environment:");
+    expect(code).not.toContain("required_reviewers");
   });
 });
 
@@ -347,7 +386,7 @@ describe("automation safety CI", () => {
     expect(code).not.toContain("pull_request_target");
     expect(code).not.toContain("workflow_dispatch");
     expect(code).not.toContain("secrets.");
-    expect(code).not.toContain("AUTOMATION_ENABLED");
+    expect(code).not.toContain("AUTOMATION_");
     expect(code).not.toContain("environment:");
     expect(code).not.toContain("deploy");
   });

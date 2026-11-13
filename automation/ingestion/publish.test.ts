@@ -185,6 +185,42 @@ describe("publishing sync", () => {
     expect(writes(catalog)).toHaveLength(0);
   });
 
+  it("never publishes a Draft even when an ingestion job exists", async () => {
+    const published = page();
+    const draft = page({
+      id: "page-2",
+      posterId: "artwork-456",
+      raindropId: "456",
+      title: "Draft Poster",
+      status: "Draft",
+    });
+
+    const { summary, catalog } = await run({
+      pages: [published, draft],
+      jobs: [job(), job({ posterId: "artwork-456", raindropId: "456", sourceKey: "raindrop:456" })],
+    });
+
+    // Only the Published page is eligible; the Draft page must not create or
+    // update a Firestore document even though its ingestion job could authorize
+    // a creation.
+    expect(summary.counts.publishedRecordsDiscovered).toBe(1);
+    expect(summary.counts.firestoreRecordsCreated).toBe(1);
+    expect(await catalog.get("artwork-123")).toBeTruthy();
+    expect(await catalog.get("artwork-456")).toBeNull();
+    expect(writes(catalog)).toEqual([{ kind: "create", id: "artwork-123" }]);
+  });
+
+  it("keeps Published records eligible", async () => {
+    const { summary, catalog } = await run({
+      pages: [page({ status: "Published" })],
+      jobs: [job()],
+    });
+
+    expect(summary.counts.publishedRecordsDiscovered).toBe(1);
+    expect(summary.counts.firestoreRecordsCreated).toBe(1);
+    expect((await catalog.get("artwork-123"))?.data.status).toBe("published");
+  });
+
   it("down-syncs a record that is unpublished in Notion", async () => {
     const first = await run({ pages: [page()], jobs: [job()] });
     expect((await first.catalog.get("artwork-123"))?.data.status).toBe("published");
