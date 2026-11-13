@@ -113,6 +113,10 @@ jobs:
 
   scheduled:
     name: Scheduled apply
+    # Deliberately no `needs:`. The manual validation job is skipped for
+    # schedule events, and making this job depend on it would skip scheduled
+    # execution through GitHub's implicit success() check. The reusable body
+    # re-checks this lane's activation variable before installing dependencies.
     if: github.event_name == 'schedule' && vars.AUTOMATION_INGESTION_ENABLED == 'true'
     uses: ./.github/workflows/automation-ingest-run.yml
     with:

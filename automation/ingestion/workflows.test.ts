@@ -77,6 +77,57 @@ function jobMapping(block: string, key: string, indent = 4): Record<string, stri
   return mapping;
 }
 
+/** Parse a single-job `needs:` value. */
+function jobNeeds(block: string): string[] {
+  const match = block.match(/^ {4}needs:\s*(\S+)\s*$/m);
+  return match ? [match[1]] : [];
+}
+
+type JobContext = {
+  event: string;
+  vars: Record<string, string>;
+  inputs: Record<string, string>;
+};
+
+/**
+ * Evaluate the subset of GitHub expressions these workflows use: a conjunction
+ * of `<context> == 'literal'` comparisons. Throwing on anything else keeps the
+ * test honest if a condition grows a disjunction, status function or a context
+ * the helper does not model.
+ */
+function conditionHolds(condition: string, context: JobContext): boolean {
+  return condition.split("&&").every((rawClause) => {
+    const clause = rawClause.trim();
+    const match = clause.match(
+      /^(github\.event_name|vars\.[A-Z0-9_]+|inputs\.[a-z_]+)\s*(==|!=)\s*'([^']*)'$/,
+    );
+    if (!match) throw new Error(`unsupported workflow condition clause: ${clause}`);
+    const [, ref, operator, expected] = match;
+    const actual =
+      ref === "github.event_name"
+        ? context.event
+        : ref.startsWith("vars.")
+          ? (context.vars[ref.slice("vars.".length)] ?? "")
+          : (context.inputs[ref.slice("inputs.".length)] ?? "");
+    return operator === "==" ? actual === expected : actual !== expected;
+  });
+}
+
+/**
+ * Resolve which jobs GitHub would run for one event, applying the same
+ * needs-based skip propagation GitHub uses. A job whose dependency did not run
+ * is skipped, so the implicit success() check fails for its dependents.
+ */
+function runnableJobs(text: string, order: string[], context: JobContext): string[] {
+  const ran: string[] = [];
+  for (const id of order) {
+    const block = jobBlock(text, id);
+    if (!jobNeeds(block).every((need) => ran.includes(need))) continue;
+    if (conditionHolds(jobCondition(block), context)) ran.push(id);
+  }
+  return ran;
+}
+
 const CALLERS = [
   {
     name: "raindrop-ingestion.yml",
@@ -239,7 +290,7 @@ describe.each(CALLERS)(
       expect(scheduled).not.toMatch(/workflow_dispatch/);
       expect(scheduled).not.toMatch(/AUTOMATION_MANUAL_APPLY_ENABLED/);
       expect(scheduled).not.toMatch(new RegExp(otherScheduledGate));
-      expect(scheduled).not.toContain("needs:");
+      expect(jobNeeds(scheduled)).toEqual([]);
       expect(scheduled).not.toContain("environment:");
 
       expect(jobMapping(scheduled, "with")).toEqual({
@@ -256,6 +307,82 @@ describe.each(CALLERS)(
 
     it("never reintroduces the retired lane-neutral activation variable", () => {
       expect(withoutComments(text)).not.toMatch(/\bAUTOMATION_ENABLED\b/);
+    });
+  },
+);
+
+describe.each(CALLERS)(
+  "$name scheduled job graph",
+  ({ name, scheduledGate, otherScheduledGate }) => {
+    const text = readWorkflow(name);
+    const order = ["validate", "manual-dry-run", "manual-apply", "scheduled"];
+
+    it("reaches scheduled apply on a schedule event while manual validation is skipped", () => {
+      const ran = runnableJobs(text, order, {
+        event: "schedule",
+        vars: { [scheduledGate]: "true" },
+        inputs: {},
+      });
+
+      // `validate` is intentionally `workflow_dispatch`-only, so it is skipped on
+      // a schedule event. `scheduled` has no `needs:`, which is why that skipped
+      // job cannot block it through GitHub's implicit success() check.
+      expect(ran).toEqual(["scheduled"]);
+      expect(ran).not.toContain("validate");
+      expect(jobNeeds(jobBlock(text, "scheduled"))).toEqual([]);
+    });
+
+    it("skips scheduled apply when its own lane variable is absent or not true", () => {
+      for (const value of ["", "false", "TRUE", "1"]) {
+        const ran = runnableJobs(text, order, {
+          event: "schedule",
+          vars: { [scheduledGate]: value },
+          inputs: {},
+        });
+        expect(ran).toEqual([]);
+      }
+    });
+
+    it("does not arm the scheduled lane from the other lane variable", () => {
+      const ran = runnableJobs(text, order, {
+        event: "schedule",
+        vars: { [otherScheduledGate]: "true" },
+        inputs: {},
+      });
+      expect(ran).toEqual([]);
+    });
+
+    it("still reaches manual dry-run through validation", () => {
+      const ran = runnableJobs(text, order, {
+        event: "workflow_dispatch",
+        vars: { [scheduledGate]: "true" },
+        inputs: { action: "dry-run" },
+      });
+      expect(ran).toEqual(["validate", "manual-dry-run"]);
+    });
+
+    it("still reaches manual apply through validation", () => {
+      const ran = runnableJobs(text, order, {
+        event: "workflow_dispatch",
+        vars: {
+          [scheduledGate]: "true",
+          AUTOMATION_MANUAL_APPLY_ENABLED: "true",
+        },
+        inputs: { action: "apply" },
+      });
+      expect(ran).toEqual(["validate", "manual-apply"]);
+    });
+
+    it("does not let a scheduled event enter a manual lane", () => {
+      const ran = runnableJobs(text, order, {
+        event: "schedule",
+        vars: {
+          [scheduledGate]: "true",
+          AUTOMATION_MANUAL_APPLY_ENABLED: "true",
+        },
+        inputs: { action: "apply" },
+      });
+      expect(ran).toEqual(["scheduled"]);
     });
   },
 );
