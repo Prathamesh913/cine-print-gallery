@@ -39,6 +39,7 @@ import {
 } from "./state";
 import { InMemoryPosterCatalog, type PosterCatalog } from "./poster-catalog";
 import { FirestorePosterCatalog, initFirestore } from "./firestore-adapters";
+import { readOnlyJobStore, readOnlyPosterCatalog, readOnlyRunStore } from "./read-only";
 import { TMDBEnrichmentService } from "../tmdb/service";
 import type { ExecutionSummary, RunRecord } from "./types";
 
@@ -152,18 +153,30 @@ interface Runtime {
   firestoreAvailable: boolean;
 }
 
-function buildRuntime(config: PipelineConfig, options: CliOptions, logger: Logger): Runtime {
+export interface RuntimeDeps {
+  /** Injectable for tests; production uses the Firebase Admin SDK. */
+  initFirestore?: (serviceAccountJson: string | null) => unknown;
+}
+
+export function buildRuntime(
+  config: PipelineConfig,
+  options: CliOptions,
+  logger: Logger,
+  deps: RuntimeDeps = {},
+): Runtime {
+  const init = deps.initFirestore ?? initFirestore;
+
   if (!options.apply) {
-    // Dry runs may read existing state when Admin credentials are available so
-    // skip detection and planned updates match production. No write path is
-    // reachable while dryRun is true.
+    // Dry runs read existing state when Admin credentials are available so skip
+    // detection and planned updates match production. The adapters are wrapped
+    // in read-only proxies, so no write path is reachable while dryRun is true.
     if (config.firebaseServiceAccountJson) {
       try {
-        const db = initFirestore(config.firebaseServiceAccountJson) as unknown as FirestoreLike;
+        const db = init(config.firebaseServiceAccountJson) as unknown as FirestoreLike;
         return {
-          jobStore: new FirestoreJobStore(db, config.jobCollection, logger),
-          runStore: new InMemoryRunStore(),
-          catalog: new FirestorePosterCatalog(db),
+          jobStore: readOnlyJobStore(new FirestoreJobStore(db, config.jobCollection, logger)),
+          runStore: readOnlyRunStore(),
+          catalog: readOnlyPosterCatalog(new FirestorePosterCatalog(db)),
           logger,
           firestoreAvailable: true,
         };
@@ -189,7 +202,7 @@ function buildRuntime(config: PipelineConfig, options: CliOptions, logger: Logge
   if (!config.firebaseServiceAccountJson) {
     throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is required for apply runs");
   }
-  const db = initFirestore(config.firebaseServiceAccountJson) as unknown as FirestoreLike;
+  const db = init(config.firebaseServiceAccountJson) as unknown as FirestoreLike;
   return {
     jobStore: new FirestoreJobStore(db, config.jobCollection, logger),
     runStore: new FirestoreRunStore(db, config.runCollection),
@@ -297,6 +310,7 @@ async function runPublish(
   const source = new NotionPollingSource({
     apiKey: config.notion.apiKey,
     databaseId: config.notion.databaseId,
+    posterDataSourceId: config.notion.posterDataSourceId,
     identitiesDataSourceId: config.notion.identitiesDataSourceId,
     timeoutMs: config.notion.timeoutMs,
     logger,
@@ -309,6 +323,7 @@ async function runPublish(
       jobs: runtime.jobStore,
       logger,
       batchLimit: options.limit ?? 100,
+      stateSource: runtime.firestoreAvailable ? "firestore" : "memory",
     },
     { runId: options.runId, dryRun: !options.apply },
   );
@@ -328,7 +343,12 @@ function failureCount(summary: ExecutionSummary): number {
   return summary.counts.failed;
 }
 
-function fatalSummary(options: CliOptions, startedAt: Date, message: string): ExecutionSummary {
+function fatalSummary(
+  options: CliOptions,
+  startedAt: Date,
+  message: string,
+  stateSource?: "firestore" | "memory",
+): ExecutionSummary {
   const now = new Date().toISOString();
   const failure = {
     posterId: null,
@@ -344,6 +364,7 @@ function fatalSummary(options: CliOptions, startedAt: Date, message: string): Ex
       schemaVersion: 1,
       runId: options.runId,
       dryRun: !options.apply,
+      ...(stateSource ? { stateSource } : {}),
       startedAt: startedAt.toISOString(),
       finishedAt: now,
       counts: {
@@ -400,12 +421,15 @@ async function main() {
 
   logger.info("automation.started", { apply: options.apply, mode: options.mode });
 
+  let stateSource: "firestore" | "memory" | undefined;
+
   try {
     const config = loadPipelineConfig(process.env, {
       requireR2: options.apply && (options.mode === "ingest" || options.mode === "all"),
       requireIngestionSources: options.mode !== "publish",
     });
     const runtime = buildRuntime(config, options, logger);
+    stateSource = runtime.firestoreAvailable ? "firestore" : "memory";
 
     if (!options.apply) {
       logger.warn("automation.dry_run", {
@@ -446,7 +470,7 @@ async function main() {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     logger.error("automation.fatal", { reason: message });
-    writeSummary(fatalSummary(options, startedAt, message), options.summaryOut);
+    writeSummary(fatalSummary(options, startedAt, message, stateSource), options.summaryOut);
     process.exitCode = 1;
   }
 }

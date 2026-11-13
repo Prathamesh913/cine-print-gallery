@@ -24,6 +24,11 @@ export interface NotionConfig {
   apiKey: string;
   databaseId: string;
   /**
+   * Explicit `Poster Library` data source. Optional for a database with one data
+   * source; required to disambiguate a database that contains several.
+   */
+  posterDataSourceId: string | null;
+  /**
    * Optional `Poster Identities` data source. When absent, identity records are
    * not fetched and multi-image pages are reported for review instead of being
    * resolved from a guessed mapping.
@@ -128,6 +133,7 @@ export function loadPipelineConfig(
     notion: {
       apiKey: required(env, "NOTION_KEY"),
       databaseId: required(env, "NOTION_DATABASE_ID"),
+      posterDataSourceId: optional(env, "NOTION_POSTER_DATA_SOURCE_ID"),
       identitiesDataSourceId: optional(env, "NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID"),
       timeoutMs: positiveInt(env, "NOTION_TIMEOUT_MS", 30_000),
     },

@@ -74,8 +74,10 @@ jobs:
       confirmation: ""
       environment: automation-manual-dry-run
     secrets:
-      # Read-only credentials only: a dry-run must never need write access.
+      # Read-only credentials: NOTION_KEY can only query, and the Firestore
+      # adapters are wrapped so a dry-run cannot write.
       NOTION_KEY: ${{ secrets.NOTION_KEY }}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
 
   manual-apply:
     name: Manual apply (one record)

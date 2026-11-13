@@ -87,6 +87,7 @@ const CALLERS = [
     scheduledLimit: "10",
     maxPages: true,
     dryRunSecrets: ["NOTION_KEY", "RAINDROP_ACCESS_TOKEN", "TMDB_API_KEY"],
+    dryRunReadsFirestore: false,
     writeSecrets: [
       "FIREBASE_SERVICE_ACCOUNT_JSON",
       "NOTION_KEY",
@@ -103,7 +104,8 @@ const CALLERS = [
     reusable: "./.github/workflows/automation-publish-run.yml",
     scheduledLimit: "50",
     maxPages: false,
-    dryRunSecrets: ["NOTION_KEY"],
+    dryRunSecrets: ["FIREBASE_SERVICE_ACCOUNT_JSON", "NOTION_KEY"],
+    dryRunReadsFirestore: true,
     writeSecrets: ["FIREBASE_SERVICE_ACCOUNT_JSON", "NOTION_KEY"],
   },
 ];
@@ -115,7 +117,16 @@ const REUSABLES = [
 
 describe.each(CALLERS)(
   "$name activation lanes",
-  ({ name, cron, reusable, scheduledLimit, maxPages, dryRunSecrets, writeSecrets }) => {
+  ({
+    name,
+    cron,
+    reusable,
+    scheduledLimit,
+    maxPages,
+    dryRunSecrets,
+    dryRunReadsFirestore,
+    writeSecrets,
+  }) => {
     const text = readWorkflow(name);
 
     it("keeps the schedule, permissions, concurrency and non-cancelling behaviour", () => {
@@ -179,7 +190,9 @@ describe.each(CALLERS)(
       expect(dryRun).not.toMatch(/AUTOMATION_ENABLED/);
       expect(dryRun).not.toMatch(/AUTOMATION_MANUAL_APPLY_ENABLED/);
       expect(dryRun).not.toContain("R2_");
-      expect(dryRun).not.toContain("FIREBASE_SERVICE_ACCOUNT_JSON");
+      // A dry-run reads existing Firestore state; the CLI's read-only adapters
+      // make every write throw, so the credential is read-only in practice.
+      expect(dryRun.includes("FIREBASE_SERVICE_ACCOUNT_JSON")).toBe(dryRunReadsFirestore);
 
       const withInputs = jobMapping(dryRun, "with");
       const expected: Record<string, string> = {
@@ -298,6 +311,21 @@ describe("reusable write-credential scoping", () => {
     expect(text).toContain(
       "NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID }}",
     );
+  });
+
+  it("names the poster data source explicitly and lets dry-runs read Firestore", () => {
+    const text = readWorkflow("automation-publish-run.yml");
+    const runStep = text.slice(text.indexOf("Run publishing sync"));
+
+    expect(runStep).toContain(
+      "NOTION_POSTER_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_DATA_SOURCE_ID }}",
+    );
+    // Read-only in a dry-run: the CLI wraps Firestore writes in throwing proxies.
+    expect(runStep).toContain(
+      "FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}",
+    );
+    expect(runStep).not.toContain("inputs.apply && secrets.FIREBASE_SERVICE_ACCOUNT_JSON");
+    expect(runStep).not.toContain("R2_");
   });
 });
 
