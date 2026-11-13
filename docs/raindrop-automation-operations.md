@@ -83,10 +83,43 @@ Set in **Settings → Secrets and variables → Actions → Variables**:
 | `AUTOMATION_ENABLED`                      | `true`                           | Scheduled-lane gate only (absent/false = cron disabled)         |
 | `AUTOMATION_MANUAL_APPLY_ENABLED`         | `true`                           | Manual-apply-lane gate only (absent/false = apply dispatch skipped) |
 | `RAINDROP_COLLECTION_ID`                  | `12345678`                       | Designated ingestion collection                                |
-| `NOTION_DATABASE_ID`                      | UUID                             | Poster Library database                                        |
-| `NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID` | UUID                             | Optional multi-image identity rows (see §3.1)                  |
+| `NOTION_DATABASE_ID`                      | `38c890a5f3e2800783f8da7b81a268e4` | Poster Library **database** (not a data source)              |
+| `NOTION_POSTER_DATA_SOURCE_ID`            | `38c890a5-f3e2-808b-a395-000b9b97e9db` | Poster Library **data source** (see §3.0)                    |
+| `NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID` | `412890a5-f3e2-81bb-a5fc-000b21b7ba8a` | Optional multi-image identity **data source** (see §3.1)      |
 | `R2_BUCKET_NAME`                          | bucket name                      | Never change without an approved migration                     |
 | `R2_PUBLIC_BASE_URL`                      | `https://images.cineprint.click` | Must stay the production domain                                |
+
+### 3.0 Database IDs and data source IDs are different
+
+Notion's data-source API distinguishes a database from the data sources inside
+it. The CinePrint Poster Library database contains two data sources: `Poster
+Library` (catalogue pages) and `Poster Identities` (per-image rows). Passing a
+database ID where a data source ID is expected produces:
+
+```
+object_not_found: Could not find data_source with ID: <database id>
+```
+
+The publishing and ingestion pipelines therefore resolve and validate every
+Notion object before reading or writing a record:
+
+- `NOTION_DATABASE_ID` is the database used by `databases.retrieve`.
+- `NOTION_POSTER_DATA_SOURCE_ID` is the catalogue data source. When it is set it
+  is used directly. When it is absent and the database exposes exactly one data
+  source, that one is used. When the database exposes several, the run fails with
+  a configuration error that names the candidates; it never guesses.
+- The resolved catalogue data source must expose the properties each pipeline
+  writes: `Status` and `Image URL` for publishing, plus `Raindrop ID` for
+  ingestion. This prevents accidentally polling the Poster Identities table.
+- Page creation targets the resolved data source (`parent.data_source_id`), which
+  is required by the Notion `2025-09-03` API when a database has several data
+  sources.
+- `NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID` must be a data source, must be
+  readable, and must not be the catalogue data source. Publishing reads identity
+  rows from it; ingestion does not use it.
+
+Configuration errors name the variable and the offending ID (never a secret),
+and distinguish an inaccessible ID from a missing optional one.
 
 ### 3.1 Poster identities data source is optional
 
@@ -378,8 +411,14 @@ with `AUTOMATION_MANUAL_APPLY_ENABLED`; this never affects cron and vice versa.
   environments, deployment or dispatch and uses `permissions: contents: read`.
 - Manual apply requires an exact confirmation phrase, a single-item limit and
   the protected `automation-manual-apply` environment.
-- Dry-runs receive no R2/Firebase write credentials; R2 variables are blanked for
-  non-apply runs.
+- Dry-runs receive no R2 credentials; R2 variables are blanked for non-apply
+  runs. The publishing dry-run does receive `FIREBASE_SERVICE_ACCOUNT_JSON` so it
+  can read existing state, but the CLI wraps the Firestore adapters in read-only
+  proxies whose `create`, `update` and `save` methods throw.
+- Firestore security rules do not apply to Admin SDK credentials, so the dry-run
+  read-only guarantee is enforced in code, not by rules. For defence in depth a
+  dedicated service account with `roles/datastore.viewer` can serve the same
+  reads; Firestore IAM is project-wide, so it cannot be limited to a collection.
 - Secrets are injected per step; the CLI never prints environment values.
 - Logs redact bearer tokens and credential query parameters.
 - R2 public base URL is fixed to `https://images.cineprint.click`; `.r2.dev` is
@@ -393,7 +432,11 @@ with `AUTOMATION_MANUAL_APPLY_ENABLED`; this never affects cron and vice versa.
 
 ## 10. Known operational limitations
 
-- Dry-run without Admin credentials cannot read durable state.
+- A dry-run without Admin credentials cannot read durable state. The publishing
+  workflow always supplies them; a local run without them reports
+  `stateSource: "memory"` in the summary so the empty-state fallback is visible.
+- A database that exposes several data sources requires
+  `NOTION_POSTER_DATA_SOURCE_ID`; the run refuses to guess.
 - GitHub concurrency does not protect local CLI executions or independent
   runners; coordinate them manually.
 - `RAINDROP_COLLECTION_ID` is a variable, not a secret; changing it starts a new

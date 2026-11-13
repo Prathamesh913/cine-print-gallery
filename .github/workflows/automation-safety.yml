@@ -14,6 +14,7 @@ on:
   pull_request:
     paths:
       - "automation/ingestion/**"
+      - "automation/notion/**"
       - ".github/workflows/**"
       - "package.json"
       - "package-lock.json"
@@ -22,6 +23,7 @@ on:
       - main
     paths:
       - "automation/ingestion/**"
+      - "automation/notion/**"
       - ".github/workflows/**"
       - "package.json"
       - "package-lock.json"
@@ -63,8 +65,11 @@ jobs:
       - name: Ingestion regression tests
         run: npx vitest run automation/ingestion
 
+      - name: Notion data-source regression tests
+        run: npx vitest run automation/notion
+
       - name: Lint automation sources
-        run: npx eslint automation/ingestion
+        run: npx eslint automation/ingestion automation/notion
 
       - name: Install pinned actionlint
         env:

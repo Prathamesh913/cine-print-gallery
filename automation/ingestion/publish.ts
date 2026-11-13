@@ -350,6 +350,8 @@ export interface PublishDeps {
   logger: Logger;
   now?: () => Date;
   batchLimit?: number;
+  /** Where skip detection read existing state from. */
+  stateSource?: "firestore" | "memory";
 }
 
 export interface RunPublishInput {
@@ -374,6 +376,11 @@ export async function runPublishingSync(
   };
   const failures: StageFailure[] = [];
   const logger = deps.logger;
+
+  // Validate every configured Notion object before reading a single record, so a
+  // bad data-source ID fails with a configuration error instead of an opaque
+  // API error after partial processing.
+  await deps.source.preflight?.();
 
   const pages = await deps.source.listPages();
   const identityRecords = await deps.source.listIdentityRecords();
@@ -628,6 +635,7 @@ export async function runPublishingSync(
     schemaVersion: INGESTION_SCHEMA_VERSION,
     runId: input.runId,
     dryRun: input.dryRun,
+    stateSource: deps.stateSource ?? "memory",
     startedAt: startedAt.toISOString(),
     finishedAt: finishedAt.toISOString(),
     counts,

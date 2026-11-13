@@ -5,14 +5,33 @@
  * handshake and durable delivery handling, which a GitHub Actions cron job
  * cannot provide. Polling the data source and skipping unchanged records is the
  * supported alternative.
+ *
+ * Data-source resolution is explicit and validated before any record is read:
+ * a database is not a data source, and a database may contain several data
+ * sources. Guessing which one is the poster catalogue would silently publish
+ * from (or to) the wrong table, so ambiguity is a configuration error. The
+ * resolution itself lives in `../notion/data-sources` and is shared with the
+ * ingestion client.
  */
 
 import { Client } from "@notionhq/client";
 import { identityRecordsFromNotion, type IdentityRecord } from "../../scripts/poster-identity.js";
+import {
+  NotionConfigurationError,
+  NotionDataSourceResolver,
+  normalizeNotionId,
+  type NotionConfigProblem,
+} from "../notion/data-sources";
 import type { Logger } from "./logger";
+
+export { NotionConfigurationError, normalizeNotionId };
+export type { NotionConfigProblem };
 
 export const DEFAULT_NOTION_PAGE_SIZE = 100;
 export const DEFAULT_NOTION_MAX_PAGES = 10;
+
+/** Properties the poster catalogue data source must expose. */
+export const REQUIRED_CATALOGUE_PROPERTIES = ["Status", "Image URL"] as const;
 
 export interface NotionPageLike {
   id: string;
@@ -24,11 +43,18 @@ export interface NotionPageSource {
   /** All non-archived catalogue pages, published or not. */
   listPages(): Promise<NotionPageLike[]>;
   listIdentityRecords(): Promise<IdentityRecord[]>;
+  /** Validates every configured Notion object before any record is processed. */
+  preflight?(): Promise<void>;
 }
 
 export interface NotionPollingSourceOptions {
   apiKey: string;
   databaseId: string;
+  /**
+   * Explicit Poster Library data source. Optional for a database with a single
+   * data source; required to disambiguate a database that holds several.
+   */
+  posterDataSourceId?: string | null;
   identitiesDataSourceId?: string | null;
   pageSize?: number;
   maxPages?: number;
@@ -89,7 +115,7 @@ export class NotionPollingSource implements NotionPageSource {
   private readonly maxPages: number;
   private readonly retries: number;
   private readonly baseDelayMs: number;
-  private dataSourceId: string | null = null;
+  private readonly resolver: NotionDataSourceResolver;
 
   constructor(private readonly options: NotionPollingSourceOptions) {
     if (!options.apiKey) throw new Error("NOTION_KEY is required");
@@ -101,28 +127,33 @@ export class NotionPollingSource implements NotionPageSource {
     this.maxPages = options.maxPages ?? DEFAULT_NOTION_MAX_PAGES;
     this.retries = options.retries ?? 3;
     this.baseDelayMs = options.baseDelayMs ?? 1000;
+    this.resolver = new NotionDataSourceResolver({
+      client: this.client,
+      request: (operation, event) =>
+        withNotionRetry(operation, {
+          retries: this.retries,
+          baseDelayMs: this.baseDelayMs,
+          logger: this.options.logger,
+          event,
+        }),
+      databaseId: options.databaseId,
+      posterDataSourceId: options.posterDataSourceId,
+      identitiesDataSourceId: options.identitiesDataSourceId,
+      requiredPosterProperties: REQUIRED_CATALOGUE_PROPERTIES,
+    });
   }
 
-  private async resolveDataSourceId(): Promise<string> {
-    if (this.dataSourceId) return this.dataSourceId;
-    const database = await withNotionRetry(
-      () => this.client.databases.retrieve({ database_id: this.options.databaseId }),
-      {
-        retries: this.retries,
-        baseDelayMs: this.baseDelayMs,
-        logger: this.options.logger,
-        event: "notion.database",
-      },
-    );
-    const id = (database as unknown as { data_sources?: Array<{ id?: string }> }).data_sources?.[0]
-      ?.id;
-    if (!id) throw new Error("Notion database has no data source");
-    this.dataSourceId = id;
-    return id;
+  /**
+   * Resolves and validates the catalogue and identity data sources. Callers run
+   * this before listing pages so a bad ID fails with an actionable message
+   * instead of an opaque Notion error halfway through a run.
+   */
+  async preflight(): Promise<void> {
+    await this.resolver.resolve();
   }
 
   async listPages(): Promise<NotionPageLike[]> {
-    const dataSourceId = await this.resolveDataSourceId();
+    const dataSourceId = await this.resolver.resolvePoster();
     const pages: NotionPageLike[] = [];
     let cursor: string | undefined;
 
@@ -163,7 +194,7 @@ export class NotionPollingSource implements NotionPageSource {
    * guessing an image-to-poster mapping.
    */
   async listIdentityRecords(): Promise<IdentityRecord[]> {
-    const dataSourceId = this.options.identitiesDataSourceId?.trim();
+    const dataSourceId = await this.resolver.resolveIdentities();
     if (!dataSourceId) return [];
 
     const rows: unknown[] = [];

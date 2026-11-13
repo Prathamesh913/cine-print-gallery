@@ -96,6 +96,9 @@ jobs:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           NOTION_KEY: ${{ secrets.NOTION_KEY }}
           NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+          # Explicit Poster Library data source. The database also contains the
+          # Poster Identities data source, so the client refuses to guess.
+          NOTION_POSTER_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_DATA_SOURCE_ID }}
           # Write credentials are only injected for apply runs. A dry-run must
           # remain startable without any production write credential, which
           # also means R2 repository variables stay empty for dry-runs.

@@ -77,8 +77,15 @@ jobs:
           RUN_ID: publish-${{ github.run_id }}-${{ github.run_attempt }}
           NOTION_KEY: ${{ secrets.NOTION_KEY }}
           NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+          # Explicit Poster Library data source. The database now also contains
+          # the Poster Identities data source, so the code refuses to guess when
+          # this is absent.
+          NOTION_POSTER_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_DATA_SOURCE_ID }}
           NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID: ${{ vars.NOTION_POSTER_IDENTITIES_DATA_SOURCE_ID }}
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ inputs.apply && secrets.FIREBASE_SERVICE_ACCOUNT_JSON || '' }}
+          # Read-only in a dry-run: the CLI wraps the Firestore adapters in
+          # proxies whose create/update/save methods throw. Apply runs are the
+          # only path that reaches a real write.
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
           set -euo pipefail
           mkdir -p artifacts
@@ -100,6 +107,7 @@ jobs:
                 "## Notion publishing sync",
                 "",
                 `- Mode: ${s.dryRun ? "dry-run" : "apply"}`,
+                `- Firestore state read: ${s.stateSource === "firestore" ? "yes" : "no (empty in-memory state)"}`,
                 `- Published records discovered: ${c.publishedRecordsDiscovered ?? 0}`,
                 `- Firestore records created: ${c.firestoreRecordsCreated ?? 0}`,
                 `- Firestore records updated: ${c.firestoreRecordsUpdated ?? 0}`,

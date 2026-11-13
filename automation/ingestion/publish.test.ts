@@ -640,3 +640,76 @@ describe("missing status reporting", () => {
     expect(writes(catalog)).toHaveLength(0);
   });
 });
+
+describe("configuration preflight", () => {
+  it("validates Notion configuration before reading any record", async () => {
+    const failing: NotionPageSource = {
+      preflight: vi.fn().mockRejectedValue(new Error("NOTION_POSTER_DATA_SOURCE_ID is ambiguous")),
+      listPages: vi.fn(),
+      listIdentityRecords: vi.fn(),
+    };
+
+    await expect(
+      runPublishingSync(
+        {
+          source: failing,
+          catalog: new InMemoryPosterCatalog(),
+          jobs: new InMemoryJobStore(),
+          logger: logger(),
+        },
+        { runId: "run-1", dryRun: true },
+      ),
+    ).rejects.toThrow(/ambiguous/);
+    expect(failing.listPages).not.toHaveBeenCalled();
+    expect(failing.listIdentityRecords).not.toHaveBeenCalled();
+  });
+});
+
+describe("dry-run state handling", () => {
+  it("reports an already synchronized record without writing", async () => {
+    const first = await run({ pages: [page()], jobs: [job()] });
+    const writesAfterApply = writes(first.catalog).length;
+
+    const dry = await runPublishingSync(
+      {
+        source: source([page()]),
+        catalog: first.catalog,
+        jobs: first.jobs,
+        logger: logger(),
+        stateSource: "firestore",
+      },
+      { runId: "run-2", dryRun: true },
+    );
+
+    expect(dry.counts.alreadySynchronized).toBe(1);
+    expect(dry.counts.firestoreRecordsCreated).toBe(0);
+    expect(dry.counts.firestoreRecordsUpdated).toBe(0);
+    expect(dry.stateSource).toBe("firestore");
+    expect(writes(first.catalog)).toHaveLength(writesAfterApply);
+  });
+
+  it("records when existing state was not read", async () => {
+    const { summary } = await run({ pages: [page()] });
+    expect(summary.stateSource).toBe("memory");
+  });
+
+  it("plans an unpublish in a dry run without touching Firestore", async () => {
+    const first = await run({ pages: [page()], jobs: [job()] });
+    const writesAfterApply = writes(first.catalog).length;
+
+    const dry = await runPublishingSync(
+      {
+        source: source([page({ status: "Draft" })]),
+        catalog: first.catalog,
+        jobs: new InMemoryJobStore(),
+        logger: logger(),
+        stateSource: "firestore",
+      },
+      { runId: "run-2", dryRun: true },
+    );
+
+    expect(dry.counts.firestoreRecordsUpdated).toBe(1);
+    expect((await first.catalog.get("artwork-123"))?.data.status).toBe("published");
+    expect(writes(first.catalog)).toHaveLength(writesAfterApply);
+  });
+});

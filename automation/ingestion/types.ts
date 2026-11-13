@@ -124,6 +124,8 @@ export interface PublishSummary {
   schemaVersion: typeof INGESTION_SCHEMA_VERSION;
   runId: string;
   dryRun: boolean;
+  /** `memory` means existing Firestore state was not read for this run. */
+  stateSource?: "firestore" | "memory";
   startedAt: string;
   finishedAt: string;
   counts: PublishCounts;

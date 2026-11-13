@@ -51,6 +51,17 @@ describe("pipeline configuration", () => {
     );
     expect(withId.notion.identitiesDataSourceId).toBe("ds-identities");
   });
+
+  it("keeps an explicit poster data source optional and trimmed", () => {
+    const without = loadPipelineConfig(BASE_ENV, { requireR2: false });
+    expect(without.notion.posterDataSourceId).toBeNull();
+
+    const withId = loadPipelineConfig(
+      { ...BASE_ENV, NOTION_POSTER_DATA_SOURCE_ID: "  ds-catalogue  " },
+      { requireR2: false },
+    );
+    expect(withId.notion.posterDataSourceId).toBe("ds-catalogue");
+  });
 });
 
 describe("structured logger", () => {
