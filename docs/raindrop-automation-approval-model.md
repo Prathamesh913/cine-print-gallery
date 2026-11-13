@@ -164,6 +164,32 @@ When each lane is enabled:
 - Neither cron lane writes `Published` itself. Publishing a Draft remains a
   human action in Notion.
 
+### 6.1 Why a scheduled run can show every job skipped
+
+Scheduled workflows use the workflow file from the latest default-branch commit
+at the moment GitHub queues the run. A run queued before a gate fix therefore
+uses the old gate, even if `main` and the repository variables have since
+changed.
+
+Diagnose in this order:
+
+1. Compare the run's `headSha` with `git log origin/main`. If the run predates
+   the gate fix, its skipped jobs are historical, not current behaviour.
+2. Confirm the run's `createdAt` is after both the merge and the repository
+   variables were created. Variables are read at run time; they do not
+   retroactively arm earlier runs.
+3. Inspect the `scheduled` job's `if:` and confirm it uses the lane variable
+   (`AUTOMATION_INGESTION_ENABLED` or `AUTOMATION_PUBLISHING_ENABLED`).
+4. Confirm the `scheduled` job has no `needs:`. The `Validate dispatch inputs`
+   job is `workflow_dispatch`-only and is expected to be skipped on schedule
+   events. A dependency on it would skip scheduled execution through GitHub's
+   implicit `success()` check.
+
+`automation/ingestion/workflows.test.ts` now models this graph: a schedule event
+with the lane enabled reaches only `scheduled`, while both manual lanes still
+pass through `validate`. The test fails if `needs: validate` is added to a
+scheduled job or if the event/variable conditions drift.
+
 ---
 
 ## 7. Deferred operational risks
