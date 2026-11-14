@@ -8,6 +8,11 @@ service cloud.firestore {
 
     // Collections: owner has full control; public/unlisted are readable by
     // anyone (including unauthenticated visitors) as intended by the app.
+    //
+    // Ownership is immutable after creation and clients may only touch the
+    // fields the app defines. The server functions write through the Admin
+    // SDK, which bypasses these rules, so this block exists to constrain
+    // direct client SDK / REST writes with the public web config.
     match /collections/{id} {
       allow read: if resource.data.ownerId == request.auth.uid
         || resource.data.visibility == 'public'
@@ -15,16 +20,29 @@ service cloud.firestore {
 
       allow create: if request.auth != null
         && request.resource.data.ownerId == request.auth.uid
-        && request.resource.data.visibility in ['private', 'unlisted', 'public'];
+        && request.resource.data.visibility in ['private', 'unlisted', 'public']
+        && request.resource.data.keys().hasOnly([
+          'ownerId', 'ownerName', 'name', 'description', 'coverPosterId',
+          'visibility', 'posterIds', 'createdAt', 'updatedAt'
+        ]);
 
-      allow update, delete: if request.auth != null
+      allow update: if request.auth != null
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'ownerName', 'name', 'description', 'coverPosterId', 'visibility',
+          'posterIds', 'updatedAt'
+        ]);
+
+      allow delete: if request.auth != null
         && resource.data.ownerId == request.auth.uid;
     }
 
-    // Poster catalog: read-only for clients. Written only by server-side
-    // automation via the Admin SDK, which bypasses these rules.
+    // Poster catalog: only published records are world-readable. Drafts,
+    // review submissions and archived/taken-down artwork stay server-only.
+    // Writes remain Admin-SDK-only (Admin bypasses these rules).
     match /posters/{id} {
-      allow read: if true;
+      allow read: if resource.data.status == 'published';
       allow write: if false;
     }
   }
