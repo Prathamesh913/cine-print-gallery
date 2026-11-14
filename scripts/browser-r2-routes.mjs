@@ -10,12 +10,6 @@ const ARTIFACT_DIR = "/tmp/opencode/phase13";
 const SHOT_DIR = path.join(ARTIFACT_DIR, "screenshots");
 const RESULT_PATH = "/tmp/opencode/phase13-routes-browser.json";
 const CHROMIUM = process.env.CHROMIUM_BIN || "chromium";
-const R2_MAP = JSON.parse(
-  fs.readFileSync(path.join(ROOT, "migration", "r2-image-map.json"), "utf8"),
-);
-const R2_IDS = new Set(Object.keys(R2_MAP.entries));
-const UNAVAILABLE_IDS = new Set(["stranger-things-2", "the-substance-2"]);
-
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function getFreePort() {
@@ -794,71 +788,65 @@ async function main() {
         path: "/",
       });
 
-      // Intentional unavailable detail routes for both unresolved identities.
-      for (const unavailableId of ["the-substance-2", "stranger-things-2"]) {
+      // Repaired detail routes (formerly intentional placeholders). The
+      // catalogue now requires both to render R2 images, not placeholders.
+      for (const repairedId of ["the-substance-2", "stranger-things-2"]) {
         networkEvents = [];
         consoleEvents = [];
         exceptions = [];
-        await cdp.send("Page.navigate", { url: `${BASE_URL}/poster/${unavailableId}` });
+        await cdp.send("Page.navigate", { url: `${BASE_URL}/poster/${repairedId}` });
         await waitFor(
           cdp,
           `document.readyState === "complete"`,
           30_000,
-          `${viewport.name} ${unavailableId} detail load`,
-        );
-        await waitFor(
-          cdp,
-          `Boolean(document.querySelector('[data-poster-unavailable-id="${unavailableId}"]'))`,
-          30_000,
-          `${viewport.name} ${unavailableId} placeholder`,
+          `${viewport.name} ${repairedId} detail load`,
         );
         await settleImages(cdp);
-        const unavailableDetail = await collectImages(cdp);
-        const unavailableDetailNetwork = summarizeNetwork(networkEvents);
-        const unavailableDetailConsole = consoleSummary(consoleEvents, exceptions);
-        const unavailableDetailShot = await capture(
+        const repairedDetail = await collectImages(cdp);
+        const repairedNetwork = summarizeNetwork(networkEvents);
+        const repairedConsole = consoleSummary(consoleEvents, exceptions);
+        const repairedShot = await capture(
           cdp,
-          `routes-unavailable-detail-${unavailableId}-${viewport.name}.png`,
+          `routes-repaired-detail-${repairedId}-${viewport.name}.png`,
         );
-        result.routes[`unavailable-detail-${unavailableId}-${viewport.name}`] = {
+        result.routes[`repaired-detail-${repairedId}-${viewport.name}`] = {
           viewport,
-          page: unavailableDetail,
-          network: unavailableDetailNetwork,
-          console: unavailableDetailConsole,
-          screenshot: unavailableDetailShot,
+          page: repairedDetail,
+          network: repairedNetwork,
+          console: repairedConsole,
+          screenshot: repairedShot,
         };
         addCheck(
           checks,
-          `${viewport.name} unavailable detail (${unavailableId}): intentional placeholder`,
-          unavailableDetail.path === `/poster/${unavailableId}` &&
-            unavailableDetail.unavailableIds.includes(unavailableId) &&
-            unavailableDetail.unavailableSamples.some(
-              (sample) =>
-                sample.alt?.includes("Image unavailable") &&
-                sample.src.endsWith("/poster-unavailable.svg"),
-            ),
-          { path: unavailableDetail.path, unavailableIds: unavailableDetail.unavailableIds },
-        );
-        addCheck(
-          checks,
-          `${viewport.name} unavailable detail (${unavailableId}): zero Blob and broken images`,
-          unavailableDetail.blobCount === 0 &&
-            unavailableDetail.brokenCount === 0 &&
-            unavailableDetailNetwork.blobRequests === 0,
+          `${viewport.name} repaired detail (${repairedId}): R2 image rendered`,
+          repairedDetail.path === `/poster/${repairedId}` &&
+            repairedDetail.r2Count > 0 &&
+            !repairedDetail.unavailableIds.includes(repairedId),
           {
-            blobImages: unavailableDetail.blobCount,
-            blobRequests: unavailableDetailNetwork.blobRequests,
-            brokenCount: unavailableDetail.brokenCount,
+            path: repairedDetail.path,
+            r2: repairedDetail.r2Count,
+            unavailableIds: repairedDetail.unavailableIds,
           },
         );
         addCheck(
           checks,
-          `${viewport.name} unavailable detail (${unavailableId}): no console errors`,
-          unavailableDetailConsole.consoleErrors.length === 0 &&
-            unavailableDetailConsole.exceptions.length === 0,
+          `${viewport.name} repaired detail (${repairedId}): zero Blob and broken images`,
+          repairedDetail.blobCount === 0 &&
+            repairedDetail.brokenCount === 0 &&
+            repairedNetwork.blobRequests === 0,
           {
-            consoleErrors: unavailableDetailConsole.consoleErrors,
-            exceptions: unavailableDetailConsole.exceptions,
+            blobImages: repairedDetail.blobCount,
+            blobRequests: repairedNetwork.blobRequests,
+            brokenCount: repairedDetail.brokenCount,
+          },
+        );
+        addCheck(
+          checks,
+          `${viewport.name} repaired detail (${repairedId}): no console errors`,
+          repairedConsole.consoleErrors.length === 0 && repairedConsole.exceptions.length === 0,
+          {
+            consoleErrors: repairedConsole.consoleErrors,
+            exceptions: repairedConsole.exceptions,
           },
         );
       }
