@@ -146,6 +146,23 @@ function uniqueUrls(urls: Array<string | null | undefined>): string[] {
   return [...new Set(urls.filter((url): url is string => Boolean(url)))];
 }
 
+/**
+ * A verified dynamic reference is sufficient to leave the intentional
+ * unavailable state. Invalid or incomplete references never qualify, so those
+ * posters keep the placeholder instead of falling through to a blocked Blob.
+ */
+function hasVerifiedDynamicReference(poster: Poster): boolean {
+  if (poster.r2ImageInvalid) return false;
+  if (poster.r2Image === undefined) return false;
+  return validateR2ImageReference(poster.r2Image, poster.id).ok;
+}
+
+function isUnavailable(poster: Poster, deliveryEnabled = true): boolean {
+  return (
+    isPosterImageUnavailable(poster.id) && !(deliveryEnabled && hasVerifiedDynamicReference(poster))
+  );
+}
+
 export function createPosterImageResolver(
   map: R2ImageMap,
   options: PosterImageResolverOptions,
@@ -171,14 +188,19 @@ export function createPosterImageResolver(
 
   return {
     getOptimizedPosterImageUrl(poster: Poster): string | null {
-      if (isPosterImageUnavailable(poster.id)) return null;
+      if (isUnavailable(poster, options.browserEnabled)) return null;
       const lookup = browserLookup(poster);
       if (lookup.kind === "invalid") return null;
       return trustedEntry(lookup)?.optimizedUrl ?? blobOptimizedUrl(poster);
     },
 
     getPosterImageUrl(poster: Poster, purpose: PosterImagePurpose = "gallery"): string {
-      if (isPosterImageUnavailable(poster.id)) {
+      if (
+        isUnavailable(
+          poster,
+          purpose === "download" ? options.downloadsEnabled : options.browserEnabled,
+        )
+      ) {
         return purpose === "download" ? "" : POSTER_UNAVAILABLE_URL;
       }
       if (purpose === "download") {
@@ -203,7 +225,14 @@ export function createPosterImageResolver(
      * is never used as a fallback for a mapped poster.
      */
     getPosterImageCandidates(poster: Poster, purpose: PosterImagePurpose = "gallery"): string[] {
-      if (isPosterImageUnavailable(poster.id)) return [];
+      if (
+        isUnavailable(
+          poster,
+          purpose === "download" ? options.downloadsEnabled : options.browserEnabled,
+        )
+      ) {
+        return [];
+      }
       if (purpose === "download") {
         return [downloadUrlFor(poster)];
       }
@@ -231,7 +260,7 @@ export function createPosterImageResolver(
      * explicitly enabled in a later reviewed phase.
      */
     getPosterSeoImageUrl(poster: Poster): string {
-      if (isPosterImageUnavailable(poster.id)) {
+      if (isUnavailable(poster, options.seoEnabled)) {
         return POSTER_UNAVAILABLE_ABSOLUTE_URL;
       }
       const lookup = seoLookup(poster);
@@ -245,7 +274,7 @@ export function createPosterImageResolver(
      * identities return no download URL rather than a Blob 403.
      */
     getPosterDownloadUrl(poster: Poster): string {
-      if (isPosterImageUnavailable(poster.id)) return "";
+      if (isUnavailable(poster, options.downloadsEnabled)) return "";
       return downloadUrlFor(poster);
     },
 

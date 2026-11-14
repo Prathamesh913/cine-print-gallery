@@ -11,6 +11,7 @@ import { posterPageEntities } from "../src/lib/structured-data";
 import { PosterImage } from "../src/components/PosterImage";
 import { R2_DOWNLOADS_ENABLED } from "../src/lib/r2-image-activation";
 import type { Poster } from "../src/lib/posters";
+import type { R2ImageReference } from "../src/lib/r2-image-reference";
 import { R2_IMAGE_MAP } from "../src/lib/r2-image-map.generated";
 
 const BLOB = "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com";
@@ -36,8 +37,29 @@ function poster(overrides: Partial<Poster> = {}): Poster {
   } as Poster;
 }
 
-function row(id: string, image: string): RawPosterRow {
-  return { id, data: { image, status: "published" } };
+function row(id: string, image: string, extra: Record<string, unknown> = {}): RawPosterRow {
+  return { id, data: { image, status: "published", ...extra } };
+}
+
+function dynamicReference(id: string, sha = "c".repeat(64)): R2ImageReference {
+  return {
+    sourceSha256: sha,
+    original: {
+      key: `cineprint/versions/original/${id}/${sha}.jpg`,
+      url: `https://images.cineprint.click/cineprint/versions/original/${id}/${sha}.jpg`,
+      sha256: sha,
+      sizeBytes: 1000,
+      contentType: "image/jpeg",
+    },
+    optimized: {
+      key: `cineprint/versions/optimized/${id}/${sha}-sharp-0.35.3-libvips-8.18.3-w800-q80.webp`,
+      url: `https://images.cineprint.click/cineprint/versions/optimized/${id}/${sha}-sharp-0.35.3-libvips-8.18.3-w800-q80.webp`,
+      sha256: "d".repeat(64),
+      sizeBytes: 400,
+      contentType: "image/webp",
+    },
+    verifiedAt: "2026-11-14T00:00:00.000Z",
+  };
 }
 
 function metaContent(head: ReturnType<typeof posterHeadMeta>, key: string): string | undefined {
@@ -104,6 +126,46 @@ describe("sitemap optimized image URLs", () => {
 
     const html = renderToStaticMarkup(<PosterImage poster={p} purpose="gallery" alt="t" />);
     expect(html).toContain(`src="${expected}"`);
+  });
+
+  it("resolves a valid dynamic r2Image for an intentionally unavailable poster everywhere", () => {
+    for (const id of UNAVAILABLE_IDS) {
+      const blob = `${BLOB}/cineprint/external/${id}.jpg`;
+      const ref = dynamicReference(id);
+      const p = poster({ id, image: blob, r2Image: ref });
+
+      expect(getPosterImageUrl(p, "detail")).toBe(ref.optimized.url);
+      expect(getPosterSeoImageUrl(p)).toBe(ref.optimized.url);
+
+      const entries = posterUrlEntries([row(id, blob, { r2Image: ref })]);
+      expect(entries[0].image).toBe(ref.optimized.url);
+
+      const head = posterHeadMeta(p);
+      expect(metaContent(head, "og:image")).toBe(ref.optimized.url);
+      expect(metaContent(head, "twitter:image")).toBe(ref.optimized.url);
+
+      const jsonLd = JSON.stringify(posterPageEntities(p, null));
+      expect(jsonLd).toContain(ref.optimized.url);
+      expect(jsonLd).not.toContain("public.blob.vercel-storage.com");
+
+      const html = renderToStaticMarkup(<PosterImage poster={p} purpose="detail" alt="t" />);
+      expect(html).toContain(`src="${ref.optimized.url}"`);
+    }
+  });
+
+  it("keeps an invalid dynamic r2Image fail-closed for an unavailable poster", () => {
+    const id = "the-substance-2";
+    const blob = `${BLOB}/cineprint/external/${id}.jpg`;
+    const good = dynamicReference(id);
+    const invalid = {
+      ...good,
+      original: { ...good.original, url: "https://evil.example.com/a.jpg" },
+    };
+    const p = poster({ id, image: blob, r2Image: invalid });
+
+    expect(getPosterSeoImageUrl(p)).toBe(UNAVAILABLE_URL);
+    const entries = posterUrlEntries([row(id, blob, { r2Image: invalid })]);
+    expect(entries[0].image).toBe(UNAVAILABLE_URL);
   });
 
   it("uses the local placeholder for unavailable poster SEO and sitemap", () => {

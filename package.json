@@ -31,6 +31,7 @@
     "r2:map:check": "tsx scripts/generate-r2-image-map.ts --check",
     "migration:preflight": "tsx scripts/preflight-versioned-migration.ts",
     "r2:map:export:legacy": "tsx scripts/export-r2-verified-mappings.ts",
+    "repair:posters": "tsx automation/repair/cli.ts",
     "preview:r2": "tsx scripts/preview-r2-runtime.tsx",
     "preview:r2:browser": "node scripts/browser-r2-preview.mjs",
     "health:production": "tsx scripts/production-health-check.ts"
