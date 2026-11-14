@@ -190,14 +190,26 @@ The generated static map continues to contain 61 entries: 58 migrated posters
 and 3 canaries. Dynamic `r2Image` references are a separate, existing runtime
 contract and do not alter the exporter invariants.
 
-## Post-repair monitoring follow-up
+## Monitoring after the repair
 
-`automation/monitoring/production-health.ts` currently hard-codes both IDs as
-unavailable and expects **61 R2 + 2 placeholder** sitemap images. That is correct
-before the repair executes. After `--execute` and production verification, update
-that monitor to expect **63 R2 + 0 placeholder** images (or make the expectations
-data-driven). Do not change the monitor before the repair is live, or the
-pre-repair health check will fail.
+`automation/monitoring/production-health.ts` is catalogue-driven:
+
+- It reads published posters from Firestore and resolves each one exactly like
+  the production resolver: the trusted static map entry first, then a validated
+  dynamic `r2Image` reference.
+- It fetches each optimized public R2 URL and checks HTTP 200, `image/webp` and
+  a valid WebP signature.
+- Homepage and sitemap checks derive expected counts from the published
+  catalogue instead of hard-coded assumptions. The current published catalogue
+  is resolved live, so catalogue growth does not require a monitor change.
+- Failures name the affected poster IDs.
+- The repaired detail routes are checked as R2-rendered pages, not intentional
+  placeholders. The fail-closed placeholder path still applies to any identity
+  in `INTENTIONALLY_UNAVAILABLE_POSTER_IDS` without a valid reference.
+
+The deployed sitemap is generated at build time. It updates on the next normal
+deployment; before that deployment, the health monitor will correctly report the
+stale sitemap rather than masking it.
 
 ## Recovery and rollback
 

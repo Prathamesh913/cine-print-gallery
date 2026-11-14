@@ -15,6 +15,7 @@ on:
     paths:
       - "automation/ingestion/**"
       - "automation/notion/**"
+      - "automation/repair/**"
       - ".github/workflows/**"
       - "package.json"
       - "package-lock.json"
@@ -24,6 +25,7 @@ on:
     paths:
       - "automation/ingestion/**"
       - "automation/notion/**"
+      - "automation/repair/**"
       - ".github/workflows/**"
       - "package.json"
       - "package-lock.json"
@@ -68,8 +70,11 @@ jobs:
       - name: Notion data-source regression tests
         run: npx vitest run automation/notion
 
+      - name: Repair regression tests
+        run: npx vitest run automation/repair
+
       - name: Lint automation sources
-        run: npx eslint automation/ingestion automation/notion
+        run: npx eslint automation/ingestion automation/notion automation/repair
 
       - name: Install pinned actionlint
         env:

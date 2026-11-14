@@ -521,6 +521,10 @@ describe("automation safety CI", () => {
   it("runs the activation-gate checks and pins every action", () => {
     const code = withoutComments(readWorkflow(name));
     expect(code).toContain("automation/ingestion");
+    expect(code).toContain("automation/notion");
+    expect(code.match(/automation\/repair\/\*\*/g)).toHaveLength(2);
+    expect(code).toContain("npx vitest run automation/repair");
+    expect(code).toContain("npx eslint automation/ingestion automation/notion automation/repair");
     expect(code).toContain("actionlint");
     expect(code).toContain("eslint");
 
