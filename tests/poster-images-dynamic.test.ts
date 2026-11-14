@@ -9,19 +9,22 @@ import type { R2ImageMapEntry } from "../src/lib/r2-image-map.generated";
 const SOURCE_SHA = "a".repeat(64);
 const POSTER_ID = "artwork-9001";
 
-function dynamicRef(overrides: Partial<R2ImageReference> = {}): R2ImageReference {
+function dynamicRefFor(
+  posterId: string,
+  overrides: Partial<R2ImageReference> = {},
+): R2ImageReference {
   return {
     sourceSha256: SOURCE_SHA,
     original: {
-      key: `cineprint/versions/original/${POSTER_ID}/${SOURCE_SHA}.png`,
-      url: `https://images.cineprint.click/cineprint/versions/original/${POSTER_ID}/${SOURCE_SHA}.png`,
+      key: `cineprint/versions/original/${posterId}/${SOURCE_SHA}.png`,
+      url: `https://images.cineprint.click/cineprint/versions/original/${posterId}/${SOURCE_SHA}.png`,
       sha256: SOURCE_SHA,
       sizeBytes: 1000,
       contentType: "image/png",
     },
     optimized: {
-      key: `cineprint/versions/optimized/${POSTER_ID}/${SOURCE_SHA}-sharp-0.35.3-libvips-8.18.3-w800-q80.webp`,
-      url: `https://images.cineprint.click/cineprint/versions/optimized/${POSTER_ID}/${SOURCE_SHA}-sharp-0.35.3-libvips-8.18.3-w800-q80.webp`,
+      key: `cineprint/versions/optimized/${posterId}/${SOURCE_SHA}-sharp-0.35.3-libvips-8.18.3-w800-q80.webp`,
+      url: `https://images.cineprint.click/cineprint/versions/optimized/${posterId}/${SOURCE_SHA}-sharp-0.35.3-libvips-8.18.3-w800-q80.webp`,
       sha256: "b".repeat(64),
       sizeBytes: 400,
       contentType: "image/webp",
@@ -29,6 +32,10 @@ function dynamicRef(overrides: Partial<R2ImageReference> = {}): R2ImageReference
     verifiedAt: "2026-11-10T00:00:00.000Z",
     ...overrides,
   };
+}
+
+function dynamicRef(overrides: Partial<R2ImageReference> = {}): R2ImageReference {
+  return dynamicRefFor(POSTER_ID, overrides);
 }
 
 function poster(overrides: Partial<Poster> = {}): Poster {
@@ -136,6 +143,46 @@ describe("dynamic R2 poster images", () => {
     expect(subject.getPosterImageUrl(unavailable)).toBe(POSTER_UNAVAILABLE_URL);
     expect(subject.getPosterImageCandidates(unavailable)).toEqual([]);
     expect(subject.getPosterDownloadUrl(unavailable)).toBe("");
+  });
+
+  it("lets a valid verified dynamic reference resolve an intentionally unavailable poster", () => {
+    const subject = resolver();
+    for (const id of ["the-substance-2", "stranger-things-2"]) {
+      const ref = dynamicRefFor(id);
+      const repaired = poster({
+        id,
+        image: `https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/external/${id}.jpg`,
+        r2Image: ref,
+      });
+
+      expect(subject.getPosterImageUrl(repaired)).toBe(ref.optimized.url);
+      expect(subject.getPosterImageUrl(repaired, "detail")).toBe(ref.optimized.url);
+      expect(subject.getPosterImageUrl(repaired, "original")).toBe(ref.original.url);
+      expect(subject.getPosterImageCandidates(repaired)).toEqual([
+        ref.optimized.url,
+        ref.original.url,
+      ]);
+      expect(subject.getPosterSeoImageUrl(repaired)).toBe(ref.optimized.url);
+      expect(subject.getPosterDownloadUrl(repaired)).toBe(ref.original.url);
+    }
+  });
+
+  it("keeps an invalid dynamic reference on an unavailable poster fail-closed", () => {
+    const subject = resolver();
+    const broken = poster({
+      id: "the-substance-2",
+      r2Image: dynamicRefFor("the-substance-2", {
+        original: {
+          ...dynamicRefFor("the-substance-2").original,
+          url: "https://evil.example.com/cineprint/versions/original/the-substance-2/a.png",
+        },
+      }),
+    });
+
+    expect(subject.getPosterImageUrl(broken)).toBe(POSTER_UNAVAILABLE_URL);
+    expect(subject.getPosterImageCandidates(broken)).toEqual([]);
+    expect(subject.getPosterSeoImageUrl(broken)).toContain("poster-unavailable.svg");
+    expect(subject.getPosterDownloadUrl(broken)).toBe("");
   });
 
   it("keeps the legacy Blob fallback for unmapped posters", () => {

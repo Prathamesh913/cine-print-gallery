@@ -131,6 +131,7 @@ Publishing a Draft in Notion synchronizes it to Firestore for the public site.
 - Architecture: `docs/raindrop-automation-architecture.md`
 - Operations and activation: `docs/raindrop-automation-operations.md`
 - Failure recovery: `docs/raindrop-automation-failure-recovery.md`
+- Confirmed poster image repair: `docs/poster-image-repair.md`
 - Audit: `docs/raindrop-automation-audit.md`
 
 Dry runs are the default and never write to R2, Notion, or Firestore:

@@ -1,11 +1,11 @@
 /**
- * Catalogue identities whose source image cannot be verified strongly enough
- * to migrate, and whose legacy Blob object is unavailable (403).
+ * Catalogue identities whose legacy Blob source is known to be unavailable.
  *
- * Both remain first-class catalogue entries. Browser rendering uses a neutral
- * "Image unavailable" asset instead of a broken image or an unrelated poster.
- * No R2 object exists for either identity, and no upload is authorized in this
- * phase.
+ * The placeholder is a fail-closed default, not a permanent ban. A poster with
+ * a fully validated dynamic `r2Image` reference resolves from R2 even while its
+ * ID remains in this list (see the resolver's verified-reference override).
+ * Without a valid reference, the ID still renders the neutral asset instead of
+ * the blocked Blob URL.
  */
 export const INTENTIONALLY_UNAVAILABLE_POSTER_IDS = new Set([
   "stranger-things-2",
@@ -13,7 +13,7 @@ export const INTENTIONALLY_UNAVAILABLE_POSTER_IDS = new Set([
 ]);
 
 export const POSTER_UNAVAILABLE_REASON =
-  "Source identity remains medium-confidence; no verified R2 object exists and the legacy Blob object returns 403.";
+  "No verified R2 image reference is present and the legacy Blob object returns 403.";
 
 export function isPosterImageUnavailable(posterId: string): boolean {
   return INTENTIONALLY_UNAVAILABLE_POSTER_IDS.has(posterId);

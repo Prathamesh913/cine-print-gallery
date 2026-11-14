@@ -68,7 +68,15 @@ function imageOf(
   const raw = image ? image.trim() : undefined;
   if (!raw) return undefined;
   try {
-    const optimized = resolveImage({ id, image: raw } as Poster);
+    // Sitemap rows are raw Firestore documents. Pass the complete image
+    // reference through so a valid dynamic r2Image resolves identically to the
+    // detail page instead of falling back to the legacy Blob URL.
+    const candidate = {
+      id,
+      image: raw,
+      ...(data.r2Image !== undefined && data.r2Image !== null ? { r2Image: data.r2Image } : {}),
+    } as Poster;
+    const optimized = resolveImage(candidate);
     return optimized.trim() ? optimized.trim() : raw;
   } catch {
     return raw;
