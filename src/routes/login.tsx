@@ -14,7 +14,17 @@ interface LoginSearch {
 }
 
 function isSafeInternalPath(path: string): boolean {
-  return path.startsWith("/") && !path.startsWith("//");
+  if (!path.startsWith("/") || path.startsWith("//")) return false;
+  // The URL parser folds backslashes into "/" and drops control characters, so
+  // "/\evil.example" would resolve to "//evil.example" (another origin).
+  // Reject those characters here rather than relying on the router's
+  // normalisation to save us.
+  if (path.includes("\\")) return false;
+  for (const char of path) {
+    const code = char.codePointAt(0) ?? 0;
+    if (code < 0x20 || code === 0x7f) return false;
+  }
+  return true;
 }
 
 export const Route = createFileRoute("/login")({
