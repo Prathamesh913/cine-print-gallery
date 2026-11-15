@@ -86,17 +86,14 @@ export const ensureUserProfile = createServerFn({ method: "POST" })
   )
   .middleware([authMiddleware])
   .handler(
-    async ({ data, context }): Promise<SuccessBody<null> | ErrorResponseBody> => {
+    async ({ context }): Promise<SuccessBody<null> | ErrorResponseBody> => {
       const uid = requireUid(context);
       return withEnvelope("profile.ensure", uid, async () => {
         const api = await getDb();
-        await ensureUserProfileCore(api, {
-          uid,
-          email: data.email,
-          displayName: data.displayName,
-          photoURL: data.photoURL,
-          creationTime: data.creationTime,
-        });
+        // Only the verified uid is persisted. The validator still accepts the
+        // legacy sign-in metadata fields so older clients keep working, but
+        // client-supplied identity values are unverified and are ignored.
+        await ensureUserProfileCore(api, { uid });
         return null;
       });
     },
