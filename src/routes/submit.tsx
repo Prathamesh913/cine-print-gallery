@@ -60,12 +60,16 @@ function Submit() {
     setIsSubmitting(true);
     setErrorMsg(null);
     try {
-      await submitPosterToNotion({
+      const res = await submitPosterToNotion({
         data: {
           role,
           ...form,
         },
       });
+      if (!res.ok) {
+        setErrorMsg(res.error.message);
+        return;
+      }
       setDone(true);
     } catch (err: any) {
       console.error(err);

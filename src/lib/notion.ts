@@ -147,6 +147,9 @@ export const getBase64Image = createServerFn({ method: "POST" })
     }
   });
 
+export type SubmitResult =
+  { success: true; pageId: string } | { ok: false; error: { code: string; message: string } };
+
 export const submitPosterToNotion = createServerFn({ method: "POST" })
   .validator(
     (data: {
@@ -161,7 +164,7 @@ export const submitPosterToNotion = createServerFn({ method: "POST" })
       isCopyrightConfirmed: boolean;
     }) => data,
   )
-  .handler(async ({ data }): Promise<{ success: boolean; pageId: string }> => {
+  .handler(async ({ data }): Promise<SubmitResult> => {
     try {
       // Load Admin only when a submission is actually handled. A static import
       // here would put firebase-admin on every public route's module graph.
@@ -218,8 +221,12 @@ export const submitPosterToNotion = createServerFn({ method: "POST" })
         createdAt: serverTimestamp(),
       });
       return { success: true, pageId: docRef.id };
-    } catch (err: any) {
+    } catch (err) {
+      // Full fidelity stays server-side. The caller gets the shared public
+      // envelope: internal Admin/Firestore text must never reach the response
+      // body (this handler is anonymous and has no auth middleware).
       console.error("Failed inserting submission into Firestore:", err);
-      throw new Error(`Failed all insertion attempts. Error: ${err.message}`);
+      const { toPublicError } = await import("../server/errors/error-response");
+      return toPublicError(err);
     }
   });
