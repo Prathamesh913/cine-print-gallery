@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { LayoutGrid } from "lucide-react";
-import { PosterImage } from "@/components/PosterImage";
+import { FolderCardBody } from "@/components/FolderCard";
 import { EmptyState } from "@/components/states";
 import { filterTaxonomy, type TaxonomyEntry } from "@/lib/taxonomy";
 import type { Poster } from "@/lib/posters";
@@ -34,36 +34,12 @@ interface Props {
  */
 function CardBody({ entry }: { entry: TaxonomyEntry<Poster> }) {
   return (
-    <>
-      <span
-        className="relative block w-full overflow-hidden bg-[#1E1E1E]"
-        style={{ aspectRatio: "4 / 5" }}
-      >
-        <PosterImage
-          poster={entry.representative}
-          purpose="gallery"
-          loading="lazy"
-          alt={`${entry.representative.title} (${entry.representative.year}) by ${entry.representative.artist}`}
-          className="h-full w-full object-cover transition-transform duration-200 ease-[var(--ease-out)] hoverable:group-hover:scale-[1.02]"
-        />
-      </span>
-      <span className="flex flex-1 flex-col px-4 pb-4 pt-3">
-        <span className="line-clamp-2 min-h-[2.8em] text-left text-[15px] font-semibold leading-snug text-white">
-          {entry.name}
-        </span>
-        <span className="mt-2 flex items-center justify-between border-t border-white/5 pt-2.5">
-          <span className="font-mono text-xs tabular-nums text-white/50">
-            {entry.posterIds.length} poster{entry.posterIds.length === 1 ? "" : "s"}
-          </span>
-          <span
-            aria-hidden
-            className="inline-flex items-center gap-1 font-mono text-xs text-white/60 transition-colors group-hover:text-white"
-          >
-            Explore →
-          </span>
-        </span>
-      </span>
-    </>
+    <FolderCardBody
+      name={entry.name}
+      count={entry.posterIds.length}
+      covers={entry.posters.slice(0, 3)}
+      frontAlt={`${entry.representative.title} (${entry.representative.year}) by ${entry.representative.artist}`}
+    />
   );
 }
 

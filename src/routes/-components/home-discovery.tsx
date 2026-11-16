@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
+import { FolderCardBody } from "@/components/FolderCard";
 import { getPosterImageUrl } from "@/lib/poster-images";
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
 
@@ -295,88 +296,7 @@ export function ArtistRail({ artists }: { artists: RailArtist[] }) {
             aria-label={`${name}, ${count} poster${count === 1 ? "" : "s"}`}
             className={`group relative flex w-56 shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-white/12 bg-white/[0.06] transition-[transform,border-color,background-color] duration-[160ms] ease-[var(--ease-out)] hover:border-white/20 hover:bg-white/[0.08] hoverable:hover:-translate-y-[1px] active:scale-[0.98] sm:w-64 ${focusRing}`}
           >
-            {/* Artwork zone — fan rises from behind the lower card */}
-            <div className="relative flex h-[168px] items-end justify-center overflow-visible px-3 pt-4 sm:h-[184px]">
-              <div className="relative flex items-end justify-center">
-                {covers.length === 1 ? (
-                  <div className="relative h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-md transition-[transform] duration-200 ease-[var(--ease-out)] hoverable:group-hover:-translate-y-[2px] hoverable:group-hover:scale-[1.01] group-focus-visible:-translate-y-[2px] group-focus-visible:scale-[1.01] sm:h-[144px] sm:w-[96px]">
-                    <PosterImage
-                      poster={covers[0]}
-                      purpose="gallery"
-                      loading="lazy"
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ) : covers.length === 2 ? (
-                  <>
-                    <div className="absolute bottom-0 left-1/2 h-[124px] w-[84px] -translate-x-[62%] -rotate-[5deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-85 shadow-md transition-[transform] duration-[280ms] ease-[var(--ease-out)] hoverable:group-hover:-translate-x-[70%] hoverable:group-hover:-rotate-[8deg] group-focus-visible:-translate-x-[70%] group-focus-visible:-rotate-[8deg] sm:h-[136px] sm:w-[92px]">
-                      <PosterImage
-                        poster={covers[0]}
-                        purpose="gallery"
-                        loading="lazy"
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="relative z-10 h-[132px] w-[88px] translate-x-[14%] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-lg transition-[transform] duration-200 ease-[var(--ease-out)] hoverable:group-hover:-translate-y-[3px] group-focus-visible:-translate-y-[3px] sm:h-[144px] sm:w-[96px]">
-                      <PosterImage
-                        poster={covers[1]}
-                        purpose="gallery"
-                        loading="lazy"
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] -translate-x-[108%] -rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-80 shadow-md transition-[transform] duration-[280ms] ease-[var(--ease-out)] hoverable:group-hover:-translate-x-[118%] hoverable:group-hover:-rotate-[9deg] group-focus-visible:-translate-x-[118%] group-focus-visible:-rotate-[9deg] sm:h-[132px] sm:w-[88px]">
-                      <PosterImage
-                        poster={covers[0]}
-                        purpose="gallery"
-                        loading="lazy"
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="relative z-10 h-[132px] w-[88px] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] shadow-xl transition-[transform] duration-200 ease-[var(--ease-out)] hoverable:group-hover:-translate-y-[2px] hoverable:group-hover:scale-[1.01] group-focus-visible:-translate-y-[2px] group-focus-visible:scale-[1.01] sm:h-[144px] sm:w-[96px]">
-                      <PosterImage
-                        poster={covers[1]}
-                        purpose="gallery"
-                        loading="lazy"
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="absolute bottom-0 left-1/2 h-[120px] w-[80px] translate-x-[8%] rotate-[6deg] overflow-hidden rounded-lg border border-white/10 bg-[#1E1E1E] opacity-90 shadow-md transition-[transform] duration-[280ms] ease-[var(--ease-out)] hoverable:group-hover:translate-x-[16%] hoverable:group-hover:rotate-[9deg] group-focus-visible:translate-x-[16%] group-focus-visible:rotate-[9deg] sm:h-[132px] sm:w-[88px]">
-                      <PosterImage
-                        poster={covers[2]}
-                        purpose="gallery"
-                        loading="lazy"
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Lower collection panel — substantial, rounded top where it meets artwork */}
-            <div className="flex flex-1 flex-col rounded-t-xl border-t border-white/10 bg-[#0F0F0F] px-4 pb-4 pt-4">
-              <h3 className="line-clamp-2 min-h-[2.8em] text-left text-[15px] font-semibold leading-snug text-white">
-                {name}
-              </h3>
-              <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-3">
-                <span className="font-mono text-xs tabular-nums text-white/50">
-                  {count} poster{count === 1 ? "" : "s"}
-                </span>
-                <span className="inline-flex items-center gap-1 font-mono text-xs text-white/60 transition-colors group-hover:text-white">
-                  Explore <span aria-hidden>→</span>
-                </span>
-              </div>
-            </div>
+            <FolderCardBody name={name} count={count} covers={covers} />
           </Link>
         ))}
       </div>
