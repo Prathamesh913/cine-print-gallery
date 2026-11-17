@@ -275,6 +275,42 @@ export interface RailArtist {
   covers: Poster[];
 }
 
+export interface RailFilm {
+  slug: string;
+  title: string;
+  count: number;
+  covers: Poster[];
+}
+
+/** Premade film/show collections — the same folder card as the artist rail. */
+export function FilmRail({ films }: { films: RailFilm[] }) {
+  if (films.length === 0) return null;
+
+  return (
+    <section aria-label="Premade collections">
+      <p className="mb-3 font-mono text-[10px] uppercase tracking-widest text-white/55 sm:text-xs">
+        Premade Collections
+      </p>
+      <div
+        className="-mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-1 pb-3 scrollbar-hide"
+        style={{ scrollPaddingInline: "1rem" }}
+      >
+        {films.map(({ slug, title, count, covers }) => (
+          <Link
+            key={slug}
+            to="/film/$slug"
+            params={{ slug }}
+            aria-label={`${title}, ${count} poster${count === 1 ? "" : "s"}`}
+            className={`group relative flex w-56 shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-white/12 bg-white/[0.06] transition-[transform,border-color,background-color] duration-[160ms] ease-[var(--ease-out)] hover:border-white/20 hover:bg-white/[0.08] hoverable:hover:-translate-y-[1px] active:scale-[0.98] sm:w-64 ${focusRing}`}
+          >
+            <FolderCardBody name={title} count={count} covers={covers} />
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /** ArtistRail — collection/folder card: artwork emerges from behind a substantial metadata panel. */
 export function ArtistRail({ artists }: { artists: RailArtist[] }) {
   if (artists.length < 4) return null;
