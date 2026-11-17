@@ -29,7 +29,7 @@ export function FilmArticle({ title, year, isShow, genres, description, posters 
 
   return (
     <article className="w-full">
-      <div className="page-shell w-full max-w-6xl pt-10">
+      <div className="page-shell w-full pt-10">
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-white/45">
             <li>
@@ -109,7 +109,7 @@ export function FilmArticle({ title, year, isShow, genres, description, posters 
         </div>
       </section>
 
-      <div className="page-shell w-full max-w-6xl flex-grow pb-16">
+      <div className="page-shell flex-grow pb-16">
         <PosterGrid posters={posters} />
       </div>
     </article>
