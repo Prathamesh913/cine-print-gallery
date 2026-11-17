@@ -1,4 +1,5 @@
 import type { Poster } from "./posters";
+import { sourceForImageUrl } from "./download-image";
 import { isPosterImageUnavailable } from "./poster-availability";
 import { R2_IMAGE_MAP, type R2ImageMapEntry } from "./r2-image-map.generated";
 import { validateR2ImageReference } from "./r2-image-reference";
@@ -9,6 +10,15 @@ import {
 } from "./r2-image-activation";
 
 export type PosterImagePurpose = "gallery" | "detail" | "original" | "download";
+export type PosterDownloadKind = "original" | "optimized";
+
+/** A verified, directly downloadable R2 source with its delivery metadata. */
+export interface PosterDownloadSource {
+  kind: PosterDownloadKind;
+  url: string;
+  contentType: "image/jpeg" | "image/png" | "image/webp" | "image/gif";
+  extension: "jpg" | "png" | "webp" | "gif";
+}
 
 /** Local neutral asset used when a catalogue identity has no verified image. */
 export const POSTER_UNAVAILABLE_URL = "/poster-unavailable.svg";
@@ -32,6 +42,8 @@ export interface PosterImageResolver {
   getPosterImageUrl(poster: Poster, purpose?: PosterImagePurpose): string;
   getPosterImageCandidates(poster: Poster, purpose?: PosterImagePurpose): string[];
   getPosterSeoImageUrl(poster: Poster): string;
+  /** Verified download sources. Empty when no source can be verified. */
+  getPosterDownloadSources(poster: Poster): PosterDownloadSource[];
   getPosterDownloadUrl(poster: Poster): string;
   getPosterImageFallbackUrl(poster: Poster): string;
 }
@@ -180,13 +192,33 @@ export function createPosterImageResolver(
   const downloadLookup = (poster: Poster) => lookupEntryFor(poster, map, options.downloadsEnabled);
   const browserEntryFor = (poster: Poster) => trustedEntry(browserLookup(poster));
   const seoEntryFor = (poster: Poster) => trustedEntry(seoLookup(poster));
-  const downloadUrlFor = (poster: Poster) => {
+  // Downloads never fall back to the legacy Blob URL: only a verified R2
+  // original qualifies. An absent or invalid mapping yields no source.
+  const downloadEntryFor = (poster: Poster): R2ImageMapEntry | null => {
     const lookup = downloadLookup(poster);
-    if (lookup.kind === "invalid") return "";
-    return trustedEntry(lookup)?.originalUrl || poster.posterImageUrl || poster.image;
+    if (lookup.kind !== "entry") return null;
+    return trustedEntry(lookup);
   };
+  const downloadUrlFor = (poster: Poster) => downloadEntryFor(poster)?.originalUrl ?? "";
 
   return {
+    getPosterDownloadSources(poster: Poster): PosterDownloadSource[] {
+      if (isUnavailable(poster, options.downloadsEnabled)) return [];
+      const lookup = downloadLookup(poster);
+      if (lookup.kind !== "entry") return [];
+      const entry = lookup.entry;
+      const original = isTrustedR2Url(entry.originalUrl)
+        ? sourceForImageUrl("original", entry.originalUrl)
+        : null;
+      const optimized =
+        entry.optimizedUrl && isTrustedR2Url(entry.optimizedUrl)
+          ? sourceForImageUrl("optimized", entry.optimizedUrl)
+          : null;
+      return [original, optimized].filter(
+        (source): source is PosterDownloadSource => source !== null,
+      );
+    },
+
     getOptimizedPosterImageUrl(poster: Poster): string | null {
       if (isUnavailable(poster, options.browserEnabled)) return null;
       const lookup = browserLookup(poster);
@@ -314,6 +346,10 @@ export function getPosterImageCandidates(
 
 export function getPosterSeoImageUrl(poster: Poster): string {
   return defaultResolver.getPosterSeoImageUrl(poster);
+}
+
+export function getPosterDownloadSources(poster: Poster): PosterDownloadSource[] {
+  return defaultResolver.getPosterDownloadSources(poster);
 }
 
 export function getPosterDownloadUrl(poster: Poster): string {

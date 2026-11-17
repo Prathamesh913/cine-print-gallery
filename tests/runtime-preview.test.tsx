@@ -137,7 +137,7 @@ describe("F28 — browser runtime preview inventory", () => {
     );
     expect(R2_BROWSER_IMAGES_ENABLED).toBe(true);
     expect(R2_SEO_IMAGES_ENABLED).toBe(true);
-    expect(R2_DOWNLOADS_ENABLED).toBe(false);
+    expect(R2_DOWNLOADS_ENABLED).toBe(true);
   });
 
   it("renders the real PosterImage with the optimized URL and alt text", () => {
