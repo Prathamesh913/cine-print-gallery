@@ -318,6 +318,11 @@ function Home() {
           <ArtistRail artists={railArtists} />
         </div>
       )}
+      {railFilms.length >= 2 && showDiscovery && (
+        <div id="collections" className="page-shell w-full scroll-mt-24 pb-8">
+          <FilmRail films={railFilms} />
+        </div>
+      )}
       <FilterBar
         query={query}
         onQueryChange={setQuery}
@@ -376,11 +381,6 @@ function Home() {
           <GalleryErrorBoundary>
             <PosterGrid posters={filtered} />
           </GalleryErrorBoundary>
-        )}
-        {railFilms.length >= 2 && showDiscovery && (
-          <div id="collections" className="page-shell w-full scroll-mt-24 pb-10 pt-10">
-            <FilmRail films={railFilms} />
-          </div>
         )}
       </main>
       <Footer />
