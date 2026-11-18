@@ -43,9 +43,9 @@ describe("poster image resolution", () => {
     expect(getPosterImageUrl(external, "gallery")).toBe(external.image);
   });
 
-  it("uses the R2 original for original purpose and keeps disabled downloads on Blob", () => {
+  it("uses the verified R2 original for original and download purposes", () => {
     const value = poster();
     expect(getPosterImageUrl(value, "original")).toBe(R2_IMAGE_MAP["backrooms-1"].originalUrl);
-    expect(getPosterImageUrl(value, "download")).toBe(value.image);
+    expect(getPosterImageUrl(value, "download")).toBe(R2_IMAGE_MAP["backrooms-1"].originalUrl);
   });
 });

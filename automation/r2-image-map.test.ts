@@ -320,12 +320,12 @@ describe("R2 resolver", () => {
   const BLOB_ARTWORK_OPTIMIZED =
     "https://csfzm0ozakaiii5u.public.blob.vercel-storage.com/cineprint/optimized/1824607248.webp";
 
-  it("activates browser and SEO delivery while keeping downloads disabled", () => {
+  it("activates browser, SEO and verified download delivery", () => {
     expect(R2_BROWSER_IMAGES_ENABLED).toBe(true);
     expect(R2_SEO_IMAGES_ENABLED).toBe(true);
     expect(ACTIVE_BROWSER_IMAGES_ENABLED).toBe(true);
     expect(ACTIVE_SEO_IMAGES_ENABLED).toBe(true);
-    expect(R2_DOWNLOADS_ENABLED).toBe(false);
+    expect(R2_DOWNLOADS_ENABLED).toBe(true);
   });
 
   it("preserves Blob behavior when disabled for mapped posters", () => {
@@ -333,7 +333,7 @@ describe("R2 resolver", () => {
     expect(disabled.getOptimizedPosterImageUrl(p)).toBe(BLOB_2001_OPTIMIZED);
     expect(disabled.getPosterImageUrl(p, "gallery")).toBe(BLOB_2001_OPTIMIZED);
     expect(disabled.getPosterImageUrl(p, "original")).toBe(BLOB_2001_ORIGINAL);
-    expect(disabled.getPosterImageUrl(p, "download")).toBe(BLOB_2001_ORIGINAL);
+    expect(disabled.getPosterImageUrl(p, "download")).toBe("");
     expect(disabled.getPosterImageFallbackUrl(p)).toBe(BLOB_2001_ORIGINAL);
   });
 
@@ -379,10 +379,10 @@ describe("R2 resolver", () => {
     );
   });
 
-  it("keeps downloads on Blob when download activation is disabled", () => {
+  it("fails closed for downloads when download activation is disabled", () => {
     const p = poster();
-    expect(browserEnabled.getPosterImageUrl(p, "download")).toBe(BLOB_2001_ORIGINAL);
-    expect(browserEnabled.getPosterDownloadUrl(p)).toBe(BLOB_2001_ORIGINAL);
+    expect(browserEnabled.getPosterImageUrl(p, "download")).toBe("");
+    expect(browserEnabled.getPosterDownloadUrl(p)).toBe("");
     expect(browserEnabled.getPosterImageFallbackUrl(p)).toBe(BLOB_2001_ORIGINAL);
   });
 
@@ -397,9 +397,9 @@ describe("R2 resolver", () => {
     expect(downloadsEnabled.getPosterImageUrl(p, "gallery")).toBe(BLOB_2001_OPTIMIZED);
   });
 
-  it("keeps unmapped downloads on the existing Blob URL", () => {
+  it("fails closed for unmapped downloads instead of using Blob", () => {
     const p = poster({ id: "not-mapped", image: BLOB_BUGONIA });
-    expect(downloadsEnabled.getPosterDownloadUrl(p)).toBe(BLOB_BUGONIA);
+    expect(downloadsEnabled.getPosterDownloadUrl(p)).toBe("");
   });
 
   it("offers R2 optimized then R2 original as finite display candidates without Blob fallback", () => {
@@ -470,7 +470,7 @@ describe("R2 resolver", () => {
     expect(seoEnabled.getPosterImageUrl(p, "gallery")).toBe(BLOB_2001_OPTIMIZED);
     expect(seoEnabled.getPosterImageUrl(p, "detail")).toBe(BLOB_2001_OPTIMIZED);
     expect(seoEnabled.getPosterImageUrl(p, "original")).toBe(BLOB_2001_ORIGINAL);
-    expect(seoEnabled.getPosterImageUrl(p, "download")).toBe(BLOB_2001_ORIGINAL);
+    expect(seoEnabled.getPosterImageUrl(p, "download")).toBe("");
   });
 
   it("keeps SEO on Blob when both activation switches are disabled", () => {

@@ -21,5 +21,10 @@ export const R2_BROWSER_IMAGES_ENABLED =
 
 export const R2_SEO_IMAGES_ENABLED = DEFAULT_SEO_IMAGES_ENABLED;
 
-export const R2_DOWNLOADS_ENABLED =
-  isPreviewOrLocal && previewFlag(viteEnv?.VITE_R2_DOWNLOADS);
+/**
+ * Download delivery is restored as a reviewed part of the poster-download
+ * feature. Verified R2 sources only: the resolver returns no source at all for
+ * unmapped, invalid or unavailable identities, so enabling this flag can never
+ * reintroduce the blocked Vercel Blob 403 path.
+ */
+export const R2_DOWNLOADS_ENABLED = true;

@@ -243,8 +243,12 @@ describe("poster image fallback contract", () => {
     expect(getPosterImageUrl(p, "gallery")).toBe(getPosterImageFallbackUrl(p));
   });
 
-  it("keeps download delivery disabled", () => {
-    expect(R2_DOWNLOADS_ENABLED).toBe(false);
-    expect(getPosterImageUrl(poster(), "download")).toBe(BLOB_ORIGINAL);
+  it("restores verified download delivery without a Blob fallback", () => {
+    expect(R2_DOWNLOADS_ENABLED).toBe(true);
+    // A mapped poster resolves to a verified R2 original, never the blocked
+    // Blob URL that was used while downloads were paused.
+    expect(getPosterImageUrl(poster(), "download")).toMatch(
+      /^https:\/\/images\.cineprint\.click\//,
+    );
   });
 });

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   X,
   Heart,
@@ -16,11 +16,11 @@ import { ShareModal } from "./ShareModal";
 import { AddToCollectionModal } from "./AddToCollectionModal";
 import { PosterImage } from "./PosterImage";
 import {
-  getPosterDownloadUrl,
+  getPosterDownloadSources,
   getPosterImageCandidates,
   getPosterImageUrl,
 } from "@/lib/poster-images";
-import { downloadExtension } from "@/lib/download-image";
+import { posterDownloadHref } from "@/lib/download-image";
 import {
   INITIAL_IMAGE_LOAD_STATE,
   imageStatusForKey,
@@ -29,12 +29,12 @@ import {
   type ImageLoadState,
 } from "@/lib/image-load-state";
 import { play } from "cuelume";
-import { getBase64Image } from "@/lib/notion";
 import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -118,55 +118,8 @@ interface Props {
 
 export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
   const { isSaved, toggle } = useSaved();
-  const [downloading, setDownloading] = useState(false);
   const [collectionOpen, setCollectionOpen] = useState(false);
-
-  const handlePlexDownload = async () => {
-    if (!poster || downloading) return;
-
-    const downloadUrl = getPosterDownloadUrl(poster);
-    if (!downloadUrl) {
-      toast.error("No image URL found for this poster.");
-      return;
-    }
-
-    let baseFilename = "";
-    if (poster.collectionName) {
-      baseFilename = poster.collectionName;
-    } else if (poster.mediaType === "show") {
-      if (poster.seasonNumber !== undefined && poster.seasonNumber !== null) {
-        const paddedSeason = String(poster.seasonNumber).padStart(2, "0");
-        baseFilename = `${poster.title} - Season ${paddedSeason}`;
-      } else {
-        baseFilename = poster.title;
-      }
-    } else {
-      baseFilename = `${poster.title} (${poster.year})`;
-    }
-
-    baseFilename = baseFilename.replace(/[\\/:*?"<>|]/g, "_");
-
-    setDownloading(true);
-    const toastId = toast.loading("Preparing high-res download for Plex/Jellyfin...");
-
-    try {
-      const base64Data = await getBase64Image({ data: downloadUrl });
-      const filename = `${baseFilename}.${downloadExtension(downloadUrl, base64Data)}`;
-      const link = document.createElement("a");
-      link.href = base64Data;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success(`Downloaded: ${filename}`, { id: toastId });
-      play("success");
-    } catch (err) {
-      console.error("Download failed:", err);
-      toast.error("Failed to fetch image. Please try again.", { id: toastId });
-    } finally {
-      setDownloading(false);
-    }
-  };
+  const downloadSources = useMemo(() => (poster ? getPosterDownloadSources(poster) : []), [poster]);
 
   const [zoom, setZoom] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -483,9 +436,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                   <span className="text-[10px] tracking-[0.25em] font-mono text-white/55 uppercase">
                     Image unavailable
                   </span>
-                  <span className="text-xs text-white/50">
-                    This poster could not be loaded.
-                  </span>
+                  <span className="text-xs text-white/50">This poster could not be loaded.</span>
                 </div>
               )}
             </div>
@@ -572,9 +523,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
           <div className="overflow-y-auto px-6 py-6 flex-grow md:overflow-visible md:px-0 md:py-0 flex flex-col gap-4">
             <div>
               <div className="flex items-start justify-between gap-4">
-                <h2
-                  className="text-3xl font-semibold leading-tight text-[#F5F5F5] sm:text-4xl flex-1 font-heading"
-                >
+                <h2 className="text-3xl font-semibold leading-tight text-[#F5F5F5] sm:text-4xl flex-1 font-heading">
                   {poster.title}
                 </h2>
                 {/* Swipe down indicator in line with the title (visible on mobile only when sheet is expanded) */}
@@ -854,18 +803,32 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
                   sideOffset={8}
                   className="border-white/15 bg-[#1c1c1c] text-[#F5F5F5]"
                 >
-                  <DropdownMenuItem
-                    onSelect={handlePlexDownload}
-                    disabled={downloading}
-                    className="focus:bg-white/10 focus:text-[#F5F5F5]"
-                  >
-                    {downloading ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <Download size={16} />
-                    )}
-                    Download
-                  </DropdownMenuItem>
+                  {downloadSources.length > 0 && (
+                    <>
+                      <DropdownMenuLabel className="text-[11px] uppercase tracking-widest text-white/50">
+                        Download
+                      </DropdownMenuLabel>
+                      {downloadSources.map((source) => (
+                        <DropdownMenuItem key={source.kind} asChild>
+                          <a
+                            href={posterDownloadHref(poster!.id, source.kind)}
+                            aria-label={`Download ${source.kind} poster, ${source.kind === "original" ? "JPEG or PNG, original quality" : "WebP, smaller file"}`}
+                            className="flex-col items-start gap-0.5 py-2"
+                          >
+                            <span className="flex items-center gap-2">
+                              <Download size={16} />
+                              {source.kind === "original" ? "Original poster" : "Optimized poster"}
+                            </span>
+                            <span className="pl-6 text-xs text-white/50">
+                              {source.kind === "original"
+                                ? "JPEG/PNG · original quality"
+                                : "WebP · smaller file"}
+                            </span>
+                          </a>
+                        </DropdownMenuItem>
+                      ))}
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
