@@ -5,14 +5,6 @@ export interface UserProfile {
   bio: string;
 }
 
-interface ProfileSeed {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-  creationTime?: string | null;
-}
-
 const userDoc = (api: FirestoreApi, uid: string) => api.doc("users", uid);
 
 function newUserDoc(
@@ -31,29 +23,21 @@ function newUserDoc(
   };
 }
 
-export async function ensureUserProfileCore(api: FirestoreApi, user: ProfileSeed): Promise<void> {
+export async function ensureUserProfileCore(
+  api: FirestoreApi,
+  user: { uid: string },
+): Promise<void> {
   const ref = userDoc(api, user.uid);
   const snap = await api.getDoc(ref);
 
   if (!snap.exists) {
-    const createdAt = user.creationTime
-      ? api.timestampFromDate(new Date(user.creationTime))
-      : api.serverTimestamp();
-    await api.setDoc(ref, {
-      uid: user.uid,
-      email: user.email || "",
-      displayName: user.displayName || "",
-      photoURL: user.photoURL || null,
-      createdAt,
-      likedPostIds: [],
-    });
-    return;
-  }
-
-  if (!snap.data().createdAt && user.creationTime) {
-    await api.updateDoc(ref, {
-      createdAt: api.timestampFromDate(new Date(user.creationTime)),
-    });
+    // Only server-derived state is stored. Sign-in metadata (email,
+    // displayName, photoURL, account creation time) arrives from the client and
+    // is therefore unverified; nothing reads it, so it is not persisted.
+    // `createdAt` is the first time this server saw the account, which is the
+    // only value the server can vouch for. `likedPostIds` is created lazily by
+    // the like paths, so a concurrent first like is never clobbered here.
+    await api.setDoc(ref, { uid: user.uid, createdAt: api.serverTimestamp() }, { merge: true });
   }
 }
 
@@ -100,14 +84,19 @@ export async function getUserProfileCore(api: FirestoreApi, uid: string): Promis
   };
 }
 
+export const MAX_BIO_LENGTH = 280;
+
 export async function updateBioCore(api: FirestoreApi, uid: string, bio: string): Promise<void> {
   const ref = userDoc(api, uid);
   const snap = await api.getDoc(ref);
+  // The client caps the textarea, but that is not an enforcement boundary: a
+  // direct RPC call can send any length. Bound it server-side before the write.
+  const trimmed = bio.slice(0, MAX_BIO_LENGTH);
 
   if (!snap.exists) {
-    await api.setDoc(ref, newUserDoc(api, uid, { bio }));
+    await api.setDoc(ref, newUserDoc(api, uid, { bio: trimmed }));
   } else {
-    await api.updateDoc(ref, { bio });
+    await api.updateDoc(ref, { bio: trimmed });
   }
 }
 
@@ -121,9 +110,12 @@ export async function mergeLikedPostersCore(
   const ref = userDoc(api, uid);
   const snap = await api.getDoc(ref);
 
-  const existing: string[] = Array.isArray(snap.data().likedPostIds)
-    ? (snap.data().likedPostIds as string[])
-    : [];
+  // `data()` is undefined for a missing document, so the existence check must
+  // come first — a brand-new user could otherwise crash the merge.
+  const existing: string[] =
+    snap.exists && Array.isArray(snap.data().likedPostIds)
+      ? (snap.data().likedPostIds as string[])
+      : [];
   const merged = [...new Set([...existing, ...posterIds])];
 
   if (!snap.exists) {

@@ -9,9 +9,16 @@ import { EmptyState } from "@/components/states";
 import { Footer } from "@/components/Footer";
 import { type Poster, type PosterStyle, type PosterGenre } from "@/lib/posters";
 import { fetchNotionPosters } from "@/lib/notion";
+import { eligibleFilmGroups } from "@/lib/films";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 import { organizationEntity, websiteEntity, withJsonLd } from "@/lib/structured-data";
-import { DailySpotlight, ArtistRail, type RailArtist } from "./-components/home-discovery";
+import {
+  DailySpotlight,
+  ArtistRail,
+  FilmRail,
+  type RailArtist,
+  type RailFilm,
+} from "./-components/home-discovery";
 
 /**
  * Deterministic, dependency-free PRNG plumbing backing the homepage "daily cut".
@@ -210,6 +217,21 @@ function Home() {
       .map(([name, count]) => ({ name, count, covers: groups.get(name) ?? [] }));
   }, [posters, artistCounts]);
 
+  const railFilms = useMemo<RailFilm[]>(
+    () =>
+      eligibleFilmGroups(posters)
+        .slice()
+        .sort((a, b) => b.posterIds.length - a.posterIds.length || a.title.localeCompare(b.title))
+        .slice(0, 12)
+        .map((group) => ({
+          slug: group.slug,
+          title: group.title,
+          count: group.posterIds.length,
+          covers: group.posters.slice(0, 3),
+        })),
+    [posters],
+  );
+
   const filtered = useMemo(() => {
     const q = dq.trim().toLowerCase();
     return posters.filter((p) => {
@@ -294,6 +316,11 @@ function Home() {
       {railArtists.length >= 4 && showDiscovery && (
         <div id="artists" className="page-shell scroll-mt-24 pt-8 pb-8">
           <ArtistRail artists={railArtists} />
+        </div>
+      )}
+      {railFilms.length >= 2 && showDiscovery && (
+        <div id="collections" className="page-shell w-full scroll-mt-24 pb-8">
+          <FilmRail films={railFilms} />
         </div>
       )}
       <FilterBar

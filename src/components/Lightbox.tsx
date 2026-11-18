@@ -754,7 +754,7 @@ export function Lightbox({ poster, posters = [], onNavigate, onClose }: Props) {
               </p>
             )}
 
-            <div className="mt-auto flex w-full flex-col gap-2 pt-4 sm:w-auto sm:flex-row sm:items-stretch">
+            <div className="mt-auto grid w-full grid-cols-2 gap-2 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-stretch">
               <button
                 onClick={() => {
                   const wasSaved = saved;

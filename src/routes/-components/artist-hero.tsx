@@ -2,78 +2,10 @@ import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Globe } from "lucide-react";
 import { type Poster, slugifyArtist } from "@/lib/posters";
-import { PosterImage } from "@/components/PosterImage";
-import posterPalettesRaw from "@/lib/poster-palettes.json";
-
-/** Typed representation of the prebuilt palette data — mirrors constellation.tsx. */
-const posterPalettes = posterPalettesRaw as Record<
-  string,
-  { palette: string[]; primary: string; hsl: { h: number; s: number; l: number } }
->;
+import { FeaturedFan } from "@/components/FeaturedFan";
+import { buildGlowBackground } from "@/lib/collection-hero";
 
 const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]";
-
-/** Fallback tint when a poster id is missing from the build-time palette data. */
-const FALLBACK_PRIMARY = { hex: "#FF6B6B", rgb: [255, 107, 107] as const };
-
-function hexToRgba(hex: string, alpha: number): string {
-  const match = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
-  if (!match) {
-    const [r, g, b] = FALLBACK_PRIMARY.rgb;
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  }
-  const value = Number.parseInt(match[1], 16);
-  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
-}
-
-/**
- * Collect up to 4 distinct primary hexes from the artist's posters' palette
- * entries — deduped case-insensitive, ordered by frequency then saturation.
- * Falls back to the brand accent so the hero never renders empty/broken.
- */
-function collectPrimaries(posters: Poster[]): string[] {
-  const seen = new Map<string, { hex: string; count: number; sat: number }>();
-
-  for (const poster of posters) {
-    const entry = posterPalettes[poster.id];
-    if (!entry?.primary) continue;
-    const key = entry.primary.toLowerCase();
-    const found = seen.get(key);
-    if (found) {
-      found.count += 1;
-      // Keep the most saturated variant seen for tie-breaking.
-      if ((entry.hsl?.s ?? 0) > found.sat) found.sat = entry.hsl.s;
-    } else {
-      seen.set(key, { hex: entry.primary.toUpperCase(), count: 1, sat: entry.hsl?.s ?? 0 });
-    }
-  }
-
-  return [...seen.values()]
-    .sort((a, b) => b.count - a.count || b.sat - a.sat)
-    .slice(0, 4)
-    .map((entry) => entry.hex);
-}
-
-/**
- * Static decorative CSS: one radial-gradient per primary at low alpha on black.
- * The heaviest glow sits top-right / far right so left-aligned text keeps an AA
- * dark backdrop (reinforced by the horizontal scrim layer).
- */
-function buildGlowBackground(colors: string[]): string {
-  const spots = ["82% 20%", "60% 85%", "98% 65%", "40% 0%"];
-  const alphas = [0.28, 0.18, 0.14, 0.1];
-
-  return colors
-    .map((hex, i) => {
-      const rx = `${34 + i * 8}rem`;
-      const ry = `${22 + i * 5}rem`;
-      return `radial-gradient(${rx} ${ry} at ${spots[i % spots.length]}, ${hexToRgba(
-        hex,
-        alphas[i] ?? 0.08,
-      )} 0%, transparent 68%)`;
-    })
-    .join(", ");
-}
 
 interface ArtistHeroProps {
   slug: string;
@@ -121,23 +53,7 @@ export function ArtistHero({ slug, artistName, artistUrl, posters }: ArtistHeroP
       .join(", ");
   }, [posters]);
 
-  const coverPosters = posters.slice(0, 3);
-  const showCovers = posters.length >= 2 && coverPosters.length >= 2;
-
-  const glowBackground = useMemo(() => buildGlowBackground(collectPrimaries(posters)), [posters]);
-
-  // Fan layout: [-6°, 0°, +6°]; with only two covers use the outer rotations.
-  const fanLayouts =
-    coverPosters.length === 2
-      ? [
-          { rotate: "-rotate-6", height: "h-40", extra: "" },
-          { rotate: "rotate-6", height: "h-40", extra: "-ml-10" },
-        ]
-      : [
-          { rotate: "-rotate-6", height: "h-40", extra: "" },
-          { rotate: "", height: "h-44", extra: "-mx-7 z-10" },
-          { rotate: "rotate-6", height: "h-40", extra: "-ml-10" },
-        ];
+  const glowBackground = useMemo(() => buildGlowBackground(posters), [posters]);
 
   return (
     <section className="relative">
@@ -233,22 +149,7 @@ export function ArtistHero({ slug, artistName, artistUrl, posters }: ArtistHeroP
             )}
           </div>
 
-          {/* Featured covers fan — decorative duplicates of grid artwork, desktop only */}
-          {showCovers && (
-            <div aria-hidden className="hidden shrink-0 items-center py-2 pr-2 sm:flex">
-              {coverPosters.map((poster, i) => (
-                <PosterImage
-                  key={poster.id}
-                  poster={poster}
-                  purpose="gallery"
-                  loading="lazy"
-                  alt=""
-                  decoding="async"
-                  className={`relative rounded-lg border border-white/15 object-cover shadow-xl aspect-[2/3] w-auto ${fanLayouts[i].height} ${fanLayouts[i].rotate} ${fanLayouts[i].extra}`}
-                />
-              ))}
-            </div>
-          )}
+          <FeaturedFan posters={posters} />
         </div>
       </div>
     </section>

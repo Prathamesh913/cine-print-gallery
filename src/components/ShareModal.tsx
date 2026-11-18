@@ -248,25 +248,37 @@ export function ShareModal({ poster, onClose }: Props) {
       toast.error("Popup blocked. Please allow popups to print.");
       return;
     }
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print CinePrint Ticket - ${poster.title}</title>
-          <style>
-            body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #000000; }
-            img { max-width: 100%; max-height: 100%; object-fit: contain; }
-            @media print {
-              body { background-color: #ffffff; }
-              img { max-width: 100%; max-height: 100%; }
-            }
-          </style>
-        </head>
-        <body>
-          <img src="${imageUrl}" onload="window.print(); window.close();" />
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+    // The ticket window never needs to reach back into the app, so drop the
+    // opener reference. The handle above still works because the document is
+    // same-origin.
+    printWindow.opener = null;
+
+    // Build the document with DOM APIs. poster.title is catalogue data: it is
+    // assigned as text (doc.title / alt), never interpolated into an HTML
+    // string, so markup in a title cannot become an element or a script.
+    const doc = printWindow.document;
+    doc.title = `Print CinePrint Ticket - ${poster.title}`;
+
+    const style = doc.createElement("style");
+    style.textContent = `
+      body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #000000; }
+      img { max-width: 100%; max-height: 100%; object-fit: contain; }
+      @media print {
+        body { background-color: #ffffff; }
+        img { max-width: 100%; max-height: 100%; }
+      }
+    `;
+
+    const img = doc.createElement("img");
+    img.alt = poster.title;
+    img.addEventListener("load", () => {
+      printWindow.print();
+      printWindow.close();
+    });
+    img.src = imageUrl;
+
+    doc.head.appendChild(style);
+    doc.body.appendChild(img);
   };
 
   const handleCopy = async () => {

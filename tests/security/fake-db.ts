@@ -38,7 +38,12 @@ export class FakeDb implements FirestoreApi {
 
   async getDoc(ref: FakeRef) {
     const entry = this.data.get(ref.__path);
-    return { exists: !!entry, data: () => structuredClone(entry ?? {}) };
+    // Mirror the real SDK: data() is undefined when the document is missing.
+    // The declared contract predates this; the adapter is the loose edge.
+    return {
+      exists: !!entry,
+      data: () => (entry ? structuredClone(entry) : undefined) as Record<string, unknown>,
+    };
   }
 
   async setDoc(ref: FakeRef, data: Record<string, unknown>, opts?: { merge?: boolean }) {

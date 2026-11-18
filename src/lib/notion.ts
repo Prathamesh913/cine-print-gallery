@@ -3,7 +3,7 @@ import { type Poster } from "./posters";
 import { fetchImageDataUrl } from "./image-data-url";
 import { validateR2ImageReference } from "./r2-image-reference";
 // Public path: reads go through the CLIENT Firestore SDK. Firestore rules grant
-// public read on /posters/* (`allow read: if true`), so no Admin privileges are
+// public read only on published /posters/* documents, so no Admin privileges are
 // needed — keeping firebase-admin off the homepage request graph entirely.
 import { db } from "./firebase";
 
@@ -80,8 +80,8 @@ export function toPlainPoster(id: string, raw: Record<string, unknown>): Poster 
  * Core poster load used by the server function. Exported for focused unit tests
  * so infrastructure-vs-empty regressions do not depend on createServerFn wiring.
  *
- * Public path only: client Firestore SDK + security rules (`allow read: if true`
- * on /posters/*). No Firebase Admin involved.
+ * Public path only: client Firestore SDK + published-only security rules on
+ * /posters/*. No Firebase Admin involved.
  *
  * - Success with zero published rows → `[]` (genuine empty catalog).
  * - Any Firestore / configuration / unexpected failure → `PosterFetchError`
@@ -147,6 +147,9 @@ export const getBase64Image = createServerFn({ method: "POST" })
     }
   });
 
+export type SubmitResult =
+  { success: true; pageId: string } | { ok: false; error: { code: string; message: string } };
+
 export const submitPosterToNotion = createServerFn({ method: "POST" })
   .validator(
     (data: {
@@ -161,7 +164,7 @@ export const submitPosterToNotion = createServerFn({ method: "POST" })
       isCopyrightConfirmed: boolean;
     }) => data,
   )
-  .handler(async ({ data }): Promise<{ success: boolean; pageId: string }> => {
+  .handler(async ({ data }): Promise<SubmitResult> => {
     try {
       // Load Admin only when a submission is actually handled. A static import
       // here would put firebase-admin on every public route's module graph.
@@ -218,8 +221,12 @@ export const submitPosterToNotion = createServerFn({ method: "POST" })
         createdAt: serverTimestamp(),
       });
       return { success: true, pageId: docRef.id };
-    } catch (err: any) {
+    } catch (err) {
+      // Full fidelity stays server-side. The caller gets the shared public
+      // envelope: internal Admin/Firestore text must never reach the response
+      // body (this handler is anonymous and has no auth middleware).
       console.error("Failed inserting submission into Firestore:", err);
-      throw new Error(`Failed all insertion attempts. Error: ${err.message}`);
+      const { toPublicError } = await import("../server/errors/error-response");
+      return toPublicError(err);
     }
   });

@@ -96,7 +96,7 @@ function ArtistPage() {
       <Header showSearch={false} onFeelingLucky={handleFeelingLucky} />
 
       <main className="flex-grow flex flex-col">
-        <div className="page-shell w-full max-w-6xl pt-10">
+        <div className="page-shell w-full pt-10">
           <ArtistBreadcrumb slug={slug} name={artistName} />
         </div>
         <ArtistHero
