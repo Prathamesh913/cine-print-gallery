@@ -8,6 +8,51 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // Augments Vite's UserConfig with `nitro?: NitroConfig` (traceDeps, etc.).
 import "nitro/vite";
 
+/**
+ * Vercel builds run on Node with a deployed node_modules directory, so CJS
+ * packages can stay external (required at runtime). The Cloudflare workers
+ * preset has no node_modules at runtime, so these externalizations must only
+ * apply to Vercel builds. Vercel sets VERCEL=1 during `vercel build`;
+ * NITRO_PRESET=vercel covers local `NITRO_PRESET=vercel npm run build` repros.
+ */
+const isVercelBuild = process.env.VERCEL === "1" || process.env.NITRO_PRESET === "vercel";
+
+/**
+ * CJS-only packages that must not be bundled into the Rolldown server output
+ * on Vercel. Rolldown emits them as cross-chunk `__commonJSMin` wrappers that
+ * form an ESM cycle with the shared-helper chunk: the wrapper executes before
+ * the helper initializes, so every dynamic SSR import throws
+ * `TypeError: __commonJSMin is not a function` and every page 500s (static
+ * assets are unaffected — they never touch the function). Keeping them
+ * external (same mechanism as firebase-admin below) removes the wrappers
+ * entirely; Node resolves each once from the function node_modules, so there
+ * is still exactly one React instance. `*` = full package copy, so runtime
+ * subpath requires (react/jsx-runtime, react-dom/server, scheduler,
+ * firebase/*) resolve even when the tracer cannot see them statically.
+ */
+const vercelCjsExternals = isVercelBuild
+  ? [
+      "react*",
+      "react-dom*",
+      "scheduler*",
+      "loose-envify*",
+      "use-sync-external-store*",
+      "@floating-ui/core*",
+      "@floating-ui/dom*",
+      "@floating-ui/react-dom*",
+      "@floating-ui/utils*",
+      "firebase*",
+      "@firebase/app*",
+      "@firebase/auth*",
+      "@firebase/firestore*",
+      "@firebase/webchannel-wrapper*",
+      "@firebase/util*",
+      "@firebase/component*",
+      "@firebase/logger*",
+      "@firebase/installations*",
+    ]
+  : [];
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
@@ -23,7 +68,7 @@ export default defineConfig({
     nitro: {
       // `pkg*` = full package copy so app/auth/firestore subpaths and transitive
       // deps (google-auth-library, etc.) are present in the function output.
-      traceDeps: ["firebase-admin*"],
+      traceDeps: ["firebase-admin*", ...vercelCjsExternals],
     },
   },
 });
