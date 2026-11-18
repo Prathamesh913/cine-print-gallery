@@ -48,6 +48,11 @@ describe("isPrivateOrLoopbackHost", () => {
     "[fe80::1]",
     "[fd00::1]",
     "[fc00::1]",
+    "[fe90::1]",
+    "[fec0::1]",
+    "[ff02::1]",
+    "[::7f00:1]",
+    "[64:ff9b::7f00:1]",
   ])("rejects %s", (host) => {
     expect(isPrivateOrLoopbackHost(host)).toBe(true);
   });
@@ -115,6 +120,17 @@ describe("fetchImageDataUrl", () => {
     );
     expect(result).toMatch(/^data:image\/png;base64,/);
     expect(calls).toEqual(["https://example.com/start.png", "https://cdn.example.com/final.png"]);
+  });
+
+  it.each([
+    ["file:///etc/passwd", /Invalid protocol/],
+    ["https://user:pass@example.com/x.png", /credentials/],
+  ])("re-validates the redirect target %s", async (location, expected) => {
+    const fetchImpl = vi.fn(async () => redirect(location));
+    await expect(
+      fetchImageDataUrl("https://example.com/start.png", fetchImpl as unknown as typeof fetch),
+    ).rejects.toThrow(expected);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
   it("caps redirect hops", async () => {

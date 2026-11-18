@@ -10,12 +10,7 @@ import {
 } from "../../src/lib/user-likes-core";
 
 async function seedUser(db: FakeDb, uid: string, liked: string[]) {
-  await ensureUserProfileCore(db, {
-    uid,
-    email: `${uid}@test.dev`,
-    displayName: uid,
-    photoURL: null,
-  });
+  await ensureUserProfileCore(db, { uid });
   for (const id of liked) {
     await toggleUserLikeCore(db, uid, id);
   }

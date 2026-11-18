@@ -78,7 +78,7 @@ export default {
       const downloadResponse = await handlePosterDownload(request, {
         loadCatalogue: async () => (await import("./lib/notion")).loadPublishedPosters(),
       });
-      if (downloadResponse) return downloadResponse;
+      if (downloadResponse) return withSecurityHeaders(downloadResponse);
 
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

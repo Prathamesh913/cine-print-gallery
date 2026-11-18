@@ -86,7 +86,8 @@ describe("firestore.rules policy", () => {
     });
 
     it("keeps private collections unreadable by non-owners", () => {
-      expect(block()).toMatch(/resource\.data\.ownerId == request\.auth\.uid/);
+      const readClause = block().split("allow read:")[1]?.split("allow create:")[0] ?? "";
+      expect(readClause).toMatch(/resource\.data\.ownerId == request\.auth\.uid/);
       expect(block()).not.toMatch(/allow read: if true;/);
     });
   });

@@ -3,7 +3,7 @@ import { type Poster } from "./posters";
 import { fetchImageDataUrl } from "./image-data-url";
 import { validateR2ImageReference } from "./r2-image-reference";
 // Public path: reads go through the CLIENT Firestore SDK. Firestore rules grant
-// public read on /posters/* (`allow read: if true`), so no Admin privileges are
+// public read only on published /posters/* documents, so no Admin privileges are
 // needed — keeping firebase-admin off the homepage request graph entirely.
 import { db } from "./firebase";
 
@@ -80,8 +80,8 @@ export function toPlainPoster(id: string, raw: Record<string, unknown>): Poster 
  * Core poster load used by the server function. Exported for focused unit tests
  * so infrastructure-vs-empty regressions do not depend on createServerFn wiring.
  *
- * Public path only: client Firestore SDK + security rules (`allow read: if true`
- * on /posters/*). No Firebase Admin involved.
+ * Public path only: client Firestore SDK + published-only security rules on
+ * /posters/*. No Firebase Admin involved.
  *
  * - Success with zero published rows → `[]` (genuine empty catalog).
  * - Any Firestore / configuration / unexpected failure → `PosterFetchError`

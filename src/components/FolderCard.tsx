@@ -62,7 +62,7 @@ export function FolderCardBody({ name, count, covers, frontAlt }: Props) {
                   poster={fan[1]}
                   purpose="gallery"
                   loading="lazy"
-                  alt={altFor(0)}
+                  alt={altFor(1)}
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -74,7 +74,7 @@ export function FolderCardBody({ name, count, covers, frontAlt }: Props) {
                   poster={fan[0]}
                   purpose="gallery"
                   loading="lazy"
-                  alt={altFor(1)}
+                  alt={altFor(0)}
                   className="h-full w-full object-cover"
                 />
               </div>

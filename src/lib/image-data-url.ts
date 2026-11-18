@@ -23,7 +23,7 @@ function bareHost(hostname: string): string {
 
 function isPrivateIPv4(octets: number[]): boolean {
   const [a, b] = octets;
-  if (octets.some((o) => o < 0 || o > 255)) return true; // malformed: fail closed
+  if (octets.length !== 4 || octets.some((o) => o < 0 || o > 255)) return true; // malformed: fail closed
   if (a === 0 || a === 10 || a === 127) return true;
   if (a === 169 && b === 254) return true; // link-local
   if (a === 172 && b >= 16 && b <= 31) return true;
@@ -32,37 +32,83 @@ function isPrivateIPv4(octets: number[]): boolean {
   return false;
 }
 
+/** Expand an IPv6 literal (including a trailing dotted quad) to 16 bytes. */
+function parseIPv6(host: string): number[] | null {
+  let text = host;
+  const dotted = text.match(/(\d{1,3}(?:\.\d{1,3}){3})$/);
+  if (dotted && dotted.index !== undefined) {
+    const parts = dotted[1].split(".").map(Number);
+    if (parts.some((part) => part < 0 || part > 255)) return null;
+    const hi = (parts[0] << 8) | parts[1];
+    const lo = (parts[2] << 8) | parts[3];
+    text = text.slice(0, dotted.index) + hi.toString(16) + ":" + lo.toString(16);
+  }
+
+  const halves = text.split("::");
+  if (halves.length > 2) return null;
+  const groups = (part: string): number[] | null => {
+    if (!part) return [];
+    const out: number[] = [];
+    for (const group of part.split(":")) {
+      if (!/^[0-9a-f]{1,4}$/i.test(group)) return null;
+      out.push(Number.parseInt(group, 16));
+    }
+    return out;
+  };
+  const left = groups(halves[0]);
+  const right = halves.length === 2 ? groups(halves[1]) : [];
+  if (!left || !right) return null;
+  const used = left.length + right.length;
+  if (halves.length === 1 ? used !== 8 : used >= 8) return null;
+  const expanded = halves.length === 2 ? [...left, ...Array(8 - used).fill(0), ...right] : left;
+  const bytes: number[] = [];
+  for (const group of expanded) bytes.push(group >> 8, group & 0xff);
+  return bytes;
+}
+
+function isPrivateIPv6(bytes: number[]): boolean {
+  if (bytes.slice(0, 15).every((byte) => byte === 0) && (bytes[15] === 0 || bytes[15] === 1)) {
+    return true; // :: and ::1
+  }
+  if (bytes.slice(0, 10).every((byte) => byte === 0) && bytes[10] === 0xff && bytes[11] === 0xff) {
+    return isPrivateIPv4(bytes.slice(12)); // IPv4-mapped ::ffff:a.b.c.d
+  }
+  if (bytes.slice(0, 12).every((byte) => byte === 0)) {
+    return isPrivateIPv4(bytes.slice(12)); // IPv4-compatible ::a.b.c.d
+  }
+  if (
+    bytes[0] === 0 &&
+    bytes[1] === 0x64 &&
+    bytes[2] === 0xff &&
+    bytes[3] === 0x9b &&
+    bytes.slice(4, 12).every((byte) => byte === 0)
+  ) {
+    return isPrivateIPv4(bytes.slice(12)); // NAT64 64:ff9b::/96
+  }
+  if (bytes[0] === 0xfe && (bytes[1] & 0xc0) === 0x80) return true; // fe80::/10
+  if ((bytes[0] & 0xfe) === 0xfc) return true; // fc00::/7
+  if (bytes[0] === 0xfe && (bytes[1] & 0xc0) === 0xc0) return true; // fec0::/10
+  if (bytes[0] === 0xff) return true; // ff00::/8 multicast
+  return false;
+}
+
 /**
  * True when the host is a loopback, link-local, private, CGNAT or otherwise
  * non-public destination that a public fetch must never dial.
  *
- * The predicate runs on the URL's `hostname`, which for IPv6 literals keeps the
- * brackets and compresses IPv4-mapped addresses (`[::ffff:7f00:1]`), so both
- * forms are normalised before comparison. DNS resolution is not performed here;
- * `assertSafeImageUrl` is re-applied to every redirect hop, and callers that
- * need rebinding protection must also pin the resolved address.
+ * DNS resolution is not performed here: a hostname that resolves to a private
+ * address is not detected by this predicate. Redirects re-run the check on
+ * every hop; callers that need rebinding protection must also pin the resolved
+ * address.
  */
 export function isPrivateOrLoopbackHost(hostname: string): boolean {
   const host = bareHost(hostname);
 
-  // IPv6
-  if (host === "::" || host === "::1") return true;
-  if (host.startsWith("fe80:")) return true; // link-local fe80::/10
-  if (/^f[cd][0-9a-f]{0,2}:/.test(host)) return true; // unique local fc00::/7
-  if (host.startsWith("::ffff:")) {
-    const mapped = host.slice("::ffff:".length);
-    const dotted = mapped.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
-    if (dotted) return isPrivateIPv4(dotted.slice(1).map(Number));
-    const hex = mapped.match(/^([0-9a-f]{1,4}):([0-9a-f]{1,4})$/);
-    if (hex) {
-      const hi = parseInt(hex[1], 16);
-      const lo = parseInt(hex[2], 16);
-      return isPrivateIPv4([(hi >> 8) & 0xff, hi & 0xff, (lo >> 8) & 0xff, lo & 0xff]);
-    }
-    return true; // unparsable mapped form: fail closed
+  if (host.includes(":")) {
+    const bytes = parseIPv6(host);
+    return bytes === null ? true : isPrivateIPv6(bytes); // malformed: fail closed
   }
 
-  // IPv4 and names
   if (host === "localhost") return true;
   const v4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
   if (v4) return isPrivateIPv4(v4.slice(1).map(Number));
