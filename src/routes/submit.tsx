@@ -66,7 +66,7 @@ function Submit() {
           ...form,
         },
       });
-      if (!res.ok) {
+      if ("ok" in res) {
         setErrorMsg(res.error.message);
         return;
       }

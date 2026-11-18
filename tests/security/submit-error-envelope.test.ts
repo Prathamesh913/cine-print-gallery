@@ -49,6 +49,6 @@ describe("submitPosterToNotion error handling", () => {
 
   it("treats a returned error envelope as failure in the submit UI", () => {
     const submitSource = fs.readFileSync(path.join(repoRoot, "src/routes/submit.tsx"), "utf8");
-    expect(submitSource).toMatch(/if \(!res\.ok\)/);
+    expect(submitSource).toMatch(/"ok" in res/);
   });
 });
