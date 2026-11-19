@@ -5,10 +5,12 @@ import { getBase64Image } from "./notion";
  * Loads an image from a URL and returns an HTMLImageElement.
  * Uses crossOrigin = "anonymous" to prevent canvas taint.
  */
+export type TicketOrientation = "landscape" | "portrait";
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    
+
     if (src.startsWith("http://") || src.startsWith("https://")) {
       img.crossOrigin = "anonymous";
       const separator = src.includes("?") ? "&" : "?";
@@ -24,8 +26,13 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 
 /**
  * Generates a PNG blob for a vintage-style ticket representing the poster.
+ * Landscape renders a wide stub with the print alongside the metadata;
+ * portrait stacks a larger print above metadata that is vertically centered.
  */
-export async function generateTicketBlob(poster: Poster): Promise<Blob> {
+export async function generateTicketBlob(
+  poster: Poster,
+  orientation: TicketOrientation = "landscape",
+): Promise<Blob> {
   // Ensure fonts are loaded before drawing on canvas
   if (typeof document !== "undefined") {
     await document.fonts.ready;
@@ -52,8 +59,8 @@ export async function generateTicketBlob(poster: Poster): Promise<Blob> {
     showTime = "05:45 PM";
   }
 
-  const width = 1000;
-  const height = 460;
+  const width = orientation === "portrait" ? 460 : 1000;
+  const height = orientation === "portrait" ? 1000 : 460;
   const scale = 3; // 3x scale up for high-resolution ticket output
   const canvas = document.createElement("canvas");
   canvas.width = width * scale;
@@ -83,37 +90,69 @@ export async function generateTicketBlob(poster: Poster): Promise<Blob> {
   // 3. Draw Ticket Stub Cutouts (to look like holes punched at the ends of the tear line)
   // We use dark page background color #000000 to simulate transparency cutout
   ctx.fillStyle = "#000000";
-  
-  // Top cutout at stub line (x = 340)
-  ctx.beginPath();
-  ctx.arc(340, 0, 22, 0, Math.PI);
-  ctx.fill();
 
-  // Bottom cutout at stub line (x = 340)
-  ctx.beginPath();
-  ctx.arc(340, height, 22, Math.PI, 0);
-  ctx.fill();
+  if (orientation === "portrait") {
+    // Tear line runs horizontally; punch its ends where it meets the edges,
+    // plus top/bottom center notches for the vintage look.
+    const tearY = 560;
+    ctx.beginPath();
+    ctx.arc(0, tearY, 20, -Math.PI / 2, Math.PI / 2);
+    ctx.fill();
 
-  // Draw punch notches on the left and right edges for vintage look
-  ctx.beginPath();
-  ctx.arc(0, height / 2, 20, -Math.PI / 2, Math.PI / 2);
-  ctx.fill();
+    ctx.beginPath();
+    ctx.arc(width, tearY, 20, Math.PI / 2, -Math.PI / 2);
+    ctx.fill();
 
-  ctx.beginPath();
-  ctx.arc(width, height / 2, 20, Math.PI / 2, -Math.PI / 2);
-  ctx.fill();
+    ctx.beginPath();
+    ctx.arc(width / 2, 0, 22, 0, Math.PI);
+    ctx.fill();
 
-  // 4. Draw Dashed stub separator line
-  ctx.strokeStyle = "#2b261d";
-  ctx.lineWidth = 2;
-  ctx.setLineDash([8, 8]);
-  ctx.beginPath();
-  ctx.moveTo(340, 22);
-  ctx.lineTo(340, height - 22);
-  ctx.stroke();
-  ctx.setLineDash([]); // Reset dash pattern
+    ctx.beginPath();
+    ctx.arc(width / 2, height, 22, Math.PI, 0);
+    ctx.fill();
 
-  // 5. Left Side: Stub content
+    // Dashed tear line
+    ctx.strokeStyle = "#2b261d";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 8]);
+    ctx.beginPath();
+    ctx.moveTo(22, tearY);
+    ctx.lineTo(width - 22, tearY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  } else {
+    // Top cutout at stub line (x = 340)
+    ctx.beginPath();
+    ctx.arc(340, 0, 22, 0, Math.PI);
+    ctx.fill();
+
+    // Bottom cutout at stub line (x = 340)
+    ctx.beginPath();
+    ctx.arc(340, height, 22, Math.PI, 0);
+    ctx.fill();
+
+    // Draw punch notches on the left and right edges for vintage look
+    ctx.beginPath();
+    ctx.arc(0, height / 2, 20, -Math.PI / 2, Math.PI / 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(width, height / 2, 20, Math.PI / 2, -Math.PI / 2);
+    ctx.fill();
+
+    // 4. Draw Dashed stub separator line
+    ctx.strokeStyle = "#2b261d";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 8]);
+    ctx.beginPath();
+    ctx.moveTo(340, 22);
+    ctx.lineTo(340, height - 22);
+    ctx.stroke();
+    ctx.setLineDash([]); // Reset dash pattern
+  }
+
+  // 5. Poster print. Loaded once and drawn by both layouts.
+  let posterImg: HTMLImageElement | null = null;
   try {
     let src = poster.image;
     if (src.startsWith("http://") || src.startsWith("https://")) {
@@ -123,26 +162,20 @@ export async function generateTicketBlob(poster: Poster): Promise<Blob> {
         console.warn("Failed to proxy image via server, trying direct load:", err);
       }
     }
-    const img = await loadImage(src);
-    // Draw image centered in the stub area (width ~300)
-    ctx.save();
-    
-    const imgW = 210;
-    const imgH = 315; // 2:3 aspect ratio
-    const imgX = 65;
-    const imgY = 50;
-
-    // Draw card background for the image to simulate paper frame
-    ctx.fillStyle = "rgba(43, 38, 29, 0.05)";
-    ctx.fillRect(imgX - 4, imgY - 4, imgW + 8, imgH + 8);
-    ctx.strokeStyle = "#2b261d";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(imgX - 4, imgY - 4, imgW + 8, imgH + 8);
-
-    ctx.drawImage(img, imgX, imgY, imgW, imgH);
-    ctx.restore();
+    posterImg = await loadImage(src);
   } catch (e) {
     console.error("Failed to load poster image for canvas:", e);
+  }
+
+  if (orientation === "portrait") {
+    drawPortraitBody(ctx, posterImg, poster, { dayName, weekNum, showTime });
+    applyPaperTexture(ctx, width, height);
+    return blobFromCanvas(canvas);
+  }
+
+  // 5. Left Side: Stub content
+  drawFramedPoster(ctx, posterImg, 65, 50, 210, 315);
+  if (!posterImg) {
     // Fallback: draw placeholder box if image fails to load
     ctx.strokeStyle = "#2b261d";
     ctx.lineWidth = 2;
@@ -191,7 +224,7 @@ export async function generateTicketBlob(poster: Poster): Promise<Blob> {
   ctx.fillStyle = "#2b261d";
   const maxTitleWidth = 540;
   const titleText = poster.title.toUpperCase();
-  
+
   // Scale down font size if title is too long
   while (ctx.measureText(titleText).width > maxTitleWidth && fontSize > 20) {
     fontSize -= 3;
@@ -205,19 +238,160 @@ export async function generateTicketBlob(poster: Poster): Promise<Blob> {
   ctx.fillText(`BY ${poster.artist.toUpperCase()}  ·  ${poster.year}`, textCenterX, 285);
 
   // Showtime listing
-  ctx.font = 'bold 18px monospace';
+  ctx.font = "bold 18px monospace";
   ctx.fillStyle = "#2b261d";
   ctx.fillText("2-30, 5-45 & 9-00 P.M. SHOWS", textCenterX, 340);
 
   // Ticket fields footer
-  ctx.font = '13px monospace';
+  ctx.font = "13px monospace";
   ctx.fillStyle = "rgba(43, 38, 29, 0.8)";
-  ctx.fillText(`WEEK: ${String(weekNum).padStart(2, '0')}    SHOW: ${showTime}    DAY: ${dayName}`, textCenterX, 400);
+  ctx.fillText(
+    `WEEK: ${String(weekNum).padStart(2, "0")}    SHOW: ${showTime}    DAY: ${dayName}`,
+    textCenterX,
+    400,
+  );
 
   // Apply paper texture overlay (fibers, grain, gradients)
   applyPaperTexture(ctx, width, height);
 
-  // Return canvas as blob
+  return blobFromCanvas(canvas);
+}
+
+interface TicketDateInfo {
+  dayName: string;
+  weekNum: number;
+  showTime: string;
+}
+
+/** Draws the poster inside its paper frame; no-op when the image failed to load. */
+function drawFramedPoster(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement | null,
+  imgX: number,
+  imgY: number,
+  imgW: number,
+  imgH: number,
+) {
+  if (!img) return;
+  ctx.save();
+  // Draw card background for the image to simulate paper frame
+  ctx.fillStyle = "rgba(43, 38, 29, 0.05)";
+  ctx.fillRect(imgX - 4, imgY - 4, imgW + 8, imgH + 8);
+  ctx.strokeStyle = "#2b261d";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(imgX - 4, imgY - 4, imgW + 8, imgH + 8);
+  ctx.drawImage(img, imgX, imgY, imgW, imgH);
+  ctx.restore();
+}
+
+function fitBebasTitle(
+  ctx: CanvasRenderingContext2D,
+  title: string,
+  maxTitleWidth: number,
+  startSize: number,
+) {
+  let fontSize = startSize;
+  ctx.font = `bold ${fontSize}px "Bebas Neue", sans-serif`;
+  while (ctx.measureText(title).width > maxTitleWidth && fontSize > 20) {
+    fontSize -= 3;
+    ctx.font = `bold ${fontSize}px "Bebas Neue", sans-serif`;
+  }
+}
+
+/**
+ * Portrait stub: the print sits above a horizontal tear line, enlarged
+ * relative to the landscape stub; the metadata block below is centered
+ * vertically within the remaining space.
+ */
+function drawPortraitBody(
+  ctx: CanvasRenderingContext2D,
+  posterImg: HTMLImageElement | null,
+  poster: Poster,
+  { dayName, weekNum, showTime }: TicketDateInfo,
+) {
+  const width = 460;
+  const tearY = 560;
+  const centerX = width / 2;
+
+  // Enlarged print compared to landscape mode (210x315 -> 300x450)
+  const imgW = 300;
+  const imgH = 450;
+  const imgX = (width - imgW) / 2;
+  const imgY = 46;
+  drawFramedPoster(ctx, posterImg, imgX, imgY, imgW, imgH);
+  if (!posterImg) {
+    ctx.strokeStyle = "#2b261d";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(imgX, imgY, imgW, imgH);
+    ctx.fillStyle = "#2b261d";
+    ctx.font = '14px "Poppins", sans-serif';
+    ctx.textAlign = "center";
+    ctx.fillText("IMAGE CARRIER", centerX, imgY + imgH / 2);
+  }
+
+  // Footer on the stub side, under the print
+  ctx.fillStyle = "#2b261d";
+  ctx.font = '10px "Poppins", sans-serif';
+  ctx.textAlign = "center";
+  ctx.fillText("PRINTED BY CINEPRINT", centerX, imgY + imgH + 26);
+
+  // Metadata block, vertically centered between the tear line and the inner border
+  const blockTop = tearY + 8;
+  const blockBottom = 982;
+  // Vertical center of the region below the tear line; the metadata block is
+  // centered on this.
+  const regionCenter = blockTop + (blockBottom - blockTop) / 2;
+
+  // Header: Theatre Name
+  ctx.font = 'bold 36px "Bebas Neue", sans-serif';
+  ctx.fillStyle = "#2b261d";
+  ctx.textAlign = "center";
+  ctx.fillText("CINEPRINT GALLERY", centerX, regionCenter - 128);
+
+  // Subheader: Retro tags
+  ctx.font = '600 9px "Poppins", sans-serif';
+  ctx.fillText("( ADMIT ONE )", centerX, regionCenter - 98);
+
+  // Text instruction
+  ctx.font = 'italic 12px "Poppins", sans-serif';
+  ctx.fillStyle = "rgba(43, 38, 29, 0.75)";
+  ctx.fillText("Please allow 1 Person To See", centerX, regionCenter - 56);
+
+  // Divider line
+  ctx.strokeStyle = "rgba(43, 38, 29, 0.15)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(52, regionCenter - 42);
+  ctx.lineTo(width - 52, regionCenter - 42);
+  ctx.stroke();
+
+  // Large Movie Title
+  const titleText = poster.title.toUpperCase();
+  fitBebasTitle(ctx, titleText, 360, 38);
+  ctx.fillStyle = "#2b261d";
+  ctx.fillText(titleText, centerX, regionCenter + 6);
+
+  // Release Info (Artist & Year)
+  ctx.font = '600 10px "Poppins", sans-serif';
+  ctx.fillStyle = "rgba(43, 38, 29, 0.7)";
+  ctx.fillText(`BY ${poster.artist.toUpperCase()}  ·  ${poster.year}`, centerX, regionCenter + 44);
+
+  // Showtime listing
+  ctx.font = "bold 13px monospace";
+  ctx.fillStyle = "#2b261d";
+  ctx.fillText("2-30, 5-45 & 9-00 P.M. SHOWS", centerX, regionCenter + 88);
+
+  // Ticket fields footer
+  ctx.font = "10px monospace";
+  ctx.fillStyle = "rgba(43, 38, 29, 0.8)";
+  ctx.fillText(
+    `WEEK: ${String(weekNum).padStart(2, "0")}    SHOW: ${showTime}    DAY: ${dayName}`,
+    centerX,
+    regionCenter + 132,
+  );
+}
+
+function blobFromCanvas(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) {
