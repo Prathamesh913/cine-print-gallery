@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Copy, Download, Share2, Printer, Loader2 } from "lucide-react";
+import {
+  X,
+  Copy,
+  Download,
+  Share2,
+  Printer,
+  Loader2,
+  RectangleHorizontal,
+  RectangleVertical,
+} from "lucide-react";
 import { type Poster } from "@/lib/posters";
-import { generateTicketBlob } from "@/lib/ticket";
+import { generateTicketBlob, type TicketOrientation } from "@/lib/ticket";
 import { toast } from "sonner";
 import { useCornerSmoothing } from "@/lib/smoothing";
 import { play } from "cuelume";
@@ -15,6 +24,7 @@ export function ShareModal({ poster, onClose }: Props) {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [orientation, setOrientation] = useState<TicketOrientation>("landscape");
   const [copied, setCopied] = useState(false);
   const [sharing, setSharing] = useState(false);
   // Exit animation state
@@ -198,7 +208,7 @@ export function ShareModal({ poster, onClose }: Props) {
 
     let active = true;
 
-    generateTicketBlob(poster)
+    generateTicketBlob(poster, orientation)
       .then((b) => {
         if (!active) return;
         setBlob(b);
@@ -217,7 +227,7 @@ export function ShareModal({ poster, onClose }: Props) {
     return () => {
       active = false;
     };
-  }, [poster]);
+  }, [poster, orientation]);
 
   // Clean up object URL when modal is closed
   useEffect(() => {
@@ -359,7 +369,41 @@ export function ShareModal({ poster, onClose }: Props) {
         </p>
 
         {/* Ticket Container */}
-        <div className="flex min-h-[220px] items-center justify-center rounded-xl bg-black/40 p-4 border border-white/5">
+        <div className="relative flex min-h-[220px] items-center justify-center rounded-xl border border-white/5 bg-black/40 p-4 pt-16">
+          <div
+            role="group"
+            aria-label="Ticket orientation"
+            className="absolute left-1/2 top-3 z-10 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1 backdrop-blur-sm sm:left-auto sm:right-3 sm:translate-x-0"
+          >
+            {(
+              [
+                { mode: "landscape", label: "Landscape", Icon: RectangleHorizontal },
+                { mode: "portrait", label: "Portrait", Icon: RectangleVertical },
+              ] as const
+            ).map(({ mode, label, Icon }) => {
+              const active = orientation === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setOrientation(mode)}
+                  aria-pressed={active}
+                  aria-label={`${label} orientation`}
+                  title={`${label} orientation`}
+                  className={`inline-flex h-9 min-w-9 items-center justify-center gap-2 rounded-full px-2 text-xs font-medium transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] active:scale-95 sm:px-3 ${
+                    active
+                      ? "bg-[#F5EAD4] text-[#2b261d]"
+                      : "text-white/55 hoverable:hover:bg-white/5 hoverable:hover:text-white"
+                  }`}
+                >
+                  <Icon size={16} strokeWidth={2} aria-hidden />
+                  {/* Icon-only on mobile; icon + text from small breakpoints up */}
+                  <span className="hidden sm:inline">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+
           {loading ? (
             <div className="flex flex-col items-center gap-2 text-white/60">
               <Loader2 className="animate-spin" size={24} />
@@ -371,12 +415,12 @@ export function ShareModal({ poster, onClose }: Props) {
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               style={{ ...tiltStyle, ...ticketSmoothing.style }}
-              className="w-full overflow-hidden shadow-lg border border-white/12 relative group cursor-pointer select-none"
+              className="relative w-fit mx-auto overflow-hidden shadow-lg border border-white/12 group cursor-pointer select-none"
             >
               <img
                 src={imageUrl}
                 alt="Retro Ticket Preview"
-                className="h-auto w-full object-contain pointer-events-none"
+                className="pointer-events-none h-auto max-h-[52vh] w-auto max-w-full object-contain sm:max-h-[460px]"
               />
               {/* Dynamic light reflection glare overlay */}
               <div

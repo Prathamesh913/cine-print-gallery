@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { type Poster, slugifyArtist } from "@/lib/posters";
 import { PosterImage } from "@/components/PosterImage";
@@ -19,6 +19,11 @@ const stackOffsets = [
   { x: -34, y: 46, rotate: -2, opacity: 0.45 },
 ];
 
+const DEFAULT_POSTER_ASPECT = 2 / 3;
+// Fixed frame height for the stack; prints size themselves within it so the
+// hero never reflows when the stack cycles to a different-shaped poster.
+const STACK_HEIGHT = "clamp(260px, 52svh, 460px)";
+
 /**
  * The daily film's prints as a physical stack. The film and artist sit together
  * as the print label, the lift control sits with the prints, and the stack
@@ -34,7 +39,16 @@ export function DailySpotlight({
   const [paused, setPaused] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
+  // Posters ship without dimension metadata, so ratios are measured from the
+  // loaded images and each print renders at its own aspect inside the frame.
+  const [aspects, setAspects] = useState<Record<string, number>>({});
   const activePoster = filmPosters[activePosterIdx] || filmPosters[0];
+  const measurePoster = (posterId: string) => (event: SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth, naturalHeight } = event.currentTarget;
+    if (!naturalWidth || !naturalHeight) return;
+    const ratio = naturalWidth / naturalHeight;
+    setAspects((prev) => (prev[posterId] === ratio ? prev : { ...prev, [posterId]: ratio }));
+  };
   const totalCount = filmPosters.length;
   const wallRef = useRef<HTMLDivElement>(null);
 
@@ -177,8 +191,8 @@ export function DailySpotlight({
         </h1>
 
         <div
-          className="hero-rise relative mt-8 aspect-[3/4] w-full max-w-[300px] md:max-w-[400px]"
-          style={{ animationDelay: "80ms" }}
+          className="hero-rise relative mt-8 flex w-full max-w-[300px] items-center justify-center md:max-w-[400px]"
+          style={{ animationDelay: "80ms", height: STACK_HEIGHT }}
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocus={() => setPaused(true)}
@@ -192,10 +206,15 @@ export function DailySpotlight({
             const relative = (index - activePosterIdx + totalCount) % totalCount;
             const offset = stackOffsets[relative] ?? stackOffsets[0];
             const isTop = relative === 0;
+            const printAspect = aspects[poster.id] ?? DEFAULT_POSTER_ASPECT;
             const stackStyle = {
               transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px)) rotate(${offset.rotate}deg)`,
               zIndex: totalCount - relative,
               opacity: offset.opacity,
+              aspectRatio: `${printAspect}`,
+              // Each print keeps its own dimensions; the stable frame never
+              // resizes so cycling the stack doesn't shift the hero.
+              width: `min(100%, calc(${STACK_HEIGHT} * ${printAspect}))`,
             };
             // The top print is the crawlable destination; prints behind it stay
             // buttons so the stack can still be reordered without nesting controls.
@@ -207,7 +226,7 @@ export function DailySpotlight({
                   params={{ id: poster.id }}
                   preload="intent"
                   aria-label={`${filmTitle} (${filmYear}) — open poster by ${poster.artist}`}
-                  className="absolute left-1/2 top-1/2 aspect-[2/3] w-[78%] overflow-hidden bg-[#1E1E1E] transition-[transform,opacity] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+                  className="absolute left-1/2 top-1/2 overflow-hidden bg-[#1E1E1E] transition-[transform,opacity,width] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
                   style={stackStyle}
                 >
                   <PosterImage
@@ -216,7 +235,8 @@ export function DailySpotlight({
                     loading="eager"
                     fetchPriority="high"
                     alt={`${filmTitle} (${filmYear}) by ${poster.artist}`}
-                    className="h-full w-full object-contain"
+                    onLoad={measurePoster(poster.id)}
+                    className="h-full w-full object-cover"
                   />
                 </Link>
               );
@@ -227,7 +247,7 @@ export function DailySpotlight({
                 type="button"
                 onClick={() => choose(index)}
                 aria-label={`Bring print ${index + 1} to the top`}
-                className="absolute left-1/2 top-1/2 aspect-[2/3] w-[78%] overflow-hidden bg-[#1E1E1E] transition-[transform,opacity] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
+                className="absolute left-1/2 top-1/2 overflow-hidden bg-[#1E1E1E] transition-[transform,opacity,width] duration-[480ms] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B]"
                 style={stackStyle}
               >
                 <PosterImage
@@ -235,7 +255,8 @@ export function DailySpotlight({
                   purpose="gallery"
                   loading="lazy"
                   alt=""
-                  className="h-full w-full object-contain"
+                  onLoad={measurePoster(poster.id)}
+                  className="h-full w-full object-cover"
                 />
               </button>
             );
