@@ -147,7 +147,7 @@ describe("poster cards render genuine links", () => {
   });
 
   it("the hero's top print is a real poster anchor", () => {
-    const heroAnchors = posterAnchors(homeHtml).filter((a) => a.inner.includes("object-contain"));
+    const heroAnchors = posterAnchors(homeHtml).filter((a) => a.inner.includes('loading="eager"'));
     expect(heroAnchors).toHaveLength(1);
     expect(heroAnchors[0].href).toMatch(/^\/poster\/[^/]+$/);
   });
