@@ -1,6 +1,6 @@
 # CinePrint — Migration Dry-Run Report
 
-**Generated:** 2026-11-07T05:58:30.992Z  
+**Generated:** 2026-11-22T15:05:52.808Z  
 **Mode:** dry-run — no R2 writes  
 **Public base URL:** https://images.cineprint.click
 
@@ -21,9 +21,9 @@
 
 | State | Objects |
 |---|---:|
-| Missing | 126 |
-| Already verified | 0 |
-| Present (optimized, size matched) | 0 |
+| Missing | 4 |
+| Already verified | 61 |
+| Present (optimized, size matched) | 61 |
 | Conflicting | 0 |
 
 ## 3. Per-provider breakdown
