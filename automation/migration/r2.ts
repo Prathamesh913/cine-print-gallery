@@ -18,7 +18,11 @@ import type {
 
 export const R2_CACHE_CONTROL = "public, max-age=31536000, immutable";
 export const R2_MAX_VERIFY_BYTES = 30 * 1024 * 1024;
-export const R2_PUBLIC_VERIFY_TIMEOUT_MS = 30_000;
+// Cold CDN fetches of the largest originals (16.9 MB PNG) have been observed
+// taking ~87s end-to-end because the CDN does not retain them in edge cache;
+// the bound exists to prevent hangs, not to gate correctness (the checksum
+// still verifies integrity). 180s covers the worst observed case with margin.
+export const R2_PUBLIC_VERIFY_TIMEOUT_MS = 180_000;
 
 export class R2Error extends Error {}
 export class R2ConflictError extends R2Error {}
