@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   X,
   Copy,
@@ -10,7 +10,14 @@ import {
   RectangleVertical,
 } from "lucide-react";
 import { type Poster } from "@/lib/posters";
-import { generateTicketBlob, type TicketOrientation } from "@/lib/ticket";
+import {
+  generateTicketBlob,
+  derivePosterAccent,
+  type PosterAccent,
+  type TicketOrientation,
+  type TicketStyle,
+} from "@/lib/ticket";
+import { getPosterImageUrl } from "@/lib/poster-images";
 import { toast } from "sonner";
 import { useCornerSmoothing } from "@/lib/smoothing";
 import { play } from "cuelume";
@@ -25,6 +32,18 @@ export function ShareModal({ poster, onClose }: Props) {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [orientation, setOrientation] = useState<TicketOrientation>("landscape");
+  const [style, setStyle] = useState<TicketStyle>("poster");
+  // Poster-palette accent for the modal chrome; null keeps the neutral look.
+  const [accent, setAccent] = useState<PosterAccent | null>(null);
+  // Route the ticket through the same verified R2 resolver the gallery uses.
+  // Legacy Firestore image fields can still point at the retired Vercel Blob
+  // store, which would leave the ticket's poster plate empty; the resolver
+  // returns the verified R2 image for mapped posters and the raw field
+  // whenever it is already a working URL.
+  const ticketPoster = useMemo(
+    () => (poster ? { ...poster, image: getPosterImageUrl(poster, "gallery") } : null),
+    [poster],
+  );
   const [copied, setCopied] = useState(false);
   const [sharing, setSharing] = useState(false);
   // Exit animation state
@@ -89,6 +108,16 @@ export function ShareModal({ poster, onClose }: Props) {
       "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
   });
 
+  // Glare tint: the poster's accent hue while the Poster style is active,
+  // plain white light otherwise.
+  const glareBackground = useCallback(
+    (x: number, y: number) =>
+      accent
+        ? `radial-gradient(circle at ${x}% ${y}%, hsla(${accent.hue}, 55%, 62%, 0.22) 0%, hsla(${accent.hue}, 55%, 62%, 0) 80%)`
+        : `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 80%)`,
+    [accent],
+  );
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -112,7 +141,7 @@ export function ShareModal({ poster, onClose }: Props) {
 
     setGlareStyle({
       opacity: 1,
-      background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 80%)`,
+      background: glareBackground(glareX, glareY),
     });
   };
 
@@ -123,8 +152,7 @@ export function ShareModal({ poster, onClose }: Props) {
     });
     setGlareStyle({
       opacity: 0,
-      background:
-        "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 80%)",
+      background: glareBackground(50, 50),
     });
   };
 
@@ -158,7 +186,7 @@ export function ShareModal({ poster, onClose }: Props) {
       });
       setGlareStyle({
         opacity: 0.8,
-        background: `radial-gradient(circle at ${lightX}% ${lightY}%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 80%)`,
+        background: glareBackground(lightX, lightY),
       });
     };
 
@@ -186,7 +214,7 @@ export function ShareModal({ poster, onClose }: Props) {
       window.removeEventListener("deviceorientation", handleOrientation);
       window.removeEventListener("touchstart", enableGyro);
     };
-  }, []);
+  }, [glareBackground]);
 
   useEffect(() => {
     if (poster) {
@@ -200,7 +228,7 @@ export function ShareModal({ poster, onClose }: Props) {
   };
 
   useEffect(() => {
-    if (!poster) return;
+    if (!ticketPoster) return;
 
     setLoading(true);
     setBlob(null);
@@ -208,7 +236,7 @@ export function ShareModal({ poster, onClose }: Props) {
 
     let active = true;
 
-    generateTicketBlob(poster, orientation)
+    generateTicketBlob(ticketPoster, orientation, style)
       .then((b) => {
         if (!active) return;
         setBlob(b);
@@ -227,7 +255,29 @@ export function ShareModal({ poster, onClose }: Props) {
     return () => {
       active = false;
     };
-  }, [poster, orientation]);
+  }, [ticketPoster, orientation, style]);
+
+  // Sync the modal chrome with the poster palette while the Poster style is
+  // selected; fixed-palette styles keep the neutral chrome.
+  useEffect(() => {
+    if (!ticketPoster) return;
+    if (style !== "poster") {
+      setAccent(null);
+      return;
+    }
+    let active = true;
+    derivePosterAccent(ticketPoster)
+      .then((a) => {
+        if (active) setAccent(a);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (active) setAccent(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [ticketPoster, style]);
 
   // Clean up object URL when modal is closed
   useEffect(() => {
@@ -244,7 +294,7 @@ export function ShareModal({ poster, onClose }: Props) {
     if (!imageUrl) return;
     const a = document.createElement("a");
     a.href = imageUrl;
-    a.download = `${poster.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-ticket.png`;
+    a.download = `${poster.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${style}-ticket.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -317,7 +367,7 @@ export function ShareModal({ poster, onClose }: Props) {
         await navigator.share({
           files: [file],
           title: `${poster.title} — CinePrint Ticket`,
-          text: `Check out this retro ticket for ${poster.title} on CinePrint! ${window.location.origin}`,
+          text: `Check out this ${style === "vintage" ? "retro ticket" : style === "midnight" ? "midnight premiere pass" : "premiere pass tinted with the poster's palette"} for ${poster.title} on CinePrint! ${window.location.origin}`,
         });
       } else {
         // Fallback: Copy current window URL
@@ -370,10 +420,55 @@ export function ShareModal({ poster, onClose }: Props) {
 
         {/* Ticket Container */}
         <div className="relative flex min-h-[220px] items-center justify-center rounded-xl border border-white/5 bg-black/40 p-4 pt-16">
+          {accent && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-xl"
+              style={{
+                background: `radial-gradient(ellipse 60% 55% at 50% 45%, hsla(${accent.hue}, 55%, 62%, 0.13) 0%, hsla(${accent.hue}, 55%, 62%, 0) 70%)`,
+              }}
+            />
+          )}
+          <div
+            role="group"
+            aria-label="Ticket style"
+            className="absolute left-3 top-3 z-10 flex items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1 backdrop-blur-sm"
+          >
+            {(
+              [
+                // The poster-palette pass is the only offered style for now.
+                // The legacy cream stub and the brass Midnight pass are one
+                // uncomment away; their rendering code in ticket.ts is intact.
+                // { mode: "vintage", label: "Vintage" },
+                // { mode: "midnight", label: "Midnight" },
+                { mode: "poster", label: "Poster" },
+              ] as const
+            ).map(({ mode, label }) => {
+              const active = style === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setStyle(mode)}
+                  aria-pressed={active}
+                  aria-label={`${label} ticket style`}
+                  title={`${label} ticket style`}
+                  className={`inline-flex h-9 items-center justify-center rounded-full px-3 text-xs font-medium transition-[transform,background-color,color] duration-150 ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B6B] active:scale-95 ${
+                    active
+                      ? "text-[#2b261d]"
+                      : "text-white/55 hoverable:hover:bg-white/5 hoverable:hover:text-white"
+                  }`}
+                  style={active ? { backgroundColor: accent?.color ?? "#F5EAD4" } : undefined}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
           <div
             role="group"
             aria-label="Ticket orientation"
-            className="absolute left-1/2 top-3 z-10 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1 backdrop-blur-sm sm:left-auto sm:right-3 sm:translate-x-0"
+            className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full border border-white/10 bg-black/60 p-1 backdrop-blur-sm"
           >
             {(
               [
@@ -419,7 +514,13 @@ export function ShareModal({ poster, onClose }: Props) {
             >
               <img
                 src={imageUrl}
-                alt="Retro Ticket Preview"
+                alt={
+                  style === "vintage"
+                    ? "Retro Ticket Preview"
+                    : style === "midnight"
+                      ? "Midnight Premiere ticket preview"
+                      : "Poster-palette ticket preview"
+                }
                 className="pointer-events-none h-auto max-h-[52vh] w-auto max-w-full object-contain sm:max-h-[460px]"
               />
               {/* Dynamic light reflection glare overlay */}
